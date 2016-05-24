@@ -1,5 +1,5 @@
 # Installation of iRODS 4.1
-This document describes how to install iRODS4.1 on a Ubuntu machine with a postgresql 9.3 database as iCAT. 
+This document describes how to install iRODS4.1 on a Ubuntu machine with a postgresql 9.3 database as iCAT.
 
 ## Environment
 Ubuntu 14.04 server
@@ -46,7 +46,7 @@ COMMIT
 :FORWARD ACCEPT [0:0]
 :OUTPUT ACCEPT [0:0]
 -A INPUT -j DROP
-COMMIT 
+COMMIT
 ```
 
 ```sh
@@ -57,10 +57,10 @@ COMMIT
 ```sh
 adduser irodsadmin
 ```
-### (Optional) 
-To change the user name (useful when working with VM templates)
+### (Optional)
+To change the linux username (useful when working with VM templates and creatign several users)
 ```sh
-usermod -l alice irodsadmin 
+usermod -l alice irodsadmin
 groupmod -n alice irodsadmin
 usermod -d /home/alice -m alice
 usermod -c alice alice
@@ -97,7 +97,7 @@ wget ftp://ftp.renci.org/pub/irods/releases/4.1.6/ubuntu14/irods-database-plugin
 ```
 
 ```sh
-sudo dpkg -i irods-icat-4.1.6-ubuntu14-x86_64.deb irods-database-plugin-postgres-1.6-ubuntu14-x86_64.deb 
+sudo dpkg -i irods-icat-4.1.6-ubuntu14-x86_64.deb irods-database-plugin-postgres-1.6-ubuntu14-x86_64.deb
 ```
 This will exit with the following error message:
 ```sh

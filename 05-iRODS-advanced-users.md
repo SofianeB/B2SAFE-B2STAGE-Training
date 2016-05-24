@@ -1,5 +1,9 @@
-# Working with iRODS federations
-This part of the tutorial will show you how you can work with resources, automate data policies and how to transfer data across iRODS zones via federations.
+# Working with iRODS resources and federations
+This part of the tutorial will show how you can work with resources, automate data policies and transfer data across iRODS zones via federations.
+This part of the tutorial assumes that you either followed the tuorial [part 02 - for admins](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/02-iRODS-handson-admin.md)
+or that an irodsadmin created several resources on the iRODS instance you are working on.
+
+All commands can be executed as *irods user* from the user interface machine.
 
 ## Data and data resources
 
@@ -8,7 +12,7 @@ In the first part of the tutorial you ingested the file *put1.txt* into iRODS us
 ```sh
 ilsresc
 ```
-we can check what other resources there are. E.g.
+we can check which other resources are available. E.g.
 
 ```sh
 demoResc
@@ -19,7 +23,7 @@ replResc:replication
 └── storage2
 ```
 
-To replicate *put1.txt* to the *globalResc* and *newResc* resource, execute
+To replicate a file *put1.txt* to the *globalResc* and *newResc* resource, execute
 ```sh
 irepl -R globalResc put1.txt
 irepl -R newResc put1.txt
@@ -38,12 +42,12 @@ which will yield
   alice             2 newResc           13 2016-05-05.15:58 & put1.txt
 ```
 
-Note that all replicas are numbered. This number can be used to delete replicas:
+Note, that all replicas are numbered. This number can be used to delete replicas:
 ```sh
 itrim -n 1 put1.txt
 ```
 
-**Exercise** What happens if you rereplicate the file to *globalResc*?
+**Exercise** What happens if you replicate the file again to *globalResc*?
 
 **Exercise** What happens if you call *itrim* without the *-n* option?
 
@@ -55,7 +59,7 @@ irepl   | Replicate data to a resource
 itrim   | Reduce number of replicas
 isync   | Replicate to another iRODS zone
 
-## Replicating data between iRODS grids
+## Replicating data between iRODS zones
 We can replicate data between our iRODS zone and another iRODS zone. At the other iRODS zone the local user name needs to extended with *#<localzone>*.
 
 First let's have a look at the data under the remote account:
@@ -78,7 +82,7 @@ irsync -R demoResc i:/bobtestZone/home/alice#alicetestZone/put2.txt put3.txt
 ```
 
 ## iRODS rules
-You can automate data management processes by creating scripts written in the iRODS rule language.
+iRODS offers the possibility to automate data management processes by creating scripts written in the iRODS rule language.
 
 Save the example rule below in a file called *HelloWorld.r*
 ```sh
@@ -151,7 +155,7 @@ OUTPUT ruleExecOut, *name
 
 ### Scheduled rules
 
-iRODS offers the possibility to delay rules and to execute rules regularly.
+We can also delay rules and execute rules regularly.
 ```sh
 HelloWorld{
     delay("<PLUSET>1m</PLUSET><EF>5m</EF>"){
@@ -179,7 +183,7 @@ INPUT null
 OUTPUT ruleExecOut
 ```
 The first argument of *msiExecCmd* is the actual command. In that case the python script begins with the hash-bang *#!/usr/bin/env python* which makes it executable. The second argument is a list of parameters and the last stores the output of the executed command.
-**Note** that all commands that you call need to be located in *iRODS/server/bin/cmd*. 
+**Note** that all commands that you call need to be located in *iRODS/server/bin/cmd*. To add new commands to that folder you need *sudo* rights on the iRODS server. 
 
-### Final exercise
-Write a rule that periodically chacks whether new data is ingested into a certain collection and automatically replicate the data to a dedicated storage resource. You can make use of delayed iRODS rules. Some microservices can be of help. 
+### Exercise
+Write a rule that periodically checks whether new data is ingested into a certain collection and automatically replicate the data to a dedicated storage resource. You can make use of delayed iRODS rules. Some microservices can be of help. 

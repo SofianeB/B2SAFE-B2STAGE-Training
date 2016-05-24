@@ -1,10 +1,8 @@
-# Setting up an iRODS federation and replicate data with B2SAFE
+# Setting up an iRODS federation
 This hands-on takes you through the configuration steps necessary to set up an iRODS federation.
 
 ## Prerequisites
-Two iRODS 4.1 zones enabled with B2SAFE 2.
-Please refer to [B2SAFE](https://github.com/chStaiger/B2SAFE-B2STAGE-Training/blob/master/install_B2SAFE.md) 
- and [iRODS4](https://github.com/chStaiger/B2SAFE-B2STAGE-Training/blob/master/install_iRODS4.md)
+Two iRODS 4.1 zones.
 
 ## Configuring the iRODS federation
 ### Creating remote zones and users
@@ -106,5 +104,5 @@ bob@irods4:~$ ils /aliceZone/home/bob#bobZone
 /aliceZone/home/bob#bobZone:
 ```
 
-We explain [HERE](https://github.com/chStaiger/B2SAFE-B2STAGE-Training/blob/master/iRODS_federations_handson.md) the basics of how you can manage data across different iRODS zones.
-In our [B2SAFE-HANDS-ON](https://github.com/chStaiger/B2SAFE-B2STAGE-Training/blob/master/B2SAFE_handson.md) we illustrate how to employ policies for data management in iRODS federations. 
+We explain [HERE](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/05-iRODS-advanced-users.md) the basics of how you can manage data across different iRODS zones.
+In our [B2SAFE-HANDS-ON](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/06-B2SAFE-handson.md) we illustrate how to employ policies for data management in iRODS federations. 

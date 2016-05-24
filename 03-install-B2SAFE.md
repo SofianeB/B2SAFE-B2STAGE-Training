@@ -6,9 +6,7 @@ Ubuntu 14.04 server, iRODS 4.1 with postgresql 9.3
 You will also need a handle prefix and the respective credentials to configure B2SAFE.
 
 ##Prerequisites
-Also consult https://github.com/EUDAT-B2SAFE/B2SAFE-core/blob/master/install.txt
-or
-https://github.com/chStaiger/B2SAFE-core.git
+For a comprehensive documentation please refer to https://github.com/EUDAT-B2SAFE/B2SAFE-core/wiki.
 
 Install git:
 ```sh
@@ -19,7 +17,6 @@ sudo apt-get install git
 - Clone the github repository of B2SAFE and create the debian package
 ```sh
 git clone https://github.com/EUDAT-B2SAFE/B2SAFE-core
-git clone https://github.com/chStaiger/B2SAFE-core.git
 cd ~/B2SAFE-core/packaging
 ./create_deb_package.sh
 ```

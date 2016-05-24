@@ -18,7 +18,7 @@ apt-get update
 apt-get install -y globus-data-management-client
 ```
 
-To connect to the gridFTP server you need a certificate. The admin of the gridFTP server will provide you with two files a *usercert.pem* and a *userkey.pem*. Bothe need to be saved in:
+To connect to the gridFTP server you need a certificate. The admin of the gridFTP server will provide you with two files a *usercert.pem* and a *userkey.pem*. Both need to be saved in:
 ```sh
 mkdir /home/<user>/.globus
 ```
@@ -26,7 +26,7 @@ mkdir /home/<user>/.globus
 ## Working with gridFTP
 
 ### Proxies
-To work with gridFTP you need to create a so-called proxy, to this end your usercert.pem will be used. The gridFTP client will employ the proxy to execute commands on the gridFTP server on your behalf.
+To work with gridFTP you need to create a so-called proxy, to this end your *usercert.pem* will be used. The gridFTP client will employ the proxy to execute commands on the gridFTP server on your behalf.
 
 ```sh
 grid-proxy-init -debug
@@ -43,7 +43,8 @@ globus-url-copy -help
 ```
 
 Note, that all commands you issue via this command will be executed as one and the same iRODS user cofigured for the iRODS-DSI module. 
-That means, that even if you log in as another irodsuser your data will be deposited as this user. 
+That means, that even if you log in as another irodsuser your data will be deposited as the same user. On our training machines, it is the user *alice*.
+To work with gridFTP you might need to set the ACLs with *ichmod* for *alice* to list and copy your files.
 
 ### Listings
 
@@ -77,22 +78,22 @@ Use the *globus-url-copy* to retrieve a single file and folder from iRODS.
 In the previous parts of the tutorial we have seen how we can employ the icommands to ingest data and how to synchronise this data with another iRODS grid using B2SAFE.
 
 **Exercise**
-Develop a script that will synchronize a directory tree from your client machine to the gridFTP/iRODS server, which will, when run multiple times, take into account changed and deleted files. 
-The script shuold employ *globus-url-copy*, the *icommands* to run B2SAFE rules and own implemnted rules.
+Develop a script that will synchronise a directory tree from your client machine to the gridFTP/iRODS server, which will, when run multiple times, take into account changed and deleted files. 
+The script should employ *globus-url-copy*.
 
-* Consult the help on *globus-url-copy* and search for convenient options
-* Synchronise your `gridftp<xyz>` directory on your client machine to `/aliceZone/home/alice/irods<x>/data/`
-* Verify the data is properly updated, think of how to create and employ checksums and where to store them
-* Synchronize again and verify no files are transfered
-* Change a file
-* Synchronize again and verify the file is properly updated
+* Consult the help on *globus-url-copy* and search for convenient options.
+* Synchronise your `gridftp<xyz>` directory on your client machine to `/aliceZone/home/alice/irods<x>/data/`.
+* Verify the data is properly updated, think of how to create and employ checksums and where to store them, on the client machine and on the iRODS/gridFTP server.
+* Synchronise again and verify no files are transfered.
+* Change a file.
+* Synchronise again and verify the file is properly updated.
 
-* Extend the script with generating PIDs for the data ingested into iRODS (this can be done manually or by using the B2SAFE rules)
-* Trigger the B2SAFE replication to *bob*
+* Extend the script by generating PIDs for the data ingested into iRODS (this can be done manually or by using the B2SAFE rules).
+* Trigger the B2SAFE replication to *bob* on the iRODS client.
 
 * Which operations should be executed by a data user and which should be done by a data admin or iRODS admin?
 
-#### Using the iRODS server rule engine
+#### Challenge: Using the iRODS server rule engine
 
 A better, and more advanced, approach is to use the iRODS rule engine to compute checksums and mint PIDs automatically.
 

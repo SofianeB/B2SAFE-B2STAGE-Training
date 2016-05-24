@@ -104,7 +104,7 @@ This will return:
 **Exercise**: Write a script or an iRODS rule to retrieve all PIDs of a data collection.
 
 3. Replicate the data collection from aliceZone to bobZone. The B2SAFE admin also has access to bobZone via an iRODS federation. We will now transfer the data collection to this zone. 
-Merely transferring the data could also be done by the icommand *irepl*. However, we would like to 1) calculate checksums, create PIDs and link the replicas' PIDs with their parent counterparts. This is all already implemented by B2SAFE rules.
+Merely transferring the data could also be done by the icommand *irsyncl*. However, we would like to 1) calculate checksums, create PIDs and link the replicas' PIDs with their parent counterparts. This is all already implemented by B2SAFE rules.
 Create the file testRules/Replication.r with the following content:
         
         Replication {

@@ -1,6 +1,6 @@
 # Installation of B2STAGE
 
-In the previous examples we showed how to ingest data into iRODS via the icommands. To transfer large data EUDAT offers the possibility to employ gridFTP to directly enter data into an iRODS grid.
+In the previous examples we showed how to ingest data into iRODS via the icommands. To transfer large data EUDAT offers the possibility to employ gridFTP to directly enter data into an iRODS zone.
 Here we show how to setup a gridFTP endpoint on top of an iRODS server and how to connect the gridFTP endpoint to iRODS.
 
 ## Environment

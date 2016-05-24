@@ -1,7 +1,20 @@
 # iRODS hands-on for admins
 This tutorial explains how to administrate users and resources as irods admin.
-We will work with the icommands.
+We will work with the *icommands* installed on the user interface machine. You will need *irodsadmin* rights and *sudo* rights on the iRODS server.
 
+## The *iadmin* mode
+Creating users and resources are done under the iadmin mode. You can enter this mode by typing
+```sh
+iadmin #start mode
+help
+q #quit mode
+```
+In this mode you can only execute iadmin commands listed under *help* but not the 'normal' icommands such as iput.
+Alternatively, all iadmin commands can be executed directly on the shell predeeded with 'iadmin'.
+
+```sh
+iadmin help
+```
 
 ## User admnistration with iadmin
 
@@ -9,10 +22,10 @@ We will work with the icommands.
 
 []()  | []()
 ------|------
-mkuser      | create a user
-moduser     | modify user attributes
-rmuser      | delete a user
-mkgroup     | create group
+iadmin mkuser      | create a user
+iadmin moduser     | modify user attributes
+iadmin rmuser      | delete a user
+iadmin mkgroup     | create group
 
 ## iRODS resources
 In iRODS you can create so-called resources which correspond to different physical locations such as resource servers and storage devices. 
@@ -38,19 +51,24 @@ Usually resources are created directly under */var/lib/irods*.
 ### Composable resource trees
 
 We will now create a resource tree in which data will bereplicated automatically between two resource. 
-When you are working on our training machines please create the resources in your home directory and set the read and write access for the *irods* user. If you are working on your own machine you can create the resources directly under */var/lib/irods*.
+When you are working on our training machines please create the resources in your home directory and set the read and write access for the *irods* user. If you are working on your own machine you can create the resources directly under */var/lib/irods* or somewhere higher up the directory tree.
+```sh
+sudo mkdir /var/lib/irods/iRODS/storage1
+sudo mkdir /var/lib/irods/iRODS/storage2
+```
 
 **Create two unix file system resources**
 ```sh
 iadmin mkresc storage1 unixfilesystem <fully qualified hostname>:/var/lib/irods/iRODS/storage1
 iadmin mkresc storage2 unixfilesystem <fully qualified hostname>:/var/lib/irods/iRODS/storage2
 ```
+All iRODS users will have access to these two resources, specific access control to data in iRODS can be done by setting ACLs with *ichmod* on logical namespace level. 
 
 **Create a coordinating replication resource**
 ```sh
 iadmin mkresc replResc replication
 ```
-The keyword *replication* triggers the behaviour of this ccordinating resource. It will replicate all data ingested to the attached resources.
+The keyword *replication* triggers the behaviour of this ccordinating resource. All data in this resource will be automatically replicated between the two storage resources.
 
 **Connect the resources**
 ```sh
@@ -75,13 +93,21 @@ ils -L put2.txt
 
 []()  | []()
 ------|------
-mkresource  | create a resource
-rmresc      | delete a resource
-modresc     | modify resource attributes
+iadmin mkresource  | create a resource
+iadmin rmresc      | delete a resource
+iadmn modresc     | modify resource attributes
 
 **Exercise** Modify the replication resource to the type *compound* and test where newly ingested data will be saved.
 
-### Compound resources with Universal Mass storage backend
-**Todo**
+### Compound resources
+Compound resources consist of a cache resource and an archive resource. Data is entered to the cache resource and passed later to the archive resource. 
+The archive resource can be of several storage types for which one might need to adapt the data transfer protocol. This is defined in */var/lib/irods/iRODS/server/bin/cmd/univMSSInterface.sh*
+
+To create such a compound resource, please refer to this [setup](https://github.com/trel/irods-compound-resource/blob/master/SETUP.md).
+
+*Exercise* Inspect the *univMSSInterface.sh* and adopt it to work with *rsync* or another transfer protocol.
+
+
+
 
 

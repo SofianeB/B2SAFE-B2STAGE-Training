@@ -148,3 +148,18 @@ Enter your irods zone: alicetestZone
 ```sh
 ils
 ```
+
+### Additional Server configuration
+iRODS creates a lot of log files, which are not cleaned up automatically. To do so start a cron-job:
+```
+sudo vim /etc/cron.d/irods
+```
+Add
+```
+# cleanup old logfiles older than 14 days
+11      1       *       *       *       root    find /var/lib/irods/iRODS/server/log/{re,rods}Log.* -mtime +14  -exec rm {} \;
+```
+to the file. 
+Now root will delete all reLog and rodsLog files that are older than 14 days. The command will be executed everyday at 11.01am.
+
+

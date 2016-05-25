@@ -18,6 +18,14 @@ apt-get update
 apt-get install -y globus-data-management-client
 ```
 
+#### CA certificate
+
+Copy the *<hash>.0*  and <hash>.signing_policy from the gridFTP server to the user interface
+
+```
+sudo scp -r alice@<gridFTPserver>:/etc/grid-security/certificates/<hash>.* /etc/grid-security/certificates
+```
+
 To connect to the gridFTP server you need a certificate. The admin of the gridFTP server will provide you with two files a *usercert.pem* and a *userkey.pem*. Both need to be saved in:
 ```sh
 mkdir /home/<user>/.globus

@@ -87,7 +87,8 @@ Request a host certificate and sign it:
 ```sh
 grid-cert-request -host iRODS4-alicetest.eudat-sara.vm.surfsara.nl -force
 ```
-Make sure you call the host the same way as users would call it from outside to transfer data.
+Make sure you call the host the same way as users would call it from outside to transfer data, i.e. the fully qualified path.
+If you use a different hostname, users will have to add the mapping from IP to the hostname in their */etc/hosts* on their client machine.
 
 Sign the certificate, check it and restart the gridFTP server
 ```sh
@@ -109,16 +110,17 @@ Add the subject of the user to the gridmap file
 grid-cert-info -subject
 grid-mapfile-add-entry -dn "/O=Grid/OU=GlobusTest/OU=simpleCA-irods4.alicetest/OU=Globus Simple CA/CN=alice" -ln alice
 ```
+The flag *-ln* specifies a user on your linux system.
 
 ## Testing the gridFTP endpoint
-Switch to a user (*alice*) on your gridFTP server and install the usercertificate in the .globus directory
+Switch to a user (*alice*) on your gridFTP server and copy the user certificate and key to the /home/alice/.globus directory
 ```sh
 mkdir .globus
 cd .globus
 ```
 Make sure the certificates belong to *alice*
 ```
-sudo chown alice *
+sudo chown alice:alice *
 ```
 Initialise a proxy
 ```sh
@@ -127,7 +129,7 @@ grid-proxy-init
 
 Try to list the */tmp* directory via gridFTP and create and copy a file to that directory
 ```sh
-globus-url-copy -dbg -list globus-url-copy -dbg -list gsiftp://irods4-alicetest.eudat-sara.vm.surfsara.nl/tmp/
+globus-url-copy -dbg -list gsiftp://irods4-alicetest.eudat-sara.vm.surfsara.nl/tmp/
 echo "kjsbdj" > /home/alice/test.txt
 globus-url-copy file:/home/alice/test.txt gsiftp://irods4-alicetest.eudat-sara.vm.surfsara.nl/tmp/test.txt
 ```
@@ -151,6 +153,8 @@ mkdir -p ~/iRODS_DSI/deploy
 cd ~/iRODS_DSI
 wget ftp://ftp.renci.org/pub/irods/releases/4.1.6/ubuntu14/irods-dev-4.1.6-ubuntu14-x86_64.deb
 sudo dpkg -i irods-dev-4.1.6-ubuntu14-x86_64.deb
+wget ftp://ftp.renci.org/pub/irods/releases/4.1.6/ubuntu14/irods-runtime-4.1.6-ubuntu14-x86_64.deb
+sudo dpkg -i irods-runtime-4.1.6-ubuntu14-x86_64.deb
 sudo apt-get update
 ```
 

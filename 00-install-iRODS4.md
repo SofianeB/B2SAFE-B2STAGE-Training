@@ -39,7 +39,7 @@ sudo apt-get install iptables-persistent
 -A INPUT -j DROP
 COMMIT
 ```
-- edit /etc/iptables/rules.v4
+- edit /etc/iptables/rules.v6
 ```sh
 *filter
 :INPUT ACCEPT [0:0]
@@ -50,7 +50,7 @@ COMMIT
 ```
 
 ```sh
-/etc/init.d/iptables-persistent start
+/etc/init.d/iptables-persistent restart
 ```
 
 ### 3. Create admin user for machine and irods
@@ -125,9 +125,9 @@ sudo /var/lib/irods/packaging/setup_irods.sh
 ```
 
 ```sh
-iRODS servers zone name [tempZone]: alicetestZone
+iRODS servers zone name [tempZone]: aliceZone
 iRODS Vault directory [/var/lib/irods/iRODS/Vault]: /irodsVault
-iRODS servers zone_key [TEMPORARY_zone_key]: alicetest_zone_key
+iRODS servers zone_key [TEMPORARY_zone_key]: ALICE_zone_key
 iRODS servers administrator username [rods]: alice
 Database servers hostname or IP address: localhost
 ```
@@ -142,7 +142,7 @@ iinit
 Enter the host name (DNS) of the server to connect to: localhost
 Enter the port number: 1247
 Enter your irods user name: alice
-Enter your irods zone: alicetestZone
+Enter your irods zone: aliceZone
 ```
 - Test whether you can list your iRODS directory
 ```sh

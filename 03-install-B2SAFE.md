@@ -68,7 +68,7 @@ sudo apt-get install python-simplejson
 ```
 
 ### 4. Tests
-- B2SAFE installation
+#### B2SAFE installation
 ```sh
 cd ~/B2SAFE-core/rules
 irule -vF eudatGetV.r
@@ -78,7 +78,13 @@ irule -vF eudatGetV.r
 *version = 3.1-0
 ```
 
-- Generating PIDs
+####Generating PIDs
+* Test the epicclient.py:
+```sh
+sudo su - irods
+/opt/eudat/b2safe/cmd/epicclient.py os /opt/eudat/b2safe/conf/credentials create www.test.com
+```
+
 * Create a test collection
 ```sh
 mkdir testData

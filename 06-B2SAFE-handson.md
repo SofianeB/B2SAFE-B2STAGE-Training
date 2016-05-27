@@ -37,11 +37,13 @@ iRODS provides some standard rules which you can find here
 ```sh
 /etc/irods/core.re
 ```
-In 
+
+You can retrieve and examine the B2SAFE rule base like this
+In your /home directory do
 ```sh
-B2SAFE-core/rulebase/
+git clone https://github.com/EUDAT-B2SAFE/B2SAFE-core
 ```
-You will find the B2SAFE rules, which you can use and combine to enable your data management workflow.
+You will find the B2SAFE rulebase here *B2SAFE-core/rulebase* and some testrules here *B2SAFE-core/rules*.
 
 ### Example: Using B2SAFE to register a file
 You can use the B2SAFE rule *EUDATCreatePID* to register a single file. The rule is located in *B2SAFE-core/rulebase/pid-service.re*.
@@ -148,7 +150,7 @@ Option 1)
 
 As B2SAFE admin you have access to the PIDs of the parent PID in your iCAT catalogue. 
 
-**Exercise** If you already followed the [PID tutorial](https://github.com/chStaiger/B2SAFE-B2STAGE-Training/blob/master/0X-Working-with-PIDs_epicclient.md) write a script to fetch all PIDs of the replicas and check whether original and replica indeed have the same checksum
+**Exercise** If you already followed the [PID tutorial](https://github.com/eudat-training/B2SAFE-B2STAGE-Training) write a script to fetch all PIDs of the replicas and check whether original and replica indeed have the same checksum
 
 Option 2)
 
@@ -159,5 +161,5 @@ ils -L /bobZone/home/alice#aliceZone/DataCollection
 imeta ls -d /bobZone/home/alice#aliceZone/DataCollection/put1.txt
 ```
 
-**Exercise** Replicate the data from bobZone in a different collection in aliceZone, inspect the PID entries and write a script to communicate the whole linked list of PIDs to your irods useri, e.g. as a text file.
+**Exercise** Replicate the data from bobZone in a different collection in aliceZone, inspect the PID entries and write a script to communicate the whole linked list of PIDs to your irods user, e.g. as a text file.
 

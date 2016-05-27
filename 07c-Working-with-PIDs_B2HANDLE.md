@@ -5,6 +5,7 @@ This lecture illustrates the use of PIDs, more specifically it shows how to empl
 If you are not working on one of our test machines you need to install the B2HANDLE library and apply for a prefix. For instructions please follow the documentation:
 
 https://github.com/EUDAT-B2SAFE/B2HANDLE/blob/master/README.md
+
 http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#authentication
 
 ## Warming-up: Using PIDs
@@ -30,11 +31,16 @@ Below  you find three different PIDs and their corresponding global resolver
 
 You can either go to the resolver in your webbrowser and type in the PID to get to the data behind it. You can also concatenate the resolver and the PID.
 
-**Try to resolve the handle PID with the DOI resolver and vice versa.**
+**Try to resolve the handle PID with the DOI resolver and vice-versa.**
 
 **In the handle resolver you will find a box "Don't redirect to URLs", if you tick this box, what information do you get?**
 
 Each PID consists of a *prefix* which is linked to an administratory domain (e.g. a journal) and a *suffix*. The prefix is handed out by an issuer such as CNRI for handle or DataCite for DOIs. Once you are admin of a prefix, you can register as many data objects as you want by extending the prefix with a suffix. Note, that the suffixes need to be unique for each data object. The epic client helps you with that.
+
+## Managing PIDs
+
+#### Training machine
+On our user interface machines we already installed all necessary packages and the B2HANDLE library. You will find your credentaials for this tutorials in the folder */home/<user>/credentials/cred_b2handle*. 
 
 #### Own laptop
 In case you are working on your own laptop with your own python, please install the B2HANDLE library.
@@ -65,12 +71,12 @@ import hashlib
 import os, shutil
 ```
 ### Connect to the SURFsara handle server 
-To connect to the epic server you need to provide a prefix, the private key and the certificate; alternatively the library also provides authentication with username/password. This information is stored in a json file *credentials* and should look like this:
+To connect to the epic server you need to provide a prefix, the private key and the certificate; alternatively the library also provides authentication with username/password. This information is stored in a json file *cred_file.json* and should look like this:
 ```sh
 {
     "handle_server_url": "https://epic3.storage.surfsara.nl:8001",
-    "private_key": "/<full path>/credentials/355_841_privkey.pem",
-    "certificate_only": "/<full path>/credentials/355_841_certificate_only.pem",
+    "private_key": "/<full path>/credentials/cred_b2handle/355_841_privkey.pem",
+    "certificate_only": "/<full path>/credentials/cred_b2handle/355_841_certificate_only.pem",
     "prefix": "841",
     "handleowner": "200:0.NA/841",
     "reverse_username": "841",
@@ -78,11 +84,11 @@ To connect to the epic server you need to provide a prefix, the private key and 
     "HTTPS_verify": "True"
 }
 ```
-On the test machines you can find such a file and all necessary certificates and keys in */opt/PIDs*.
+On the user interface machines you can find such a file and all necessary certificates and keys in */<full path>/credentials/cred_b2handle/*. Please adopt the *<full path>* appropriately.
 
 - Parse credentials
 ```py
-cred = PIDClientCredentials.load_from_JSON('credentials/cred_file.json')
+cred = PIDClientCredentials.load_from_JSON('<full_path>/cred_file.json')
 ```
 - Retrieve some information about the server, this server also hosts the resolver which we will use later
 ```py
@@ -171,7 +177,7 @@ ec.modify_handle_value(Handle, ttl=None, add_if_not_exist=True, **args)
 
 - We can also access the information via the client:
     ```py
-    ec.retrieveHandle(Handle)
+    ec.retrieve_handle_record(Handle)
     ```
 
 ### Updating PID entries
@@ -217,22 +223,22 @@ ec.modify_handle_value(Handle, ttl=None, add_if_not_exist=True, **dict([('REPLIC
 
 ### Reverse look-ups
 **TODO**
-The epic API extends the handle API with recursive look-ups. Assume you just know some of the metadata stored with a PID but not the full PID. How can you get to the URL field to retrieve the data?
+The epic API extends the handle API with reverse look-ups. Assume you just know some of the metadata stored with a PID but not the full PID. How can you get to the URL field to retrieve the data?
 
 We can fetch the first data with a certain checksum:
 ```py
 args = dict([('CHECKSUM', str(''.join(md5sum)))])
 Handle = ec.search_handle(**args)
-url = ec.getValueFromHandle(Handle, 'URL')
+url = ec.get_value_from_handle(Handle, 'URL')
 print(url) 
 ```
 
 ### Using the epicclient Command Line Interface (CLI)
-For now we directly worked with the raw functions. The epicclient can also be used as CLI. 
+For now we directly worked with the library. EUDAT provides an [epicclient](https://github.com/EUDAT-B2SAFE/B2SAFE-core/blob/master/cmd/epicclient2.py) which can be used as command line interface (CLI) based on the B2HANDLE. 
 You can list all options for the CLI on the commandline with:
 
 ```sh 
-/opt/epd73/bin/python epicclient2.py os /opt/PIDs/credentials -h
+python epicclient2.py os <full path>/cred_file.json -h
 ```
 
 The functions are adjusted to the functionality in the EUDAT B2SAFE service, but can serve as reference implementation for other use cases.

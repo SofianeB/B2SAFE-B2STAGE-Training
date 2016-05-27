@@ -116,24 +116,25 @@ To connect to the epic server you need to provide a prefix and a password.
 If you use the example files, this information is stored in a *config.txt* file  and should look like this:
 
 ```py
-USERNAME=841
+USERNAME=846
 PASSWORD=xxxx
 FILENAME=surveys.csv #the file (and its location) we are going to use in the examples
-PID_SERVER=https://epic3.storage.surfsara.nl/v2_test/handles/841 #be carefull not to add the trailing slash
+PID_SERVER=https://epic3.storage.surfsara.nl/v2_test/handles/846 #be carefull not to add the trailing slash
 PID_SUFFIX=XXXX #the suffix of the first created handle
 PID2_SUFFIX=YYYY #the suffix of the second handle
 ```
+You can find the the username and password on the user interface machine in *credentials/cred_epic/cred_file.json*.
 
- - Get the list of handles in 841 prefix as an example. 
+ - Get the list of handles in 846 prefix as an example. 
 ```py
-curl -u "841:XXX" -H "Accept: application/json" \
+curl -u "846:XXX" -H "Accept: application/json" \
 	 -H "Content-Type: application/json" \
-	 https://epic3.storage.surfsara.nl/v2_test/handles/841/
+	 https://epic3.storage.surfsara.nl/v2_test/handles/846/
 ```
 
 - Connect with your credentials (username, password)
 ```py
--u "841:XXX"
+-u "846:XXX"
 ```
 - Use the correct headers to send and accept json format 
 
@@ -144,7 +145,7 @@ curl -u "841:XXX" -H "Accept: application/json" \
 - The PID prefix is combined with the pid server url  
 
 ```py
-https://epic3.storage.surfsara.nl/v2_test/handles/841/
+https://epic3.storage.surfsara.nl/v2_test/handles/846/
 ```
 
 ## Registering a file
@@ -174,14 +175,14 @@ SUFFIX=`uuidgen`
 ```
 
 - Concatenate your PID prefix and the uuid to create the full PID
-` 841/$SUFFIX `
+` 846/$SUFFIX `
 
-We now have an opaque string which is unique to our resolver (841/$SUFFIX ) since
+We now have an opaque string which is unique to our resolver (846/$SUFFIX ) since
 the prefix is unique (handed out by administrators of the resolver).
 
 The URL in the CURL request: 
 ```py
-https://epic3.storage.surfsara.nl/v2_test/handles/841/$SUFFIX 
+https://epic3.storage.surfsara.nl/v2_test/handles/846/$SUFFIX 
 ```
 
 - Register the PID, link the PID and the data object. We would like the PID to point to the location we stored in *fileLocation*
@@ -195,11 +196,11 @@ SUFFIX=`uuidgen`
 curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 		-H "Content-Type:application/json" \
 		-X PUT --data '[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}]'\
-		 https://epic3.storage.surfsara.nl/v2_test/handles/841/$SUFFIX 
+		 https://epic3.storage.surfsara.nl/v2_test/handles/846/$SUFFIX 
 ```
 
 The result of this request is a new handle with the name HANDLE where
-HANDLE = 841/UUID1
+HANDLE = 846/UUID1
 
 #### Responses 
  - HTTP/1.1 201 Created: (Success)
@@ -230,7 +231,7 @@ Dont forget to change the UUD1 to the correct suffix value.
 curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 		-H "Content-Type:application/json" \
 		-X PUT --data '[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}]'\
-		 https://epic3.storage.surfsara.nl/v2_test/handles/841/UUID1 
+		 https://epic3.storage.surfsara.nl/v2_test/handles/846/UUID1 
 ```
 (Use example2.sh)
 
@@ -252,7 +253,7 @@ And the actual request is:
 curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 		-H "Content-Type:application/json" \
 		-X PUT --data '[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}, {"type":"TYPE","parsed_data":"Data Carpentry pandas example file"}]'\
-		 https://epic3.storage.surfsara.nl/v2_test/handles/841/UUID1
+		 https://epic3.storage.surfsara.nl/v2_test/handles/846/UUID1
 ```
 
 Use example3.sh
@@ -269,7 +270,7 @@ curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 		-X POST --data '[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}, 
  					    {"type":"TYPE","parsed_data":"Data Carpentry pandas example file"}, 
  					    {"type":"MD5","parsed_data":$md5value}]'\
-		 https://epic3.storage.surfsara.nl/v2_test/handles/841/UUID1
+		 https://epic3.storage.surfsara.nl/v2_test/handles/846/UUID1
 
 ```
 
@@ -285,7 +286,7 @@ We can fetch the first data with a certain checksum:
 curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 		-H "Content-Type:application/json" \
 		-X GET \
-		https://epic3.storage.surfsara.nl/v2_test/handles/841/?MD5=MD5VALUE
+		https://epic3.storage.surfsara.nl/v2_test/handles/846/?MD5=MD5VALUE
 ```
 
 Use example5.sh
@@ -302,7 +303,7 @@ Use example5.sh
 curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 		-H "Content-Type:application/json" \
 		-X POST --data '[{"type":"URL","parsed_data":"/<PATH>/surveys.csv"}]'\
-		 https://epic3.storage.surfsara.nl/v2_test/handles/841/UUID1
+		 https://epic3.storage.surfsara.nl/v2_test/handles/846/UUID1
 ```
 
 Use example6.sh
@@ -337,21 +338,21 @@ SUFFIX=`uuidgen`
 curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 		-H "Content-Type:application/json" \
 		-X PUT --data '[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}]'\
-		 https://epic3.storage.surfsara.nl/v2_test/handles/841/$SUFFIX 
+		 https://epic3.storage.surfsara.nl/v2_test/handles/846/$SUFFIX 
 ```
 
 - Leave information that local file should be the same as the figshare file. Update the data of handle 
 
 First update the json 
 ```
-	[{"type":"URL","parsed_data":"/<PATH>/surveys.csv"},{"type":"SAME_AS","parsed_data":"841/newhandle"}]
+	[{"type":"URL","parsed_data":"/<PATH>/surveys.csv"},{"type":"SAME_AS","parsed_data":"846/newhandle"}]
 ```
 
 ```py
 curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 		-H "Content-Type:application/json" \
-		-X POST --data '[{"type":"URL","parsed_data":"/<PATH>/surveys.csv",},{"type":"SAME_AS","parsed_data":"841/newhandle"}]'\
-		 https://epic3.storage.surfsara.nl/v2_test/handles/841/UUID1
+		-X POST --data '[{"type":"URL","parsed_data":"/<PATH>/surveys.csv",},{"type":"SAME_AS","parsed_data":"846/newhandle"}]'\
+		 https://epic3.storage.surfsara.nl/v2_test/handles/846/UUID1
 ```
 
 

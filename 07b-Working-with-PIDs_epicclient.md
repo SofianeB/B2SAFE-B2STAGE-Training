@@ -36,20 +36,23 @@ Each PID consists of a *prefix* which is linked to an administratory domain (e.g
 
 The code is based on the [epicclient.py](https://github.com/EUDAT-B2SAFE/B2SAFE-core/blob/master/cmd/epicclient.py).
 Please check the dependencies before you start.
-You will also need test credentials for the epic server.
+You will also need test credentials for the epic server. On the user interface, credentials are located in *credentials/cred_epic*
+
+Please download the epicclient.py.
+```sh
+wget https://raw.githubusercontent.com/EUDAT-Training/B2SAFE-B2STAGE-Training/develop/code/epicclient.py
+```
 
 #### Install python dependencies
 
-On the training machines you will find an enthought python compiler preinstalled with all neceassary dependencies:
+On the user interface machine you will find python compiler preinstalled with all neceassary dependencies, we also offer ipython for convenient testing:
 ```sh
-/opt/epd73/bin/python
-/opt/epd73/bin/ipython
+python
 ```
-
-#### Training machine
-pid-training.eudat-sara.vm.surfsara.nl
-
-The epicclient.py can be fount in */opt/PIDs/* on the training machine.
+or
+```
+ipython
+```
 
 #### Own laptop
 In case you are working on your own laptop with your own python, please install:
@@ -60,6 +63,7 @@ easy_install simplejson
 easy_install lxml
 easy_install defusedxml
 ```
+
 Final check
 
 ```sh
@@ -94,8 +98,8 @@ To connect to the epic server you need to provide a prefix and a password. This 
 ```sh
 {
     "baseuri": "https://epic3.storage.surfsara.nl/v2_test/handles/",
-    "username": "841",
-    "prefix": "841",
+    "username": "846",
+    "prefix": "846",
     "password": "XXX",
     "accept_format": "application/json",
     "debug" : "False"
@@ -105,7 +109,7 @@ On the test machines you can find such a file in */opt/PIDs*.
 
 - Parse credentials (username, password)
 ```py
-cred = Credentials('os', '/<PATH>/credentials')
+cred = Credentials('os', '/<PATH>/cred_file.json')
 cred.parse()
 ```
 - Retrieve some information about the server, this server also hosts the resolver which we will use later
@@ -115,7 +119,7 @@ print('PID server ' + ec.cred.baseuri)
 ```
 - The PID prefix is your user name which is coupled to an administratory domain
 ```py
-print('PID prefix' + ec.cred.prefix)
+print('PID prefix ' + ec.cred.prefix)
 ```
 
 ## Registering a file
@@ -235,7 +239,7 @@ ec.modifyHandle(Handle, 'Same_as', newHandle)
 ```
 
 ### Reverse look-ups
-The epic API extends the handle API with recursive look-ups. Assume you just know some of the metadata stored with a PID but not the full PID. How can you get to the URL field to retrieve the data?
+The epic API extends the handle API with reverse look-ups. Assume you just know some of the metadata stored with a PID but not the full PID. How can you get to the URL field to retrieve the data?
 
 We can fetch the first data with a certain checksum:
 ```py

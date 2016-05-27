@@ -101,6 +101,8 @@ iadmn modresc     | modify resource attributes
 
 **Exercise** Modify the replication resource to the type *compound* and test where newly ingested data will be saved.
 
+If you are working on our training machines, you can use */var/lib/irods/iRODS/Vault1-10* to create and bundle resources.
+
 ### Compound resources
 Compound resources consist of a cache resource and an archive resource. Data is entered to the cache resource and passed later to the archive resource. 
 The archive resource can be of several storage types for which one might need to adapt the data transfer protocol. This is defined in */var/lib/irods/iRODS/server/bin/cmd/univMSSInterface.sh*

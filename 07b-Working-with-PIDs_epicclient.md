@@ -95,7 +95,7 @@ import os, shutil
 ```
 ### Connect to the SURFsara handle server 
 To connect to the epic server you need to provide a prefix and a password. This information is stored in a json file *credentials* and should look like this:
-```sh
+```
 {
     "baseuri": "https://epic3.storage.surfsara.nl/v2_test/handles/",
     "username": "846",
@@ -160,6 +160,9 @@ Let’s go to the resolver and see what is stored there
 We can get some information on the data from the resolver.
 We can retrieve the data object itself via the web-browser.
 
+[//]: # "Does wget need to explaining? It is mentioned here without"
+[//]: # "context. Not sure how well the target audiance understands"
+[//]: " "the usage of wget."
 **Download the file via the resolver. Try to use *wget* when working remotely on our training machine.**
 
 **How is the data stored when downloading via the browser and how via *wget*?**
@@ -167,13 +170,13 @@ We can retrieve the data object itself via the web-browser.
 **Have a look at the metadata stored in the PID entry.**
 
 **What happens if you try to reregister the file with the same PID?**
-```py
+```sh
 newHandle = ec.createHandle(pid, fileLocation)
 ```
 
 ### Store some handy information with your file
 - We can store some more information in the PID entry with the function *modifyHandle*
-```py
+```
 ?ec.modifyHandle
 ec.modifyHandle(Handle, 'TYPE', 'Data Carpentry pandas example file')
 ```

@@ -23,6 +23,7 @@ apt-get install -y globus-data-management-client
 Copy the *<hash>.0*  and <hash>.signing_policy from the gridFTP server to the user interface
 
 ```
+sudo mkdir /etc/grid-security/certificates
 sudo scp -r alice@<gridFTPserver>:/etc/grid-security/certificates/<hash>.* /etc/grid-security/certificates
 ```
 
@@ -56,21 +57,26 @@ To work with gridFTP you might need to set the ACLs with *ichmod* for *alice* to
 
 ### Listings
 
-List the irods home collection of the user *alice*
+List the iRODS home collection of the iRODS user *alice*:
 ```sh
-globus-url-copy -vb -list gsiftp://irods4-alicetest.eudat-sara.vm.surfsara.nl/alicetestZone/home/alice/
+globus-url-copy -vb -ipv6 -list gsiftp://<fqhn_or_ip>/aliceZone/home/alice/
 ```
-Since this GridFTP server is integrated with iRODS, the url to list consists of '''/<zone_name>/<collection>/<collection>/```. Where the collection part is the logical path inside the iRODS zone.
-Note, that you cannot use gridFTP any longer to list, add and fetch data from the normal file system on the iRODS server any longer in this setting.
+[//]: # "The '''/<zone_name>/<collection>/<collection>/``` part below"
+[//]: # "does not show in the redendered result. It show '''////``` instead."
+Since this GridFTP server is integrated with iRODS, the url to list consists of */zone_name/home/alice/collection/*. Where the collection part is the logical path of the iRODS zone.
+**Note**, that you cannot use gridFTP any longer to list, add and fetch data from the normal file system on the iRODS server in this setting. Also note, that all data will be ingested under the user *alice*.
+
 
 ### Uploading data
 **Single files**
 
 Single files can be uploaded to iRODS via:
 ```sh
-globus-url-copy -dbg file:/home/alice/test.txt gsiftp://irods4-alicetest.eudat-sara.vm.surfsara.nl/alicetestZone/home/alice/
+globus-url-copy -dbg -ipv6 file:/home/alice/test.txt gsiftp://alice.eudat-sara.vm.surfsara.nl/aliceZone/home/alice/
 ```
-This will add *test.txt* to te iRODS collection *alice*. To rename the file in iRODS you can extend the iRODS path pointing to the collection with a filename.
+This will add *test.txt* to the iRODS collection *alice*. To rename the file in iRODS you can extend the iRODS path pointing to the collection with a filename.
+
+**Exercise: ACLs** Ingest some data in iRODS using gridFTP. Use your iRODS admin account to find where it is ingested to and what the ACLs are. You might need an *iquest* command.
 
 **Exercise: Data collections**
 
@@ -103,7 +109,7 @@ The script should employ *globus-url-copy*.
 
 #### Challenge: Using the iRODS server rule engine
 
-A better, and more advanced, approach is to use the iRODS rule engine to compute checksums and mint PIDs automatically.
+A better and more advanced approach is to use the iRODS rule engine to compute checksums and mint PIDs automatically.
 
 For this exercise you will need *system admin* and *irods admin* rights on the iRODS server.
 
@@ -127,3 +133,7 @@ ON($objPath like "/aliceZone/home/irods<x>/*") {
 }
 ```
 More information on the iRODS microservices: https://docs.irods.org/master/doxygen/
+
+[//]: # "I feel this last bit goes a bit too quickly. All we get here are"
+[//]: # "pointers. To me it feels an example is missing, I might be wrong"
+[//]: # "of course..."

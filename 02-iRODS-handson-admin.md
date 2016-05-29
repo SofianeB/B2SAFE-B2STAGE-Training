@@ -39,18 +39,18 @@ iadmin mkresc newResc unixfilesystem <fully qualified hostname>:/home/alice/newV
 ```
 Since iRODS is executed not as your local user but as *irods*, putting data into the resource located in your home directpry will fail:
 
-```sh
+```
 iput -R newResc put2.txt
 ERROR: putUtil: put error for /alicetestZone/home/alice/put2.txt,
  status = -520013 status = -520013 UNIX_FILE_MKDIR_ERR, Permission denied
 ```
 
 This can be helped by granting read and write access to the *irods* user.
-Usually resources are created directly under */var/lib/irods*. 
+Usually resources are created directly under */var/lib/irods*.
 
 ### Composable resource trees
 
-We will now create a resource tree in which data will be replicated automatically between two resource. 
+We will now create a resource tree in which data will be replicated automatically between two resource.
 When you are working on our training machines please create the resources in your home directory and set the read and write access for the *irods* user. If you are working on your own machine you can create the resources directly under */var/lib/irods* or somewhere higher up the directory tree.
 ```sh
 sudo mkdir /var/lib/irods/iRODS/storage1
@@ -62,14 +62,13 @@ sudo mkdir /var/lib/irods/iRODS/storage2
 iadmin mkresc storage1 unixfilesystem <fully qualified hostname>:/var/lib/irods/iRODS/storage1
 iadmin mkresc storage2 unixfilesystem <fully qualified hostname>:/var/lib/irods/iRODS/storage2
 ```
-All iRODS users will have access to these two resources, specific access control to data in iRODS can be done by setting ACLs with *ichmod* on logical namespace level. 
+All iRODS users will have access to these two resources, specific access control to data in iRODS can be done by setting ACLs with *ichmod* on logical namespace level.
 
 **Create a coordinating replication resource**
 ```sh
 iadmin mkresc replResc replication
 ```
-
-The keyword *replication* triggers the behaviour of this ccordinating resource. All data in this resource will be automatically replicated between the two storage resources.
+The keyword *replication* triggers the behaviour of this cordinating resource. All data in this resource will be automatically replicated between the two storage resources.
 
 **Connect the resources**
 ```sh
@@ -104,7 +103,7 @@ iadmn modresc     | modify resource attributes
 If you are working on our training machines, you can use */var/lib/irods/iRODS/Vault1-10* to create and bundle resources.
 
 ### Compound resources
-Compound resources consist of a cache resource and an archive resource. Data is entered to the cache resource and passed later to the archive resource. 
+Compound resources consist of a cache resource and an archive resource. Data is entered to the cache resource and passed later to the archive resource.
 The archive resource can be of several storage types for which one might need to adapt the data transfer protocol. This is defined in */var/lib/irods/iRODS/server/bin/cmd/univMSSInterface.sh*
 
 To create such a compound resource, please refer to this [setup](https://github.com/trel/irods-compound-resource/blob/master/SETUP.md).

@@ -62,26 +62,26 @@ easy_install uuid-runtime
 
 Final check
 
-```py
+```sh
 curl --help
 ```
 
 If you write the code described below in a file, don't forget to change the permissions. 
 You should make each file executable. 
 
-Suppose you have a file `filename.sh` 
+Suppose you have a file called `filename.sh` 
 
-you can make it by doing as:
+you can make it executable by doing:
 `chmod +x filename.sh`
 
-so it will execute when you type
+so it will execute when you type:
 `./filename.sh`
 
 
 #### Example workflow
 
-1. Obtain a prefix from an resolver admin
-2. Set up internet connection to the PID server with a client
+1. Obtain a prefix from a resolver admin
+2. Set up an internet connection to the PID server with a client
 3. Create a PID
 4. Link PID and location of the data object
 
@@ -103,7 +103,7 @@ Before we start, lets explain the main parameters of CURL used as options
 
  * **-X, --request <command>**: (HTTP) Specifies a custom request method to use when communicating with the HTTP server. The specified request method will be used instead of the method otherwise used (which defaults to GET).  Common additional HTTP requests include PUT ,POST and DELETE . ( -X GET) 
  * **-U, --proxy-user <user:password>**: Specify the user name and password to use for proxy authentication. (ex: -u "username:pass) 
- * **-H, --header <header>**: Extra header to include in the request when sending HTTP to a server. You may specify any number of extra headers.(ex: -H "Accept: application/json" so as to accept json data)
+ * **-H, --header <header>**: Extra header to include in the request when sending HTTP to a server. You may specify any number of extra headers. (ex: -H "Accept: application/json" so as to accept json data)
  * **-d, --data <data>**: (HTTP) Sends the specified data in a POST or PUT request to the HTTP server, in the same way that a browser does when a user has filled in an HTML form and presses the submit button. 
  * **-D, --dump-header <file>**: Write the protocol headers to the specified file.
  * **-v**: get verbosed information about the connection with the server 
@@ -115,7 +115,7 @@ These are the main parameters we are going to use in our examples. For more para
 To connect to the epic server you need to provide a prefix and a password. 
 If you use the example files, this information is stored in a *config.txt* file  and should look like this:
 
-```py
+```sh
 USERNAME=846
 PASSWORD=xxxx
 FILENAME=surveys.csv #the file (and its location) we are going to use in the examples
@@ -126,25 +126,25 @@ PID2_SUFFIX=YYYY #the suffix of the second handle
 You can find the the username and password on the user interface machine in *credentials/cred_epic/cred_file.json*.
 
  - Get the list of handles in 846 prefix as an example. 
-```py
+```sh
 curl -u "846:XXX" -H "Accept: application/json" \
 	 -H "Content-Type: application/json" \
 	 https://epic3.storage.surfsara.nl/v2_test/handles/846/
 ```
 
 - Connect with your credentials (username, password)
-```py
+```
 -u "846:XXX"
 ```
 - Use the correct headers to send and accept json format 
 
-```py
+```
 -H "Accept: application/json" -H "Content-Type: application/json"
 ```
 
 - The PID prefix is combined with the pid server url  
 
-```py
+```
 https://epic3.storage.surfsara.nl/v2_test/handles/846/
 ```
 
@@ -154,7 +154,7 @@ https://epic3.storage.surfsara.nl/v2_test/handles/846/
 
 First prepare the data in a json format to register. 
 
-```py
+```
 '[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}]'
 ```
 
@@ -162,7 +162,7 @@ We are going to create a new PID by using the PUT request
 
 So the request method is -X PUT followed by the actual json data 
 
-```py
+```
 -X PUT --data '[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}]'
 ```
 
@@ -170,7 +170,7 @@ So the request method is -X PUT followed by the actual json data
 
 - Create a universally unique identifier (uuid)
 - Take function for this from
-```py
+```sh
 SUFFIX=`uuidgen`
 ```
 
@@ -181,14 +181,14 @@ We now have an opaque string which is unique to our resolver (846/$SUFFIX ) sinc
 the prefix is unique (handed out by administrators of the resolver).
 
 The URL in the CURL request: 
-```py
+```
 https://epic3.storage.surfsara.nl/v2_test/handles/846/$SUFFIX 
 ```
 
 - Register the PID, link the PID and the data object. We would like the PID to point to the location we stored in *fileLocation*
 (example1.sh)
 
-```py
+```sh
 #!/bin/bash    
 
 SUFFIX=`uuidgen`
@@ -227,7 +227,7 @@ We can retrieve the data object itself via the web-browser.
 
 Dont forget to change the UUD1 to the correct suffix value.
 
-```py
+```sh
 curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 		-H "Content-Type:application/json" \
 		-X PUT --data '[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}]'\
@@ -258,12 +258,15 @@ curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 
 Use example3.sh
 
+[//]: # "Not sure: do you mean 'to store identity information of the file'"
+[//]: # "perhaps? In the sentence below."
 - We want to store information on identity of the file, e.g. the md5 checksum. We first have 
 to generate the checksum. However, we can only create checksums for files which we 
 have access to with our python compiler. In the step above we can download the file and
 then continue to calculate the checksum. **NOTE** the filename might depend on the download method.
 
-```#!/bin/bash
+```sh
+#!/bin/bash
 md5value=` md5 surveys.csv | awk '{ print $4 }'`
 curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 		-H "Content-Type:application/json" \
@@ -282,7 +285,7 @@ Use example4.sh
 The epic API extends the handle API with recursive look-ups. Assume you just know some of the metadata stored with a PID but not the full PID. How can you get to the URL field to retrieve the data?
 
 We can fetch the first data with a certain checksum:
-```py
+```sh
 curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 		-H "Content-Type:application/json" \
 		-X GET \
@@ -299,7 +302,7 @@ Use example5.sh
 ### Updating PID entries
 - Assume location of file has changed. This means we need to modify the URL field.
 
-```py
+```sh
 curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 		-H "Content-Type:application/json" \
 		-X POST --data '[{"type":"URL","parsed_data":"/<PATH>/surveys.csv"}]'\
@@ -330,7 +333,7 @@ in the PIDs.
 
 - Reregister the figshare file
 - First create a new PID
-```py
+```sh
 #!/bin/bash    
 
 SUFFIX=`uuidgen`
@@ -348,7 +351,7 @@ First update the json
 	[{"type":"URL","parsed_data":"/<PATH>/surveys.csv"},{"type":"SAME_AS","parsed_data":"846/newhandle"}]
 ```
 
-```py
+```sh
 curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 		-H "Content-Type:application/json" \
 		-X POST --data '[{"type":"URL","parsed_data":"/<PATH>/surveys.csv",},{"type":"SAME_AS","parsed_data":"846/newhandle"}]'\

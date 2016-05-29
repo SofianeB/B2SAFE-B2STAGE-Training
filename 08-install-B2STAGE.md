@@ -48,8 +48,8 @@ COMMIT
 ```sh
 /etc/init.d/iptables-persistent restart
 ```
-
-To ensure the mapping from IP to hostname you might have to:
+ 
+ To ensure the mapping from IP to hostname you might have to edit the */etc/hosts*:
 ```sh
 hostname
 echo "your.ip.num.ber <yourhostname>" >> /etc/hosts
@@ -74,23 +74,26 @@ sudo su -
 cd /root/
 grid-ca-create
 ```
-Follow the prompt.
+ Follow the prompt.
 
-Create symlinks in your working directory:
+- Create symlinks in */etc/grid-security*:
+```sh
+cd /etc/grid-security
+```
 ```sh
 ln -s /var/lib/globus/simple_ca/grid-security.conf grid-security.conf
 ln -s /var/lib/globus/simple_ca/globus-host-ssl.conf  globus-host-ssl.conf
 ln -s /var/lib/globus/simple_ca/globus-user-ssl.conf  globus-user-ssl.conf
 ```
 
-Request a host certificate and sign it:
+- Request a host certificate and sign it:
 ```sh
-grid-cert-request -host iRODS4-alicetest.eudat-sara.vm.surfsara.nl -force
+grid-cert-request -host <fully.qualified.hostname> -force
 ```
-Make sure you call the host the same way as users would call it from outside to transfer data, i.e. the fully qualified path.
-If you use a different hostname, users will have to add the mapping from IP to the hostname in their */etc/hosts* on their client machine.
+ Make sure *\<fully.qualified.hostname\>* matches the way how to call the server from outside to transfer data.
+ If you use a different hostname, users will have to add the mapping from IP to the hostname in their */etc/hosts* on their client machine.
 
-Sign the certificate, check it and restart the gridFTP server
+ Sign the certificate, check it and restart the gridFTP server
 ```sh
 grid-ca-sign -in /etc/grid-security/hostcert_request.pem -out /etc/grid-security/hostcert.pem
 openssl x509 -in /etc/grid-security/hostcert.pem -text -noout
@@ -98,36 +101,37 @@ openssl x509 -in /etc/grid-security/hostcert.pem -text -noout
 ```
 
 ## Creating user certificates and editing the gridmap file
-User need to have an own user certificate in order to transfer data to the gridFTP endpoint. This is how you create and sign a user certificate.
+Users need to have an own user certificate in order to transfer data to the gridFTP endpoint. This is how you create and sign a user certificate.
+- As root create a user certificate:
 ```sh
-grid-cert-request -force
+grid-cert-request 
 grid-ca-sign -in /root/.globus/usercert_request.pem -out /root/.globus/usercert.pem
 ```
-Send the *usercert.pem* and the *userkey.pem* to the user. The user should store these two documents in */home/user/.globus/*.
+- Send the *usercert.pem* and the *userkey.pem* to the user. The user should store these two documents in */home/user/.globus/*.
 
-Add the subject of the user to the gridmap file
+- Add the subject of the user to the gridmap file
 ```sh
 grid-cert-info -subject
 grid-mapfile-add-entry -dn "/O=Grid/OU=GlobusTest/OU=simpleCA-irods4.alicetest/OU=Globus Simple CA/CN=alice" -ln alice
 ```
-The flag *-ln* specifies a user on your linux system.
+ The flag *-ln* specifies a user on your linux system.
 
 ## Testing the gridFTP endpoint
-Switch to a user (*alice*) on your gridFTP server and copy the user certificate and key to the /home/alice/.globus directory
+- Switch to a user on your gridFTP server and copy the user certificate and key to the */home/<user>/.globus* directory
 ```sh
 mkdir .globus
 cd .globus
 ```
-Make sure the certificates belong to *alice*
+- Make sure the certificates belong to *alice*
 ```
 sudo chown alice:alice *
 ```
-Initialise a proxy
+- Initialise a proxy
 ```sh
 grid-proxy-init
 ```
 
-Try to list the */tmp* directory via gridFTP and create and copy a file to that directory
+T- ry to list the */tmp* directory via gridFTP and create and copy a file to that directory
 ```sh
 globus-url-copy -dbg -list gsiftp://irods4-alicetest.eudat-sara.vm.surfsara.nl/tmp/
 echo "kjsbdj" > /home/alice/test.txt
@@ -144,7 +148,7 @@ sudo apt-get install libglobus-common-dev
 sudo apt-get install libglobus-gridftp-server-dev 
 sudo apt-get install libglobus-gridmap-callout-error-dev
 sudo apt-get install libcurl4-openssl-dev
-apt-get install build-essential make cmake git
+sudo apt-get install build-essential make cmake git
 ```
 
 ### Necessary iRODS packages and code
@@ -240,7 +244,7 @@ grid-proxy-init
 List data in the user's iRODS home collection:
 - Listing
 ```sh
-alice@irods4:~$ globus-url-copy -list gsiftp://irods4-alicetest.eudat-sara.vm.surfsara.nl/alicetestZone/home/alice/
+alice@irods4:~$ globus-url-copy -list gsiftp://alice.eudat-sara.vm.surfsara.nl/aliceZone/home/alice/
 ```
 
 The output should look like this:
@@ -253,6 +257,40 @@ gsiftp://irods4-alicetest.eudat-sara.vm.surfsara.nl/alicetestZone/home/alice/
     DataTrunk/
     testData/
 ```
+
+### Debug information
+When you are using a grid certificate mapping to a linux user that is called differently than the default irods user in */root/.irods/irods_environment* or */var/lib/irods/.irods/irods_environment.json* you will encounter ther following error:
+
+```
+530-Login incorrect. : /home/ubuntu/iRODS_DSI/B2STAGE-GridFTP/DSI/globus_gridftp_server_iRODS.c:globus_l_gfs_iRODS_make_error:579:
+530-iRODS DSI. Error: 'clientLogin' failed.. CAT_INVALID_AUTHENTICATION: , status: -826000.
+530-
+530 End.
+```
+
+One solution is to to create an irods admin with the same user name as the linux account the certificate is mapped to and update the *irods_environment* files.
+I.e. if your grid certificate is mapped to *admin*, but your iRODS user is *alice*, do:
+- Create an iRODS account *admin*
+```
+iadmin mkuser admin rodsadmin
+iadmin moduser admin password ***
+```
+- Update the */root/.irods/irods_environment*:
+```
+{
+    "irods_port": 1247,
+    "irods_host": "localhost",
+    "irods_user_name": "admin",
+    "irods_zone_name": "aliceZone"
+}
+```
+- Update the */var/lib/irods/.irods/irods_environment.json*:
+```
+    "irods_home": "/aliceZone/home/admin",
+    "irods_cwd": "/aliceZone/home/admin",
+    "irods_user_name": "admin",
+```
+
 
 
 

@@ -290,6 +290,7 @@ iadmin moduser admin password ***
     "irods_cwd": "/aliceZone/home/admin",
     "irods_user_name": "admin",
 ```
+- Restart the gridFTP server directly under root and not via sudo.
 
 
 

@@ -243,3 +243,20 @@ python epicclient2.py os <full path>/cred_file.json -h
 ```
 
 The functions are adjusted to the functionality in the EUDAT B2SAFE service, but can serve as reference implementation for other use cases.
+
+### Quick Links to github Documentation 
+
+ - [Instantiate Client](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#instantiation)
+ - [Authentication](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#authentication)
+  - [Authentication using client certificates](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#authentication-using-client-certificates)
+  - [Authentication using username and password](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#authentication-using-username-and-password)
+ - [Basic Handle interaction](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#basic-handle-interaction)
+ - [Managing multiple URLs with 10320/loc](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#managing-multiple-urls-with-10320-loc)
+ - [Full method documentation](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#full-method-documentation)
+  - [Constructors](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#constructors)
+  - [Handle record methods](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#handle-record-methods)
+  - [Methods for managing 10320/loc entries](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#methods-for-managing-10320-loc-entries)
+  - [Helper methods](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#helper-methods)
+- [Utilities](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#module-b2handle.utilhandle)
+- [Client credentials](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#module-b2handle.clientcredentials)
+- [Exceptions](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#module-b2handle.handleexceptions)

@@ -5,12 +5,7 @@
 ## Contents
 This training module provides hands-on material for iRODS4, EUDAT B2SAFE, B2STAGE and persistent identifiers, more specifically handles (handle version 8).
 
-The Trainees can consult the user [documentation on the services](https://eudat.eu/services/userdoc) for a general introduction, if needed, before following the contents of this git repository. The online training material foresees two types of trainees: those who want to learn how to **deploy** and integrate the EUDAT B2SAFE and B2STAGE services; and those who prefer to only learn how to **use** such services. I.e. following the "use" part of the training will familiarise the trainees with the APIs of the services, but not with the underlying technology and its wiring, whereas following the full in-depth tutorial will allow trainees to understand how the components of a service are combined and thus enables the trainees to also extend the integration of services at the low-level (technology-level rather than API level).
-
-**Deploy**: The tutorial takes trainees through the steps how to build an infrastructure and steer data flows in this infrastructure shown in the Figure below. It assumes that trainees have sufficient resources to build the setup. They will need to prepare: three distinct (potentially virtualised) computational resources; each with e.g. 2 vCPU, 8GB memory, 100GB disk; running a Linux operating system (Ubuntu preferred); in which they have sudo access rights. By following the B2SAFE-B2STAGE tutorials, they will become familiar with the installation, configuration and using scenarios for B2SAFE, B2STAGE and their underlying technologies, iRODS, gridFTP, the handle system and the EUDAT Data Storage Interface. 
-**Use**: For users who do not have access to computational resources or only wish to follow the scenarios of using the above-mentioned services, we provide a virtual machine setup in which they can steer data flows and familiarise themselves with the underlying technologies. In this setup they will learn about client-commands and the defined APIs for certain components of B2SAFE and B2STAGE. We also provide the client tools to test the handle system via B2HANDLE, the epicclient and cURL interface. 
-
-To get access tothe trainingenvironment, trainees should use the [EUDAT contact pages](https://eudat.eu/support-request?service=DOCUMENTATION); they can use a subject like: "Access to training VMs"; and a message like: "I am attending the User Meeting in Barcelona on 22-23 June 2016. I am a member of the [XYZ] User Community/Data Pilot.". In this setting trainees can train themselves across all tutorials that list "researchers", "data managers" or "Interested researchers" (see table below).
+Please consult the user [documentation on the services](https://eudat.eu/services/userdoc) for a general introduction, if needed, before following the contents of this git repository. The online training material foresees two types of trainees: those who want to learn how to **deploy**  and integrate the EUDAT B2SAFE and B2STAGE services as *site admins*; and those who prefer to only learn how to **use** such services. I.e. following the "use" part of the training will familiarise you with the APIs of the services, but not with the underlying technology and its wiring, whereas following the full in-depth tutorial will allow you to understand how the components of a service are combined and thus enables you to also extend the integration of services at the low-level (technology-level rather than API level).
 
 The order of the markdown files proposes the curriculum of the training. Each component takes about 1 hour.
 
@@ -39,10 +34,14 @@ Via the user interface machine they can access the first VM which contains an iR
 Another VM holds another iRODS server. Both iRODS grids are federtated and users can transfer data from one grid to the other.
 The client VM also provides the necessary python libraries to work with the *epicclient* and b2handle.
 
+To get access to the training environment, please use the [EUDAT contact pages](https://eudat.eu/support-request?service=DOCUMENTATION); and provide some details on which community you are from and in which context you would like to follow the tutorial. 
+
+The appropriate parts of the tutorial you can follow in the training environment are labeled with "researchers", "interested researchers" and "datamanagers" in the table above.
+
 ### Site admins - Training
-Site admins will be guided through all steps to setup the environment, covering iRODS installation and federation, setting up B2SAFE, deploying a gridFTP endpoint and pointing it to the iRODS server via the data staging interface.
+Site admins will be guided through all steps to setup the environment, covering iRODS installation and federation, setting up B2SAFE, deploying a gridFTP endpoint and pointing it to the iRODS server via the data staging interface. To build the setup you will need to prepare or have access to three distinct (potentially virtualised) computational resources; each with e.g. 2 vCPU, 8GB memory, 100GB disk; running a Linux operating system (Ubuntu preferred); in which you have sudo rights. You will also need extra credentials for the persistent identifiers part. To receive some credentials please use the [EUDAT contact pages](https://eudat.eu/support-request?service=DOCUMENTATION); and provide some details on which community you are from and in which context you would like to follow the tutorial. 
 
 ### Persistent identifiers (PIDs)
 In the tutorial we will explain how to create, update and delete PIDs. The infrastructure to manage PIDs is provided by SURFsara.
-Note that all instances (B2SAFE, user modules) will make use of the same PID prefix.
+Note that all instances (B2SAFE, user modules) will make use of the same PID prefix. To follow this part of the tutorial you need extra credentials. We will provide you with these credentials via [EUDAT contact pages](https://eudat.eu/support-request?service=DOCUMENTATION); please provide some details on which community you are from and in which context you would like to follow the tutorial. 
 

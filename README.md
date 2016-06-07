@@ -34,14 +34,22 @@ Via the user interface machine they can access the first VM which contains an iR
 Another VM holds another iRODS server. Both iRODS grids are federtated and users can transfer data from one grid to the other.
 The client VM also provides the necessary python libraries to work with the *epicclient* and b2handle.
 
+
 To get access to the training environment, please use the [EUDAT contact pages](https://eudat.eu/support-request?service=DOCUMENTATION); and provide some details on which community you are from and in which context you would like to follow the tutorial. 
+
 
 The appropriate parts of the tutorial you can follow in the training environment are labeled with "researchers", "interested researchers" and "datamanagers" in the table above.
 
 ### Site admins - Training
-Site admins will be guided through all steps to setup the environment, covering iRODS installation and federation, setting up B2SAFE, deploying a gridFTP endpoint and pointing it to the iRODS server via the data staging interface. To build the setup you will need to prepare or have access to three distinct (potentially virtualised) computational resources; each with e.g. 2 vCPU, 8GB memory, 100GB disk; running a Linux operating system (Ubuntu preferred); in which you have sudo rights. You will also need extra credentials for the persistent identifiers part. To receive some credentials please use the [EUDAT contact pages](https://eudat.eu/support-request?service=DOCUMENTATION); and provide some details on which community you are from and in which context you would like to follow the tutorial. 
+Site admins will be guided through all steps to setup the environment, covering iRODS installation and federation, setting up B2SAFE, deploying a gridFTP endpoint and pointing it to the iRODS server via the data staging interface. 
+
+To build the setup you will need to prepare or have access to three distinct (potentially virtualised) computational resources; each with e.g. 2 vCPU, 8GB memory, 100GB disk; running a Linux operating system (Ubuntu preferred); in which you have sudo rights. 
+
+You will also need extra credentials for the persistent identifiers part. To receive such credentials please use the [EUDAT contact pages](https://eudat.eu/support-request?service=DOCUMENTATION); and provide some details on which community you are from and in which context you would like to follow the tutorial. 
 
 ### Persistent identifiers (PIDs)
 In the tutorial we will explain how to create, update and delete PIDs. The infrastructure to manage PIDs is provided by SURFsara.
-Note that all instances (B2SAFE, user modules) will make use of the same PID prefix. To follow this part of the tutorial you need extra credentials. We will provide you with these credentials via [EUDAT contact pages](https://eudat.eu/support-request?service=DOCUMENTATION); please provide some details on which community you are from and in which context you would like to follow the tutorial. 
+Note that all instances (B2SAFE, user modules) will make use of the same PID prefix. 
+
+To follow this part of the tutorial you need extra credentials. We will provide you with these credentials via [EUDAT contact pages](https://eudat.eu/support-request?service=DOCUMENTATION); please provide some details on which community you are from and in which context you would like to follow the tutorial. 
 

@@ -179,7 +179,7 @@ The protocol to use is *gsiftp* and the server name needs to match the field *CN
 ```sh
 globus-url-copy -dbg -list gsiftp://irods4-alice.eudat-sara.vm.surfsara.nl/tmp/
 echo "kjsbdj" > /home/alice/test.txt
-globus-url-copy file:/home/alice/test.txt gsiftp://irods4-alicetest.eudat-sara.vm.surfsara.nl/tmp/test.txt
+globus-url-copy file:/home/alice/test.txt gsiftp://irods4-alice.eudat-sara.vm.surfsara.nl/tmp/test.txt
 ```
 
 

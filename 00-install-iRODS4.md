@@ -78,6 +78,12 @@ sudo apt-get install postgresql
 hostnamectl <set-hostname> <new-hostname>
 echo "IPa.ddr.ess <new-hostname>" >> /etc/hosts
 ```
+Example hosts-file:
+```sh
+127.0.0.1   localhost
+127.0.1.1   alice.eudat-sara.vm.surfsara.nl
+IPa.ddr.ess  alice.eudat-sara.vm.surfsara.nl
+```
 
 ## Installing iRODS
 ### 6. Configure and create porstgresql database
@@ -92,12 +98,12 @@ exit
 ```
 ### 7. Download and install iRODS packages
 ```sh
-wget ftp://ftp.renci.org/pub/irods/releases/4.1.6/ubuntu14/irods-icat-4.1.6-ubuntu14-x86_64.deb
-wget ftp://ftp.renci.org/pub/irods/releases/4.1.6/ubuntu14/irods-database-plugin-postgres-1.6-ubuntu14-x86_64.deb
+wget ftp://ftp.renci.org/pub/irods/releases/4.1.8/ubuntu14/irods-icat-4.1.8-ubuntu14-x86_64.deb
+wget ftp://ftp.renci.org/pub/irods/releases/4.1.8/ubuntu14/irods-database-plugin-postgres-1.8-ubuntu14-x86_64.deb
 ```
 
 ```sh
-sudo dpkg -i irods-icat-4.1.6-ubuntu14-x86_64.deb irods-database-plugin-postgres-1.6-ubuntu14-x86_64.deb
+sudo dpkg -i irods-icat-4.1.8-ubuntu14-x86_64.deb irods-database-plugin-postgres-1.8-ubuntu14-x86_64.deb
 ```
 This will exit with the following error message:
 ```sh

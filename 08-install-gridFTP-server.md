@@ -68,7 +68,7 @@ sudo apt-get install globus-data-management-client globus-gridftp globus-gsi
 ```
 
 ## Creating a certificate authority (CA) on the server
-Installing the *globus-dsi* module will automatically create a *simple ca* on your server. 
+Installing the *globus-gsi* module will automatically create a *simple ca* on your server. 
 
 ```sh
 /var/lib/globus/simple_ca

@@ -13,7 +13,7 @@ sudo apt-get install build-essential make cmake git
 
 ## Necessary iRODS packages and code
 ```sh
-mkdir -p ~/iRODS_DSI/deploy
+mkdir -p ~/iRODS_DSI
 cd ~/iRODS_DSI
 wget ftp://ftp.renci.org/pub/irods/releases/4.1.8/ubuntu14/irods-dev-4.1.8-ubuntu14-x86_64.deb
 sudo dpkg -i irods-dev-4.1.8-ubuntu14-x86_64.deb
@@ -56,13 +56,20 @@ sudo su -
 root@iRODS4:~# mkdir .irods
 vim ~/.irods/irods_environment.json
 {
-"irods_host" : "localhost",
+"irods_host" : "<fully-qualified-hostname>",
 "irods_port" : 1247,
 "irods_user_name" : "alice",
 "irods_zone_name" : "alicetestZone",
 "irods_default_resource" : "demoResc"
 }
 ```
+Note, that when you copy an irods environment file over or when you create this file with *iinit* the value *irods_default_resource* is not automatically set. However, the iRODS-DSI is dependent on this value and not setting it will cause unpredictable errors.
+
+Do an 
+```sh
+iinit
+```
+to create the password-hash that will be used later to automatically authenticate with iRODS.
 
 Add the following to your */etc/gridftp.conf* file:
 ```sh
@@ -78,7 +85,7 @@ $GLOBUS_TCP_PORT_RANGE 50000,51000
 port 2811
 
 #iRODS connection
-$LD_LIBRARY_PATH "$LD_LIBRARY_PATH:/home/alice/iRODS_DSI/B2STAGE-GridFTP/"
+$LD_LIBRARY_PATH "$LD_LIBRARY_PATH:/home/alice/iRODS_DSI/"
 $irodsConnectAsAdmin "rods"
 load_dsi_module iRODS
 auth_level 4
@@ -93,6 +100,26 @@ Restart the gridFTP server:
 ```sh
 /etc/init.d/globus-gridftp-server restart
 ```
+
+### Enabling PID resolution on the server
+The iRODS-DSI supports accessing data in iRODS with their PID like:
+```sh
+eve@eve:~$ globus-url-copy -list gsiftp://alice.eudat-sara.vm.surfsara.nl/846/70c2995c-2d80-11e6-acfc-04040a64008f/
+gsiftp://alice.eudat-sara.vm.surfsara.nl/846/70c2995c-2d80-11e6-acfc-04040a64008f/
+    file.txt
+```
+To enable this feature simply add
+
+```sh
+#Resolution of PIDs
+$pidHandleServer "http://<handle-server>:<port>/api/handles"
+```
+E.g.
+```sh
+$pidHandleServer "http://epic3.storage.surfsara.nl:8001/api/handles"
+```
+to your *gridftp.conf* and restart the gridFTP server.
+
 
 ### Testing the iRODS-DSI
 As a user initialise a proxy
@@ -109,7 +136,7 @@ alice@irods4:~$ globus-url-copy -list gsiftp://alice.eudat-sara.vm.surfsara.nl/a
 
 The output should look like this:
 ```
-gsiftp://irods4-alicetest.eudat-sara.vm.surfsara.nl/alicetestZone/home/alice/
+gsiftp://irods4-alicetest.eudat-sara.vm.surfsara.nl/aliceZone/home/alice/
 put1.txt
 put2.txt
 test.txt
@@ -119,35 +146,17 @@ testData/
 ```
 
 ### Debug information
-When you are using a grid certificate mapping to a linux user that is called differently than the default irods user in */root/.irods/irods_environment* or */var/lib/irods/.irods/irods_environment.json* you will encounter ther following error:
-
+When the gridFTP server is run under root and you restart the server using *sudo* under an admin user you will encounter this error after restarting the gridFTP server:
 ```
-530-Login incorrect. : /home/ubuntu/iRODS_DSI/B2STAGE-GridFTP/DSI/globus_gridftp_server_iRODS.c:globus_l_gfs_iRODS_make_error:579:
+alice@ubuntu:~/iRODS_DSI/B2STAGE-GridFTP$ globus-url-copy -list gsiftp://alice.eudat-sara.vm.surfsara.nl/aliceZone/home/alice/
+gsiftp://aliceZone.eudat-sara.vm.surfsara.nl/aliceZone/home/
+
+
+error: globus_ftp_client: the server responded with an error
+530 530-Login incorrect. : /home/alice/iRODS_DSI/B2STAGE-GridFTP/DSI/globus_gridftp_server_iRODS.c:globus_l_gfs_iRODS_make_error:579:
 530-iRODS DSI. Error: 'clientLogin' failed.. CAT_INVALID_AUTHENTICATION: , status: -826000.
 530-
 530 End.
 ```
 
-One solution is to to create an irods admin with the same user name as the linux account the certificate is mapped to and update the *irods_environment* files.
-I.e. if your grid certificate is mapped to *admin*, but your iRODS user is *alice*, do:
-- Create an iRODS account *admin*
-```
-iadmin mkuser admin rodsadmin
-iadmin moduser admin password ***
-```
-- Update the */root/.irods/irods_environment*:
-```
-{
-"irods_port": 1247,
-"irods_host": "localhost",
-"irods_user_name": "admin",
-"irods_zone_name": "aliceZone"
-}
-```
-- Update the */var/lib/irods/.irods/irods_environment.json*:
-```
-"irods_home": "/aliceZone/home/admin",
-"irods_cwd": "/aliceZone/home/admin",
-"irods_user_name": "admin",
-```
-- Restart the gridFTP server directly under root and not via sudo.
+You need to restart the gridFTP server directly under root and not via sudo.

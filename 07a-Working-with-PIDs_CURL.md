@@ -363,3 +363,15 @@ curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 
 These examples are adjusted to the functionality in the EUDAT B2SAFE service, but can serve as reference implementation for other use cases.
 
+## Reverse look-ups
+Sometimes you know some specs stored in a PID entry but not the PID itself. You can retrieve the PID/handle like this:
+
+```sh
+curl -u <prefix>:<password> https://epic3.storage.surfsara.nl:8001/hrls/handles?URL=*
+```
+In this example we will get all PIDs with a defined URL field.
+
+**Exercise** Register several replicas of a data file and retrieve them with the command above. Which metadata needs to be stored to achieve that?
+
+
+

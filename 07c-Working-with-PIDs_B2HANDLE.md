@@ -80,8 +80,8 @@ To connect to the epic server you need to provide a prefix, the private key and 
     "certificate_only": "/<full path>/credentials/cred_b2handle/355_841_certificate_only.pem",
     "prefix": "841",
     "handleowner": "200:0.NA/841",
-    "reverse_username": "841",
-    "reverse_password": "****",
+    "reverselookup_username": "841",
+    "reverselookup_password": "****",
     "HTTPS_verify": "True"
 }
 ```
@@ -170,7 +170,7 @@ then continue to calculate the checksum. **NOTE** the filename might depend on t
 ```py
 import hashlib
 md5sum = hashlib.md5('/<PATH>/surveys.csv').hexdigest()
-args = dict([('TYPE', 'file'), ('MD5', md5sum)])
+args = dict([('TYPE', 'file'), ('CHECKSUM', md5sum)])
 ec.modify_handle_value(Handle, ttl=None, add_if_not_exist=True, **args)
 ```
 
@@ -223,14 +223,22 @@ ec.modify_handle_value(Handle, ttl=None, add_if_not_exist=True, **dict([('REPLIC
 ```
 
 ### Reverse look-ups
-**TODO**
-The epic API extends the handle API with reverse look-ups. Assume you just know some of the metadata stored with a PID but not the full PID. How can you get to the URL field to retrieve the data?
+The B2HANDLE library extends the handle API with reverse look-ups. Assume you just know some of the metadata stored with a PID but not the full PID. How can you get to the URL field to retrieve the data?
 
-We can fetch the first data with a certain checksum:
+We can fetch all data with a certain checksum. 
+Make sure that your credential json file contains the keys *reverselookup_username* and *reverselookup_password*.
+
 ```py
-args = dict([('CHECKSUM', str(''.join(md5sum)))])
-Handle = ec.search_handle(**args)
-url = ec.get_value_from_handle(Handle, 'URL')
+credentials = PIDClientCredentials.load_from_JSON('<full_path>/cred_file.json')
+client = EUDATHandleClient.instantiate_with_credentials(credentials)
+args = dict([('CHECKSUM', md5sum)])
+result = ec.search_handle(\*\*args)
+```
+*result* conatins a list of all PIDs where a fiels **CHECKSUM** is defined and has the value stored in **md5sum**.
+Now we can retrieve the location of the first hit in the list.
+
+```py
+url = ec.get_value_from_handle(result[0], 'URL')
 print(url) 
 ```
 

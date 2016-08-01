@@ -7,6 +7,6 @@ Developers
 
 Reviewers
 
-* Claudio Cacciari (CINECA)
-* Roberto Mucci (CINECA)
-* Gerben Venekamp (SURFsara)
+* Claudio Cacciari (CINECA, IT)
+* Roberto Mucci (CINECA, IT)
+* Gerben Venekamp (SURFsara, NL)

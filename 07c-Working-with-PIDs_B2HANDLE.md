@@ -232,7 +232,7 @@ Make sure that your credential json file contains the keys *reverselookup_userna
 credentials = PIDClientCredentials.load_from_JSON('<full_path>/cred_file.json')
 client = EUDATHandleClient.instantiate_with_credentials(credentials)
 args = dict([('CHECKSUM', md5sum)])
-result = ec.search_handle(\*\*args)
+result = ec.search_handle(**args)
 ```
 *result* conatins a list of all PIDs where a fiels **CHECKSUM** is defined and has the value stored in **md5sum**.
 Now we can retrieve the location of the first hit in the list.

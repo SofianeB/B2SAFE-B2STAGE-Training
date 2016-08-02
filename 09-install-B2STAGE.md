@@ -92,7 +92,7 @@ auth_level 4
 ```
 and add the line below to */etc/init.d/globus-gridftp-server*:
 ```sh
-LD_PRELOAD="$LD_PRELOAD:/usr/lib/x86_64-linux-gnu/libglobus_gridftp_server.so:/home/alice/iRODS_DSI/B2STAGE-GridFTP/libglobus_gridftp_server_iRODS.so"
+LD_PRELOAD="$LD_PRELOAD:/usr/lib/x86_64-linux-gnu/libglobus_gridftp_server.so:/home/alice/iRODS_DSI/libglobus_gridftp_server_iRODS.so"
 export LD_PRELOAD
 ```
 

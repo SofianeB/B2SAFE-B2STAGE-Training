@@ -1,8 +1,10 @@
 # Using B2STAGE, hands-on
 This section is divided into two parts. In the first part we explain how to install and configure the gridFTP tools to make a connection to an gridFTP-enabled iRODS server.
-The second part will take you through the commands how to work on an iRODS system with help of gridFTP and how to combine the gridFTP commands with the icommands to steer your data flow.
+The second part will take you through the commands how to work on an iRODS system by means of gridFTP and how to combine the gridFTP commands with the icommands to steer your data flow.
 
 ## Setup a gridFTP client
+If you are working on one of the provisioned user interface machines, please skip this section.
+
 ### Prerequisites
 - Ubuntu 14.04
 - Installation of the [icommands](http://irods.org/download/)
@@ -13,12 +15,23 @@ To install the client tools you need **sudo-rights** on the machine you are ging
 Download the globus tools package and install the *globus-data-management-client*
 ```sh
 wget http://toolkit.globus.org/ftppub/gt6/installers/repo/globus-toolkit-repo_latest_all.deb
-dpkg -i globus-toolkit-repo_latest_all.deb
-apt-get update
-apt-get install -y globus-data-management-client
+sudo dpkg -i globus-toolkit-repo_latest_all.deb
+sudo apt-get update
+sudo apt-get install -y globus-data-management-client
 ```
 
-#### CA certificate
+### Installing *uberftp*
+
+The uberFTP client provides some more handy functionality like bulk removal of data that is complementary to the functionality the globus-tools offer.
+
+```sh
+sudo apt-get install software-properties-common
+sudo add-apt-repository ppa:maarten-kooyman-6/ppa
+sudo apt-get update
+sudo apt-get install uberftp 
+```
+
+### CA certificate
 
 Copy the *<hash>.0*  and <hash>.signing_policy from the gridFTP server to the user interface
 
@@ -43,46 +56,56 @@ grid-proxy-init -debug
 
 The option *debug* will give you insight in how the proxy is created. At the end of the prompt you will find an expiration time for your proxy. Commands that have not been finished before that time will be cut off and thus fail.
 
-### globus-url-copy
-We will work with the *globus-url-copy* command and show you how you can list, add and retrieve files from iRODS with this command.
+On the gridFTP server your certificate is mapped to a certain **iRODS user** under which you can managae your data.
 
-First let's have a look at what functionality is offered:
+### globus-url-copy
+We will work with the *globus-url-copy* command and show how you can do simple data operations like list, add and retrieve files from iRODS with this command.
+
+First let's have a look at which functionalities are offered:
 ```sh
 globus-url-copy -help
 ```
-
-Note, that all commands you issue via this command will be executed as one and the same iRODS user cofigured for the iRODS-DSI module. 
-That means, that even if you log in as another irodsuser your data will be deposited as the same user. On our training machines, it is the user *alice*.
-To work with gridFTP you might need to set the ACLs with *ichmod* for *alice* to list and copy your files.
 
 ### Listings
 
 List the iRODS home collection of the iRODS user *alice*:
 ```sh
-globus-url-copy -vb -ipv6 -list gsiftp://<fqhn_or_ip>/aliceZone/home/alice/
+globus-url-copy -vb -ipv6 -list gsiftp://<fqdn>/aliceZone/home/alice/
 ```
 [//]: # "The '''/<zone_name>/<collection>/<collection>/``` part below"
 [//]: # "does not show in the redendered result. It show '''////``` instead."
 Since this GridFTP server is integrated with iRODS, the url to list consists of */zone_name/home/alice/collection/*. Where the collection part is the logical path of the iRODS zone.
-**Note**, that you cannot use gridFTP any longer to list, add and fetch data from the normal file system on the iRODS server in this setting. Also note, that all data will be ingested under the user *alice*.
+**Note**, that you cannot use this gridFTP instance any longer to list, add and fetch data from the normal file system on the server in this setting. Try to list the folder */tmp* on the gridFTP server:
+
+```sh
+globus-url-copy -vb -ipv6 -list gsiftp://<fqdn>/tmp/
+gsiftp://<fqdn>/tmp/
 
 
-### Uploading data
+error: globus_ftp_client: the server responded with an error
+500 500-Command failed. : /home/alice/iRODS_DSI/B2STAGE-GridFTP/DSI/globus_gridftp_server_iRODS.c:globus_l_gfs_iRODS_make_error:579:
+500-iRODS DSI. Error: No such file or directory.. USER_FILE_DOES_NOT_EXIST: , status: -310000.
+500-
+500 End.
+```
+
+### Data management in iRODS with gridFTP
 **Single files**
 
 Single files can be uploaded to iRODS via:
 ```sh
-globus-url-copy -dbg -ipv6 file:/home/alice/test.txt gsiftp://alice.eudat-sara.vm.surfsara.nl/aliceZone/home/alice/
+globus-url-copy -dbg -ipv6 file:/home/alice/test.txt gsiftp://<fqdn>/aliceZone/home/alice/
 ```
 This will add *test.txt* to the iRODS collection *alice*. To rename the file in iRODS you can extend the iRODS path pointing to the collection with a filename.
 
-**Exercise: ACLs** Ingest some data in iRODS using gridFTP. Use your iRODS admin account to find where it is ingested to and what the ACLs are. You might need an *iquest* command.
+**Exercise: ACLs** Ingest some data in iRODS using gridFTP. Use your iRODS (admin) account to find out where the files are located on the server and which the ACLs are set. You might need an *iquest* command.
 
 **Exercise: Data collections**
 
 Use the *globus-url-copy* to copy a whole directory to iRODS.
 How can you copy a whole subtree?
 How can you make sure that the destination collection in iRODS is created properly?
+How can you delete a whole directory (or iRODS collection) using gridFTP?
 
 **Exercise: Retrieve data from iRODS**
 
@@ -91,31 +114,29 @@ Use the *globus-url-copy* to retrieve a single file and folder from iRODS.
 ## GridFTP and B2SAFE
 In the previous parts of the tutorial we have seen how we can employ the icommands to ingest data and how to synchronise this data with another iRODS grid using B2SAFE.
 
-**Exercise**
-Develop a script that will synchronise a directory tree from your client machine to the gridFTP/iRODS server, which will, when run multiple times, take into account changed and deleted files. 
-The script should employ *globus-url-copy*.
+**Exercise: Synchronising collections**
+Develop a script that will synchronise a directory tree on your client machine with the gridFTP/iRODS server. The script should only process changed and deleted files when run several times.
 
 * Consult the help on *globus-url-copy* and search for convenient options.
-* Synchronise your `gridftp<xyz>` directory on your client machine to `/aliceZone/home/alice/irods<x>/data/`.
-* Verify the data is properly updated, think of how to create and employ checksums and where to store them, on the client machine and on the iRODS/gridFTP server.
+* Synchronise your `gridftp<xyz>` directory on your client machine to */aliceZone/home/alice/irods<x>/data/* on the iRODS server.
+* Verify that the data is properly updated, think of how to create and employ checksums and where to store them, on the client machine and on the iRODS/gridFTP server.
 * Synchronise again and verify no files are transfered.
 * Change a file.
 * Synchronise again and verify the file is properly updated.
 
+**Exercise: Data management with PIDs**
 * Extend the script by generating PIDs for the data ingested into iRODS (this can be done manually or by using the B2SAFE rules).
-* Trigger the B2SAFE replication to *bob* on the iRODS client.
+* Trigger the B2SAFE replication to the iRODS server *bob*.
+* (Optional) If you use your own iRODS/B2SAFE instances, try to automatically trigger the B2SAFE rules upon certain actions.
 
 * Which operations should be executed by a data user and which should be done by a data admin or iRODS admin?
 
-#### Challenge: Using the iRODS server rule engine
+#### Challenge: Using the iRODS server rule engine to execute data policies
+For this challenge you need admin rights on the gridFTP/iRODS server.
 
-A better and more advanced approach is to use the iRODS rule engine to compute checksums and mint PIDs automatically.
-
-For this exercise you will need *system admin* and *irods admin* rights on the iRODS server.
-
-You can find the iRODS server rule engine configuration on the iRODS server here: `/etc/irods/core.re`. 
-
-Some usefull hooks in this context are:
+An advanced approach is to use the iRODS rule engine to compute checksums and mint PIDs automatically. To this end you will use iRODS event hooks to trigger certain actions when data is ingested into a certain collection. If a user adds or changes data in this collection, these actions will be automatically executed.
+You can find the iRODS server rule engine configuration on the iRODS server here: */etc/irods/core.re*. 
+Some usefull event hooks are:
 
 * `acPostProcForPut` - Rule for post processing the put operation.
 * `acPostProcForCopy` - Rule for post processing the copy operation.
@@ -137,3 +158,36 @@ More information on the iRODS microservices: https://docs.irods.org/master/doxyg
 [//]: # "I feel this last bit goes a bit too quickly. All we get here are"
 [//]: # "pointers. To me it feels an example is missing, I might be wrong"
 [//]: # "of course..."
+
+# Trouble shooting
+When you work with servers in different time zones you might encounter tghis error when you try to reach the gridFTP server:
+
+```sh
+user@ubuntu:~$ globus-url-copy -list gsiftp://<fqdn>/aliceZone/home/alice/
+gsiftp://<fqdn>/aliceZone/home/alice/
+
+
+error: globus_ftp_client: the server responded with an error
+530 530-globus_xio_gssapi_ftp.c:globus_l_xio_gssapi_ftp_decode_adat:856:
+530-Authentication Error
+530-GSS Major Status: Authentication Failed
+530-accept_sec_context.c:gss_accept_sec_context:180:
+530-SSLv3 handshake problems
+530-globus_i_gsi_gss_utils.c:globus_i_gsi_gss_handshake:1018:
+530-Unable to verify remote side's credentials
+530-globus_i_gsi_gss_utils.c:globus_i_gsi_gss_handshake:991:
+530-SSLv3 handshake problems: Couldn't do ssl handshake
+530-OpenSSL Error: s3_srvr.c:3279: in library: SSL routines, function SSL3_GET_CLIENT_CERTIFICATE: no certificate returned
+530-globus_gsi_callback.c:globus_gsi_callback_handshake_callback:539:
+530-Could not verify credential
+530-globus_gsi_callback.c:globus_i_gsi_callback_cred_verify:762:
+530-The certificate is not yet valid: Cert with subject: /O=Grid/OU=GlobusTest/OU=simpleCA-irods4.eve/OU=Globus Simple CA/CN=eve/CN=33477151 is not yet valid- check clock skew between hosts.
+530 End.
+```
+
+This can be helped by synchronising the two machines. Run 
+```sh
+sudo ntpdate -s ntp1.nl.uu.net
+```
+on both of them.
+

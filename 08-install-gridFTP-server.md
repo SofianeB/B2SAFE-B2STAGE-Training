@@ -182,6 +182,13 @@ echo "kjsbdj" > /home/alice/test.txt
 globus-url-copy file:/home/alice/test.txt gsiftp://irods4-alice.eudat-sara.vm.surfsara.nl/tmp/test.txt
 ```
 
+## Trouble shooting
+When accessing the gridFTP server from outside, you might run into the problem that the server just listens on ipv6 interfaces. To change this, add the following line to the *gridftp.conf*:
+
+```sh
+control_interface 0.0.0.0
+```
+It forces the server to listen to all ipv4 interfaces.
 
 
 

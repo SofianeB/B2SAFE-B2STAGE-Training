@@ -1,7 +1,8 @@
 # B2SAFE-B2STAGE-Training
-<img align="right" src="img/B2SAFE.png" width="100px">
-<img align="right" src="img/B2STAGE.png" width="100px">
 <img align="right" src="img/B2HANDLE.png" width="100px">
+<img align="right" src="img/B2STAGE.png" width="100px">
+<img align="right" src="img/B2SAFE.png" width="100px">
+
 ## Contents
 This training module provides hands-on material for iRODS4, EUDAT B2SAFE, B2STAGE and persistent identifiers, more specifically handles (handle version 8).
 

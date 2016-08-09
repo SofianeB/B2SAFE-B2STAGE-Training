@@ -75,7 +75,7 @@ sudo apt-get install postgresql
 ### 5. Set host name
 
 ```sh
-hostnamectl <set-hostname> <new-hostname>
+hostnamectl set-hostname <new-hostname>
 echo "IPa.ddr.ess <new-hostname>" >> /etc/hosts
 ```
 Example hosts-file:

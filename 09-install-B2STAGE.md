@@ -120,6 +120,11 @@ $pidHandleServer "http://epic3.storage.surfsara.nl:8001/api/handles"
 ```
 to your *gridftp.conf* and restart the gridFTP server.
 
+### Combining B2SAFE and B2STAGE
+PIDs are usually created with the respective rule in B2SAFE. B2STAGE is capable of resolving the PIDs to their data in iRODS. To this end the URL field in the PID entry needs to contain a path which B2STAGE links to its iRODS instance.
+The URL field is set by B2SAFE automatically employing the *serverID* from B2SAFE. This variable needs to match exactly the fullyqualified hostname you used to request the host certficate during the [gridFTP server installation](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/08-install-gridFTP-server.md).
+
+Alternatively, you can also adopt the variable *serverID* in */opt/eudat/b2safe/rulebase/local.re* - getEpicApiParameters to make both server names match.
 
 ### Testing the iRODS-DSI
 As a user initialise a proxy

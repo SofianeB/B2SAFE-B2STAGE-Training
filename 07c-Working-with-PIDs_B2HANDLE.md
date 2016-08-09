@@ -37,7 +37,6 @@ You can either go to the resolver in your webbrowser and type in the PID to get 
 
 Each PID consists of a *prefix* which is linked to an administratory domain (e.g. a journal) and a *suffix*. The prefix is handed out by an issuer such as CNRI for handle or DataCite for DOIs. Once you are admin of a prefix, you can register as many data objects as you want by extending the prefix with a suffix. Note, that the suffixes need to be unique for each data object. The epic client helps you with that.
 
-
 ## Managing PIDs
 
 #### Training machine

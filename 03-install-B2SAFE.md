@@ -20,6 +20,13 @@ git clone https://github.com/EUDAT-B2SAFE/B2SAFE-core
 cd ~/B2SAFE-core/packaging
 ./create_deb_package.sh
 ```
+- PID configuration
+If you do not want to add the trusted CA of the epic server to your trusted CAs you need to edit the B2SAFE-core/cmd/epicclient.py:
+
+```py
+self.http = httplib2.Http(disable_ssl_certificate_validation=True)
+```
+
 - Install the created package as *root*
 ```sh
 dpkg -i /home/alice/debbuild/irods-eudat-b2safe_3.1-0.deb
@@ -37,11 +44,6 @@ source /etc/irods/service_account.config
 sudo su - $IRODS_SERVICE_ACCOUNT_NAME -s "/bin/bash" -c "cd /opt/eudat/b2safe/packaging/ ; ./install.sh"
 ```
 For a testing server you might want to set *AUTHZ_ENABLED* and *MSIFREE_ENABLED* to false.
-If you do not want to add the trusted CA of the epic server to your trusted CAs you need to edit the B2SAFE-core/cmd/epicclient.py before running the *install.sh*:
-
-```py
-self.http = httplib2.Http(disable_ssl_certificate_validation=True)
-```
 
 ### 3. Python dependencies
 - Check dependencies

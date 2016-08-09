@@ -71,16 +71,16 @@ import hashlib
 import os, shutil
 ```
 ### Connect to the SURFsara handle server 
+```json
 To connect to the epic server you need to provide a prefix, the private key and the certificate; alternatively the library also provides authentication with username/password. This information is stored in a json file *cred_file.json* and should look like this:
-```sh
 {
     "handle_server_url": "https://epic3.storage.surfsara.nl:8001",
     "private_key": "/<full path>/credentials/cred_b2handle/355_841_privkey.pem",
     "certificate_only": "/<full path>/credentials/cred_b2handle/355_841_certificate_only.pem",
     "prefix": "841",
     "handleowner": "200:0.NA/841",
-    "reverse_username": "841",
-    "reverse_password": "****",
+    "reverselookup_username": "841",
+    "reverselookup_password": "****",
     "HTTPS_verify": "True"
 }
 ```
@@ -96,7 +96,7 @@ print('PID prefix ' + cred.get_prefix())
 print('Server ' + cred.get_server_URL())
 ```
 
-- Create an instance of the client by oassing your credentials:
+- Create an instance of the client by passing your credentials:
 ```py
 ec = EUDATHandleClient.instantiate_with_credentials(cred)
 ```
@@ -169,7 +169,7 @@ then continue to calculate the checksum. **NOTE** the filename might depend on t
 ```py
 import hashlib
 md5sum = hashlib.md5('/<PATH>/surveys.csv').hexdigest()
-args = dict([('TYPE', 'file'), ('MD5', md5sum)])
+args = dict([('TYPE', 'file'), ('CHECKSUM', md5sum)])
 ec.modify_handle_value(Handle, ttl=None, add_if_not_exist=True, **args)
 ```
 
@@ -222,14 +222,22 @@ ec.modify_handle_value(Handle, ttl=None, add_if_not_exist=True, **dict([('REPLIC
 ```
 
 ### Reverse look-ups
-**TODO**
-The epic API extends the handle API with reverse look-ups. Assume you just know some of the metadata stored with a PID but not the full PID. How can you get to the URL field to retrieve the data?
+The B2HANDLE library extends the handle API with reverse look-ups. Assume you just know some of the metadata stored with a PID but not the full PID. How can you get to the URL field to retrieve the data?
 
-We can fetch the first data with a certain checksum:
+We can fetch all data with a certain checksum. 
+Make sure that your credential json file contains the keys *reverselookup_username* and *reverselookup_password*.
+
 ```py
-args = dict([('CHECKSUM', str(''.join(md5sum)))])
-Handle = ec.search_handle(**args)
-url = ec.get_value_from_handle(Handle, 'URL')
+credentials = PIDClientCredentials.load_from_JSON('<full_path>/cred_file.json')
+client = EUDATHandleClient.instantiate_with_credentials(credentials)
+args = dict([('CHECKSUM', md5sum)])
+result = ec.search_handle(**args)
+```
+*result* conatins a list of all PIDs where a fiels **CHECKSUM** is defined and has the value stored in **md5sum**.
+Now we can retrieve the location of the first hit in the list.
+
+```py
+url = ec.get_value_from_handle(result[0], 'URL')
 print(url) 
 ```
 
@@ -242,3 +250,20 @@ python epicclient2.py os <full path>/cred_file.json -h
 ```
 
 The functions are adjusted to the functionality in the EUDAT B2SAFE service, but can serve as reference implementation for other use cases.
+
+### Quick Links to github Documentation 
+
+ - [Instantiate Client](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#instantiation)
+ - [Authentication](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#authentication)
+  - [Authentication using client certificates](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#authentication-using-client-certificates)
+  - [Authentication using username and password](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#authentication-using-username-and-password)
+ - [Basic Handle interaction](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#basic-handle-interaction)
+ - [Managing multiple URLs with 10320/loc](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#managing-multiple-urls-with-10320-loc)
+ - [Full method documentation](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#full-method-documentation)
+  - [Constructors](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#constructors)
+  - [Handle record methods](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#handle-record-methods)
+  - [Methods for managing 10320/loc entries](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#methods-for-managing-10320-loc-entries)
+  - [Helper methods](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#helper-methods)
+- [Utilities](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#module-b2handle.utilhandle)
+- [Client credentials](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#module-b2handle.clientcredentials)
+- [Exceptions](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#module-b2handle.handleexceptions)

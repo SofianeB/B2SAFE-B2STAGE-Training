@@ -38,7 +38,7 @@ iRODS provides some standard rules which you can find here
 /etc/irods/core.re
 ```
 
-You can retrieve and examine the B2SAFE rule base like this
+You can retrieve and examine the B2SAFE rule base.
 In your /home directory do
 ```sh
 git clone https://github.com/EUDAT-B2SAFE/B2SAFE-core

@@ -148,7 +148,7 @@ curl -u "846:XXX" -H "Accept: application/json" \
 https://epic3.storage.surfsara.nl/v2_test/handles/846/
 ```
 
-## Registering a file
+## Registering a file with PUT
 
 ### We will register a public file from figshare. 
 
@@ -235,7 +235,18 @@ curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 ```
 (Use example2.sh)
 
-### Store some handy information with your file
+## Registering a file with POST
+In contrast to the PUT command where we also had to define the suffix of the PID we can send data to the PID server and automatically create a suffix. This is done with the POST command:
+
+```
+curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
+		-H "Content-Type:application/json" \
+		-X POST --data '[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}]' \
+		https://epic3.storage.surfsara.nl/v2_test/handles/846/
+```
+**Exercise** What is the returned PID? What happens if you send the request again?
+
+## Store some handy information with your file
 
 - We can store some more information in the PID entry by modifying the json data 
 
@@ -281,7 +292,14 @@ Use example4.sh
 
 - With the resolver we can access this information. Note, this data is publicly available to anyone.
 
-### Reverse look-ups
+Use example5.sh
+
+#### Responses 
+ - HTTP/1.1 200 OK: (Success)
+ - HTTP/1.1 401 Unauthorized: Your username or your password is wrong
+ - HTTP/1.1 404 NOT found: The url doesn’t exist
+
+## Reverse look-ups
 The epic API extends the handle API with recursive look-ups. Assume you just know some of the metadata stored with a PID but not the full PID. How can you get to the URL field to retrieve the data?
 
 We can fetch the first data with a certain checksum:
@@ -291,13 +309,6 @@ curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 		-X GET \
 		https://epic3.storage.surfsara.nl/v2_test/handles/846/?MD5=MD5VALUE
 ```
-
-Use example5.sh
-
-#### Responses 
- - HTTP/1.1 200 OK: (Success)
- - HTTP/1.1 401 Unauthorized: Your username or your password is wrong
- - HTTP/1.1 404 NOT found: The url doesn’t exist
  
 ### Updating PID entries
 - Assume location of file has changed. This means we need to modify the URL field.
@@ -305,8 +316,8 @@ Use example5.sh
 ```sh
 curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
 		-H "Content-Type:application/json" \
-		-X POST --data '[{"type":"URL","parsed_data":"/<PATH>/surveys.csv"}]'\
-		 https://epic3.storage.surfsara.nl/v2_test/handles/846/UUID1
+		-X POST --data '[{"type":"URL","parsed_data":"/<PATH>/surveys.csv"}]' \
+		https://epic3.storage.surfsara.nl/v2_test/handles/846/UUID1
 ```
 
 Use example6.sh

@@ -151,6 +151,7 @@ testData/
 ```
 
 ### Debug information
+#### Invalid Authentication
 When the gridFTP server is run under root and you restart the server using *sudo* under an admin user you will encounter this error after restarting the gridFTP server:
 ```
 alice@ubuntu:~/iRODS_DSI/B2STAGE-GridFTP$ globus-url-copy -list gsiftp://alice.eudat-sara.vm.surfsara.nl/aliceZone/home/alice/
@@ -165,3 +166,25 @@ error: globus_ftp_client: the server responded with an error
 ```
 
 You need to restart the gridFTP server directly under root and not via sudo.
+
+#### PID resolving
+The PID resolving is tricky. The URL entry of the PID needs to be minted in a way that the gridFTP server knows that the data is lying in its iRODS instance. 
+
+When the PID is not minted correctly or the data you try to fetch is indeed lying on a different iRODS server, you will encounter this error:
+
+```sh
+error: globus_ftp_client: the server responded with an error
+500 500-Command failed. : /home/cloud-user/iRODS_DSI/B2STAGE-GridFTP/DSI/globus_gridftp_server_iRODS.c:globus_l_gfs_iRODS_stat:844:
+500-iRODS DSI: the Handle Server 'http://epic3.storage.surfsara.nl:8001/api/handles' returnd the URL 'irods://di4r2016-3.novalocal/aliceZone/home/alice/testfile.txt' which is not managed by this GridFTP server which is connected through the iRODS DSI to: 192.168.17.53
+500-
+500 End.
+```
+The *DSI* tells you where the PID resolves to (*irods://di4r2016-3.novalocal:1247/aliceZone/home/alice/testfile.txt*) and gives you the name of the iRODS instance it knows (*192.168.17.53*). So in the case above the URL field of the PID should state
+
+```
+irods://192.168.17.53:1247/aliceZone/home/alice/testfile.txt
+```
+
+To make sure that B2SAFE mints the PIDs correctly,  you need to adjust the serverID in */opt/eudat/b2safe/rulebase/local.re*.
+
+

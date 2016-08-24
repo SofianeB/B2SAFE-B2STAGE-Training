@@ -29,7 +29,7 @@ self.http = httplib2.Http(disable_ssl_certificate_validation=True)
 
 - Install the created package as *root*
 ```sh
-dpkg -i /home/alice/debbuild/irods-eudat-b2safe_3.1-0.deb
+dpkg -i /home/alice/debbuild/irods-eudat-b2safe_3.1-1.deb
 ```
 ### 2. Configure B2SAFE
 ```sh

@@ -45,6 +45,14 @@ To connect to the gridFTP server you need a certificate. The admin of the gridFT
 mkdir /home/<user>/.globus
 ```
 
+## Hostname resolving
+To map the actual server name and the distinguished name of the gridFTP server you can adjust the */etc/hosts*. Here we show an example:
+```sh
+<ip.add.re.ss>   localname of the gridFTP server
+<fqdn>           localname of the gridFTP server
+```
+This enables you to access the gridFTP server by its, in most cases, shorter full name or IP address.
+
 ## Working with gridFTP
 
 ### Proxies

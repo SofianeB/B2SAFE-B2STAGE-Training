@@ -44,7 +44,7 @@ source /etc/irods/service_account.config
 sudo su - $IRODS_SERVICE_ACCOUNT_NAME -s "/bin/bash" -c "cd /opt/eudat/b2safe/packaging/ ; ./install.sh"
 ```
 You need to fill in the following parameters:
-- *SERVER_ID*: The fully qualified name of your server or IP address. Note, that when you also plan to install B2STAGE, the server ID has to match the hostname of your gridFTP instance.
+- *SERVER_ID*: The fully qualified name of your server or IP address. Note, that when you also plan to install B2STAGE, the server ID has to match the known hostname of your gridFTP instance.
 - BASE_URI: The handle server that hosts your handle prefix. Here we use *https://epic3.storage.surfsara.nl/v2_test/handles/*
 - USERNAME: This is your handle prefix
 - PREFIX: This is also your handle prefix

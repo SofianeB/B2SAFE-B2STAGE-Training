@@ -322,18 +322,15 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
 ```
 
 We can also update or add more fields at one time:
-**TODO**
 ```sh
-MD5VALUE=` md5 surveys.csv | awk '{ print $4 }'`
-
 $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
-    -H "Content-Type:application/json" \
+    -H "Content-Type:application/json" \ 
     -H 'Authorization: Handle clientCert="true"' \
     -X PUT --data '{"values": [
-        {"index":4, "type": "TEST4", "data": "newvalue"}, 
-        {"index":5, "type":"TEST5", "data":"www.google.com"}, 
-        {"index":3, "type":"MD5","data":"'$MD5VALUE'"}]}' \
-    $PID_SERVER/1000/$SUFFIX?index=4&index=5&index=3 | python -m json.tool
+        {"index": 4, "type": "size", "data": ""}, 
+        {"index": 5, "ttl": 86400, "type": "FORMAT", "data": "csv"}, 
+        {"index": 2, "ttl": 86400, "type": "TYPE", "data": "Data Carpentry file"}]}' \
+    $PID_SERVER/1000/$SUFFIX?index=4\&index=5\&index=2
 ```
 
 ## Linking files by PIDs
@@ -402,7 +399,7 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
     -X DELETE \
-    $PID_SERVER/$SUFFIX?index=3 | python -m json.tool
+    $PID_SERVER/$SUFFIX?index=101 | python -m json.tool
 ```
 
 Note, if you do not soecify the index in the URL pointing to your PID, the whole PID will be removed.

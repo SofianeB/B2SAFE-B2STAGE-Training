@@ -1,9 +1,8 @@
 # Working with Persistent Identifiers - Hands-on
-This lecture takes you through the steps to create and administer PIDs employing the HTTP restful API.
-
+This lecture takes you through the steps to create and administer PIDs employing the HTTP restful API of the hanlde server version 8.
 
 ## Warming-up: Using PIDs
-Below  you find three different PIDs and their corresponding global resolver
+Below you find three different PIDs and their corresponding global resolver
 
 - Handle 
 
@@ -44,7 +43,7 @@ The code is based on cURL. cURL is an open source command line tool and library 
 #### Install cURL dependencies
 
 CURL: is an open source command line tool and library for transferring data with URL syntax.
-On the training machines 
+On the training machines (Ubuntu) we installed cURL for you with: 
 
 ```py
 apt-get install curl 
@@ -59,24 +58,35 @@ In case you are working on your own laptop with your own python, please install:
 easy_install curl
 easy_install uuid-runtime
 ```
-
 Final check
-
 ```sh
 curl --help
 ```
 
-If you write the code described below in a file, don't forget to change the permissions. 
-You should make each file executable. 
+The handle server works with certificate authentication and openssl. 
+On a MAC you need to install curl via [homebrew](http://brew.sh/) and specify that it should use openssl:
 
-Suppose you have a file called `filename.sh` 
+```
+brew install curl --with-openssl
+```
+For your convenience you can export this location to a variable and call it by
+```
+CURL=/usr/local/Cellar/curl/<version>/bin/curl
+$CURL --help
+```
+Please replace <version> with the version you installed on your MAC.
 
-you can make it executable by doing:
-`chmod +x filename.sh`
+If you write the code described below to a file, do not forget to change the permissions. 
+You should make each file executable with `#!bash` in the very first line.
 
-so it will execute when you type:
+Suppose you have a file called `filename.sh` then 
+you can make it executable by typing this on a shell:
+```sh
+chmod +x filename.sh
+```
+
+so it will execute when you type on the shell:
 `./filename.sh`
-
 
 #### Example workflow
 
@@ -90,7 +100,7 @@ That means the PIDs we create are not resolvable via the global handle resolver 
 
 #### For resolving PIDs please use:
 
-`http://epic3.storage.surfsara.nl:8001`
+`http://epic4.storage.surfsara.nl:8001`
 
 ### Main Parameters of CURL 
 
@@ -99,10 +109,10 @@ The main command
   `curl [options] [URL...]`
   
   
-Before we start, lets explain the main parameters of CURL used as options 
+Before we start, we explain the main parameters of CURL used as options 
 
  * **-X, --request <command>**: (HTTP) Specifies a custom request method to use when communicating with the HTTP server. The specified request method will be used instead of the method otherwise used (which defaults to GET).  Common additional HTTP requests include PUT ,POST and DELETE . ( -X GET) 
- * **-U, --proxy-user <user:password>**: Specify the user name and password to use for proxy authentication. (ex: -u "username:pass) 
+ * **-U, --proxy-user <user:password>**: Specify the user name and password to use for proxy authentication. (ex: -u <username>:<pass>) 
  * **-H, --header <header>**: Extra header to include in the request when sending HTTP to a server. You may specify any number of extra headers. (ex: -H "Accept: application/json" so as to accept json data)
  * **-d, --data <data>**: (HTTP) Sends the specified data in a POST or PUT request to the HTTP server, in the same way that a browser does when a user has filled in an HTML form and presses the submit button. 
  * **-D, --dump-header <file>**: Write the protocol headers to the specified file.
@@ -112,108 +122,114 @@ These are the main parameters we are going to use in our examples. For more para
 
 ### Connect to the SURFsara handle server 
 
-To connect to the epic server you need to provide a prefix and a password. 
-If you use the example files, this information is stored in a *config.txt* file  and should look like this:
+To connect to the handle server you need to provide a **prefix** and its respective **private key** and **certificate**, the latter two are pem-files. We will use a prefix *1000* registered as a test prefix at SURFsara. 
+Since we use these parameters everytime we call curl, it is handy to store them in shell variables:
 
 ```sh
-USERNAME=846
-PASSWORD=xxxx
-FILENAME=surveys.csv #the file (and its location) we are going to use in the examples
-PID_SERVER=https://epic3.storage.surfsara.nl/v2_test/handles/846 #be carefull not to add the trailing slash
-PID_SUFFIX=XXXX #the suffix of the first created handle
-PID2_SUFFIX=YYYY #the suffix of the second handle
+PRIVKEY=privkey.pem
+CERTIFICATE=certificate_only.pem
+PID_SERVER=https://epic4.storage.surfsara.nl:8001/api/handles
 ```
-You can find the the username and password on the user interface machine in *credentials/cred_epic/cred_file.json*.
-
- - Get the list of handles in 846 prefix as an example. 
-```sh
-curl -u "846:XXX" -H "Accept: application/json" \
-	 -H "Content-Type: application/json" \
-	 https://epic3.storage.surfsara.nl/v2_test/handles/846/
-```
-
-- Connect with your credentials (username, password)
-```
--u "846:XXX"
-```
-- Use the correct headers to send and accept json format 
-
-```
--H "Accept: application/json" -H "Content-Type: application/json"
-```
-
-- The PID prefix is combined with the pid server url  
-
-```
-https://epic3.storage.surfsara.nl/v2_test/handles/846/
+You will find the key and certificate in the folder *credentials* on the provided VMs. If you are using your own laptop, please contact us to obtain a test prefix and the respective pem-files.
 ```
 
 ## Registering a file with PUT
 
 ### We will register a public file from figshare. 
 
-First prepare the data in a json format to register. 
-
+We are going to create a new PID by using the PUT request.
+The request method is -X PUT followed by the actual json data 
+```sh
+-X PUT --data '{"values":[ \
+    { \
+        "index":100,\
+        "type":"HS_ADMIN",\
+        "data":{\
+            "value":{\
+                "index":200,\
+                "handle":"0.NA/1000",\
+                "permissions":"011111110011",\
+                "format":"admin"\
+            },\
+            "format":"admin"\
+        }\
+    },\
+    {\
+        "index":1,\
+        "type":"URL",\
+        "data":"www.google.com"\
+    }
+]
+}'
 ```
-'[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}]'
-```
-
-We are going to create a new PID by using the PUT request
-
-So the request method is -X PUT followed by the actual json data 
-
-```
--X PUT --data '[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}]'
-```
+The first member of the list behind *values* sets the ownership of the handle and the permission.
+It will appear as *index 100* in the handle entry. The permissions correspond to `[create hdl,delete hdl,read val,modify val,del val,add val,modify admin,del admin,add admin]` where 1 means *allowed* and 0 *prohibited*. 
 
 ### Building the PID:
 
 - Create a universally unique identifier (uuid)
-- Take function for this from
+- Take the function *uuidgen* for this
 ```sh
 SUFFIX=`uuidgen`
 ```
 
 - Concatenate your PID prefix and the uuid to create the full PID
-` 846/$SUFFIX `
+` 1000/$SUFFIX `
 
-We now have an opaque string which is unique to our resolver (846/$SUFFIX ) since
+We now have an opaque string which is unique to our resolver (1000/$SUFFIX ) since
 the prefix is unique (handed out by administrators of the resolver).
 
 The URL in the CURL request: 
 ```
-https://epic3.storage.surfsara.nl/v2_test/handles/846/$SUFFIX 
+https://epic4.storage.surfsara.nl:8001/api/handles/1000/$SUFFIX 
+```
+or when you set the variable *PID_SERVER*
+```
+$PID_SERVER/1000/$SUFFIX
 ```
 
-- Register the PID, link the PID and the data object. We would like the PID to point to the location we stored in *fileLocation*
-(example1.sh)
+## Registering a file with PUT
+
+Register the PID, link the PID and the data object. Here we use public csv file, stored on figshare.
 
 ```sh
-#!/bin/bash    
 
 SUFFIX=`uuidgen`
 
-curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
-		-H "Content-Type:application/json" \
-		-X PUT --data '[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}]'\
-		 https://epic3.storage.surfsara.nl/v2_test/handles/846/$SUFFIX 
+$CURL -k --key $PRIVKEY --cert $CERTIFICATE \
+    -H "Content-Type:application/json" \
+    -H 'Authorization: Handle clientCert="true"' \
+    -X PUT --data \ 
+        '{"values":[{"index":100,"type":"HS_ADMIN",
+            "data":{"value":{"index":200,"handle":"0.NA/1000", 
+                "permissions":"011111110011","format":"admin"},
+            "format":"admin"}},
+        {"index":1,"type":"URL",
+            "data":"https://ndownloader.figshare.com/files/2292172"}]}' \
+$PID_SERVER/1000/$SUFFIX | python -m json.tool
 ```
+This gives you the response:
+```
+{"responseCode":1,"handle":"1000AE919576-226E-412D-BC9D-73682DD207F5"}
+```
+indicating, that the handle was created.
 
-The result of this request is a new handle with the name HANDLE where
-HANDLE = 846/UUID1
+### Responses 
 
-#### Responses 
- - HTTP/1.1 201 Created: (Success)
- - HTTP/1.1 204 No-Content: The local name already exists , and instead of creating a new one you’ve just updated the values of an existing one.
- - HTTP/1.1 401 Unauthorized: Your username or your password is wrong
- - HTTP/1.1 405 Method Not Allowed: 
- 	- You are trying to create a new handle in the main url of the server either (https://epic.grnet.gr/handles/11239/) or (https://epic.grnet.gr/handles). You have not specified a unique name for your handle. (or)
-	- You are trying to create a new handle with manual generation of suffix name via POST instead of PUT. POST supports automatic generation of suffix name.
- - HTTP/1.1 415 Unsupported Media Type: You haven’t specify the correct headers for your request. The service supports Json representation so you must define the content-type of the request.
-
+* 1: Success (200 OK or 201 Created)
+* 2: An unexpected error on the server (500 Internal Server Error)
+* 100: Handle not found (404 Not Found)
+* 101: Handle already exists (409 Conflict)
+* 102: Invalid handle (400 Bad Request)
+* 200: Values not found (in resolution, 200 OK; otherwise 400 Bad Request)
+* 201: Value already exists (409 Conflict)
+* 202: Invalid value (400 Bad Request)
+* 301: Server not responsible for handle (400 Bad Request)
+* 402: Authentication needed (401 Unauthorized)
+* 40x: Other authentication errors (403 Forbidden)
 
 Let’s go to the resolver and see what is stored there
-`http://epic3.storage.surfsara.nl:8001`. 
+`http://epic4.storage.surfsara.nl:8001`. 
 We can get some information on the data from the resolver.
 We can retrieve the data object itself via the web-browser.
 
@@ -223,166 +239,173 @@ We can retrieve the data object itself via the web-browser.
 
 **Have a look at the metadata stored in the PID entry.**
 
+**Insoect the HS_ADMIN field**
+
 **What happens if you try to reregister the file with the same PID?** 
 
-Dont forget to change the UUD1 to the correct suffix value.
+### Overwrite handles
+We saw in the last exercise, that the data in the handles can be overwritten. That is useful in some cases, as we will see later. However, upon registration you might want to check that you do not overwrite existing data.
+A secure way to create handles is:
 
 ```sh
-curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
-		-H "Content-Type:application/json" \
-		-X PUT --data '[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}]'\
-		 https://epic3.storage.surfsara.nl/v2_test/handles/846/UUID1 
+$CURL -k --key $PRIVKEY --cert $CERTIFICATE \
+    -H "Content-Type:application/json" \
+    -H 'Authorization: Handle clientCert="true"' \
+    -X PUT --data \
+        '{"values":[{"index":100,"type":"HS_ADMIN",
+            "data":{"value":{"index":200,"handle":"0.NA/1000",
+                "permissions":"011111110011","format":"admin"},
+            "format":"admin"}},
+        {"index":1,"type":"URL",
+            "data":"https://ndownloader.figshare.com/files/2292172"}]}' \
+$PID_SERVER/$SUFFIX?overwrite=false | python -m json.tool
 ```
-(Use example2.sh)
+This will return the response *101*, inidicating that the handle already exists.
 
-## Registering a file with POST
-In contrast to the PUT command where we also had to define the suffix of the PID we can send data to the PID server and automatically create a suffix. This is done with the POST command:
-
-```
-curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
-		-H "Content-Type:application/json" \
-		-X POST --data '[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}]' \
-		https://epic3.storage.surfsara.nl/v2_test/handles/846/
-```
-**Exercise** What is the returned PID? What happens if you send the request again?
-
-## Store some handy information with your file
-
-- We can store some more information in the PID entry by modifying the json data 
+## Modify handles and store additional data 
 
 Lets say that we want to add a new type with data 'Data Carpentry pandas example file'.
 We have to update the json data
 ```
-[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}, 
- {"type":"TYPE","parsed_data":"Data Carpentry pandas example file"}]
-
+    -X PUT --data \
+        '{"values":[{"index":100,"type":"HS_ADMIN",
+            "data":{"value":{"index":200,"handle":"0.NA/1000",
+                "permissions":"011111110011","format":"admin"},
+            "format":"admin"}},
+        {"index":2,"type":"TYPE",
+            "data":"Data Carpentry pandas example file"}]}' \
 ```
 
-And the actual request is:
-
-```py
-curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
-		-H "Content-Type:application/json" \
-		-X PUT --data '[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}, {"type":"TYPE","parsed_data":"Data Carpentry pandas example file"}]'\
-		 https://epic3.storage.surfsara.nl/v2_test/handles/846/UUID1
-```
-
-Use example3.sh
-
-[//]: # "Not sure: do you mean 'to store identity information of the file'"
-[//]: # "perhaps? In the sentence below."
-- We want to store information on identity of the file, e.g. the md5 checksum. We first have 
-to generate the checksum. However, we can only create checksums for files which we 
-have access to with our python compiler. In the step above we can download the file and
-then continue to calculate the checksum. **NOTE** the filename might depend on the download method.
+And the actual request to add this to the existing handle is:
 
 ```sh
-#!/bin/bash
-md5value=` md5 surveys.csv | awk '{ print $4 }'`
-curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
-		-H "Content-Type:application/json" \
-		-X POST --data '[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}, 
- 					    {"type":"TYPE","parsed_data":"Data Carpentry pandas example file"}, 
- 					    {"type":"MD5","parsed_data":$md5value}]'\
-		 https://epic3.storage.surfsara.nl/v2_test/handles/846/UUID1
-
+$CURL -k --key $PRIVKEY --cert $CERTIFICATE \
+    -H "Content-Type:application/json" \
+    -H 'Authorization: Handle clientCert="true"' \
+    -X PUT --data \
+        '{"values":[{"index":100,"type":"HS_ADMIN",
+            "data":{"value":{"index":200,"handle":"0.NA/1000",
+                "permissions":"011111110011","format":"admin"},
+            "format":"admin"}},
+        {"index":1,"type":"URL",
+            "data":"https://ndownloader.figshare.com/files/2292172"},
+        {"index":2,"type":"TYPE",
+            "data":"Data Carpentry pandas example file"},
+        {"index":101,"type":"FORMAT",
+            "data":"csv"}]}' \
+$PID_SERVER/1000/$SUFFIX | python -m json.tool
 ```
+The handle API works with indexes. The very first index *index 1* is used by the resolver which expects a url. That is why we use "URL" as type, which makes it easier to debug if something goes wrong. It is a convention to use capital letters to define keys. 
+Index 100 is reserved for the *HS_ADMIN*. All other indexes can be determined by the user.
+The other indexes are free and can be customised.
 
-Use example4.sh
+With the resolver we can access this information. Note, this data is publicly available to anyone.
 
-- With the resolver we can access this information. Note, this data is publicly available to anyone.
-
-Use example5.sh
-
-#### Responses 
- - HTTP/1.1 200 OK: (Success)
- - HTTP/1.1 401 Unauthorized: Your username or your password is wrong
- - HTTP/1.1 404 NOT found: The url doesn’t exist
-
-## Reverse look-ups
-The epic API extends the handle API with recursive look-ups. Assume you just know some of the metadata stored with a PID but not the full PID. How can you get to the URL field to retrieve the data?
-
-We can fetch the first data with a certain checksum:
-```sh
-curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
-		-H "Content-Type:application/json" \
-		-X GET \
-		https://epic3.storage.surfsara.nl/v2_test/handles/846/?MD5=MD5VALUE
-```
- 
 ### Updating PID entries
-- Assume location of file has changed. This means we need to modify the URL field.
+In the previous example we have actually not overwritten the data in the handle but we created a new handle with the same suffix but different content.
+Now let us see how we can add and modify entries.
+
+We want to store information on identity of the file, e.g. the md5 checksum. We first have
+to generate the checksum. However, we can only create checksums for files which we
+have access to with our python compiler. In the step above we can download the file and
+then continue to calculate the checksum. 
+**NOTE** the filename might depend on the download method.
 
 ```sh
-curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
-		-H "Content-Type:application/json" \
-		-X POST --data '[{"type":"URL","parsed_data":"/<PATH>/surveys.csv"}]' \
-		https://epic3.storage.surfsara.nl/v2_test/handles/846/UUID1
+MD5VALUE=` md5 surveys.csv | awk '{ print $4 }'`
+
+$CURL -k --key $PRIVKEY --cert $CERTIFICATE \    
+    -H "Content-Type:application/json" \     
+    -H 'Authorization: Handle clientCert="true"' \     
+    -X PUT --data '{"index":3, "type":"MD5","data":"'$MD5VALUE'"}' \    
+    $PID_SERVER/1000/$SUFFIX?index=3 | python -m json.tool
 ```
 
-Use example6.sh
+We can also update or add more fields at one time:
+**TODO**
+```sh
+MD5VALUE=` md5 surveys.csv | awk '{ print $4 }'`
 
-#### Responses
- - HTTP/1.1 204 No-Content: The local name already exists , and instead of creating a new one you’ve just updated the values of an existing one.
- - HTTP/1.1 401 Unauthorized: Your username or your password is wrong
- - HTTP/1.1 415 Unsupported Media Type: You haven’t specify the correct headers for your request. The service supports Json representation so you must define the content-type of the request.
- 
+$CURL -k --key $PRIVKEY --cert $CERTIFICATE \
+    -H "Content-Type:application/json" \
+    -H 'Authorization: Handle clientCert="true"' \
+    -X PUT --data '{"values": [
+        {"index":4, "type": "TEST4", "data": "newvalue"}, 
+        {"index":5, "type":"TEST5", "data":"www.google.com"}, 
+        {"index":3, "type":"MD5","data":"'$MD5VALUE'"}]}' \
+    $PID_SERVER/1000/$SUFFIX?index=4&index=5&index=3 | python -m json.tool
+```
+
+## Linking files by PIDs
+
+Let us label the downloaded copy of the csv file with a new PID.
+The file should reside in your download folder or at a location that you specified when using *wget* to download the file.
+Replace <PATH> with the appropriate path and filename.
+```sh
+SUFFIX2=`uuidgen`
+FILELOC=<PATH>
+MD5SUM=` md5 $FILELOC | awk '{ print $4 }'`
+
+$CURL -k --key $PRIVKEY --cert $CERTIFICATE \
+    -H "Content-Type:application/json" \
+    -H 'Authorization: Handle clientCert="true"' \
+    -X PUT --data \
+        '{"values":[{"index":100,"type":"HS_ADMIN",
+            "data":{"value":{"index":200,"handle":"0.NA/1000",
+                "permissions":"011111110011","format":"admin"},
+            "format":"admin"}},
+        {"index":1,"type":"URL",
+            "data":"'$FILELOC'"}, 
+        {"index":2, "type":"TYPE", "data":"Data Carpentry pandas example file"},
+        {"index":3, "type":"MD5", "data":"'$MD5SUM'"}]}' \
+$PID_SERVER/1000/$SUFFIX | python -m json.tool
+```
+
 **Try to fetch some metadata on the file from the resolver.**
-
 **Try to resolve directly to the file. What happens?**
 
-We updated the "URL" with a local path on a personal machine. That means you can no longer download the data
-directly, but you have access to the data stored in the PID.
+We used a local path as "URL" pointing to a personal machine where the data is protected. 
+That means you can no longer download the data directly, but you have access to the data stored in the PID.
 
 * Information stored with the PID is ALWAYS public
 * Data itself can lie on a protected server/computer and not be accessible for everyone
 
-### Linking two files
-
-We know that the file in the figshare repository and our local file are identical. We want to store this information
-in the PIDs.
-
-- Reregister the figshare file
-- First create a new PID
+We have now two PIDs one pointing to the public file
 ```sh
-#!/bin/bash    
-
-SUFFIX=`uuidgen`
-
-curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
-		-H "Content-Type:application/json" \
-		-X PUT --data '[{"type":"URL","parsed_data":"https://ndownloader.figshare.com/files/2292172"}]'\
-		 https://epic3.storage.surfsara.nl/v2_test/handles/846/$SUFFIX 
+echo 1000/$SUFFIX
 ```
-
-- Leave information that local file should be the same as the figshare file. Update the data of handle 
-
-First update the json 
+and one pointing to our local copyof that public file
+```sh
+echo 1000/$SUFFIX2
 ```
-	[{"type":"URL","parsed_data":"/<PATH>/surveys.csv"},{"type":"SAME_AS","parsed_data":"846/newhandle"}]
-```
+We will link the two files using the keywork *REPLICA* and we will use index 4.
 
 ```sh
-curl -v -u "YOURUSERNAME:YOURPASSWORD" -H "Accept:application/json" \
-		-H "Content-Type:application/json" \
-		-X POST --data '[{"type":"URL","parsed_data":"/<PATH>/surveys.csv",},{"type":"SAME_AS","parsed_data":"846/newhandle"}]'\
-		 https://epic3.storage.surfsara.nl/v2_test/handles/846/UUID1
+$CURL -k --key $PRIVKEY --cert $CERTIFICATE \
+    -H "Content-Type:application/json" \
+    -H 'Authorization: Handle clientCert="true"' \
+    -X PUT --data '{"index":4, "type":"REPLICA","data":"1000/'$SUFFIX2'"}' \
+    $PID_SERVER/1000/$SUFFIX?index=4 | python -m json.tool
+
+$CURL -k --key $PRIVKEY --cert $CERTIFICATE \
+    -H "Content-Type:application/json" \
+    -H 'Authorization: Handle clientCert="true"' \
+    -X PUT --data '{"index":4, "type":"REPLICA","data":"1000/'$SUFFIX'"}' \
+    $PID_SERVER/1000/$SUFFIX2?index=4 | python -m json.tool
 ```
 
-
-
-
-These examples are adjusted to the functionality in the EUDAT B2SAFE service, but can serve as reference implementation for other use cases.
-
-## Reverse look-ups
-Sometimes you know some specs stored in a PID entry but not the PID itself. You can retrieve the PID/handle like this:
+## Delete handle entries and whole handles
+In case we wish to remove the information on the checksum from the handle do this:
 
 ```sh
-curl -u <prefix>:<password> https://epic3.storage.surfsara.nl:8001/hrls/handles?URL=*
+$CURL -k --key $PRIVKEY --cert $CERTIFICATE \
+    -H "Content-Type:application/json" \
+    -H 'Authorization: Handle clientCert="true"' \
+    -X DELETE \
+    $PID_SERVER/$SUFFIX?index=3 | python -m json.tool
 ```
-In this example we will get all PIDs with a defined URL field.
 
-**Exercise** Register several replicas of a data file and retrieve them with the command above. Which metadata needs to be stored to achieve that?
+Note, if you do not soecify the index in the URL pointing to your PID, the whole PID will be removed.
 
 
 

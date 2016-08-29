@@ -53,26 +53,14 @@ COMMIT
 /etc/init.d/iptables-persistent restart
 ```
 
-### 3. Create admin user for machine and irods
-```sh
-adduser irodsadmin
-```
-### (Optional)
-To change the linux username (useful when working with VM templates and creatign several users)
-```sh
-usermod -l alice irodsadmin
-groupmod -n alice irodsadmin
-usermod -d /home/alice -m alice
-usermod -c alice alice
-```
 Add newuser to sudoers
 
-### 4. Install postgresql
+### 3. Install postgresql
 ```sh
 sudo apt-get install postgresql
 ```
 
-### 5. Set host name
+### 4. Set host name
 
 ```sh
 hostnamectl set-hostname <new-hostname>
@@ -86,7 +74,7 @@ IPa.ddr.ess  alice.eudat-sara.vm.surfsara.nl
 ```
 
 ## Installing iRODS
-### 6. Configure and create porstgresql database
+### 5. Configure and create porstgresql database
 ```sh
 sudo su - postgres
 psql
@@ -96,7 +84,7 @@ GRANT ALL PRIVILEGES ON DATABASE "ICAT" to irods;
 \q
 exit
 ```
-### 7. Download and install iRODS packages
+### 6. Download and install iRODS packages
 ```sh
 wget ftp://ftp.renci.org/pub/irods/releases/4.1.8/ubuntu14/irods-icat-4.1.8-ubuntu14-x86_64.deb
 wget ftp://ftp.renci.org/pub/irods/releases/4.1.8/ubuntu14/irods-database-plugin-postgres-1.8-ubuntu14-x86_64.deb
@@ -118,7 +106,7 @@ The dependencies will be fixed by executing:
 sudo apt-get -f install
 ```
 
-### 8. Configuring iRODS
+### 7. Configuring iRODS
 - First we create the irods vault (where data put into iRODS will be physically stored).
 ```sh
 sudo mkdir /irodsVault 
@@ -138,7 +126,7 @@ iRODS servers administrator username [rods]: alice
 Database servers hostname or IP address: localhost
 ```
 
-### 9. Login to iRODS
+### 8. Login to iRODS
 
 ```sh
 iinit

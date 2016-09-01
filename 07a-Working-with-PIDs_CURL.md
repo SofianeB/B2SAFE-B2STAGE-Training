@@ -64,7 +64,7 @@ curl --help
 ```
 
 The handle server works with certificate authentication and openssl. 
-On a MAC you need to install curl via [homebrew](http://brew.sh/) and specify that it should use openssl:
+**On a MAC** you need to install curl via [homebrew](http://brew.sh/) and specify that it should use openssl:
 
 ```
 brew install curl --with-openssl
@@ -74,7 +74,7 @@ For your convenience you can export this location to a variable and call it by
 CURL=/usr/local/Cellar/curl/<version>/bin/curl
 $CURL --help
 ```
-Please replace <version> with the version you installed on your MAC.
+Please replace \<version\> with the version you installed on your MAC.
 
 If you write the code described below to a file, do not forget to change the permissions. 
 You should make each file executable with `#!bash` in the very first line.

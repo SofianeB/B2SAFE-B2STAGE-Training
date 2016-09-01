@@ -140,30 +140,32 @@ You will find the key and certificate in the folder *credentials* on the provide
 We are going to create a new PID by using the PUT request.
 The request method is -X PUT followed by the actual json data 
 ```sh
--X PUT --data '{"values":[ \
-    { \
-        "index":100,\
-        "type":"HS_ADMIN",\
-        "data":{\
-            "value":{\
-                "index":200,\
-                "handle":"0.NA/1000",\
-                "permissions":"011111110011",\
-                "format":"admin"\
-            },\
-            "format":"admin"\
-        }\
-    },\
-    {\
-        "index":1,\
-        "type":"URL",\
-        "data":"www.google.com"\
+-X PUT --data '{"values":[ 
+    { 
+        "index":100,
+        "type":"HS_ADMIN",
+        "data":{
+            "value":{
+                "index":200,
+                "handle":"0.NA/1000",
+                "permissions":"011111110011",
+                "format":"admin"
+            },
+            "format":"admin"
+        }
+    },
+    {
+        "index":1,
+        "type":"URL",
+        "data":"www.google.com"
     }
 ]
 }'
 ```
-The first member of the list behind *values* sets the ownership of the handle and the permission.
-It will appear as *index 100* in the handle entry. The permissions correspond to `[create hdl,delete hdl,read val,modify val,del val,add val,modify admin,del admin,add admin]` where 1 means *allowed* and 0 *prohibited*. 
+The first member of the list behind *values* sets the ownership of the handle and permission.
+It will appear as *index 100* in the handle entry. The permissions correspond to 
+`[create hdl,delete hdl,read val,modify val,del val,add val,modify admin,del admin,add admin]` 
+where 1 means *allowed* and 0 *prohibited*. 
 
 ### Building the PID:
 
@@ -176,8 +178,7 @@ SUFFIX=`uuidgen`
 - Concatenate your PID prefix and the uuid to create the full PID
 ` 1000/$SUFFIX `
 
-We now have an opaque string which is unique to our resolver (1000/$SUFFIX ) since
-the prefix is unique (handed out by administrators of the resolver).
+Since the prefix is unique and we employed a uuid to create the suffix, we now have an opaque string which is unique to our resolver (1000/$SUFFIX).
 
 The URL in the CURL request: 
 ```
@@ -190,7 +191,7 @@ $PID_SERVER/1000/$SUFFIX
 
 ## Registering a file with PUT
 
-Register the PID, link the PID and the data object. Here we use public csv file, stored on figshare.
+Register the PID, link the PID and the data object. Here we use a public csv file as data which is stored on figshare and publicly available.
 
 ```sh
 
@@ -210,7 +211,7 @@ $PID_SERVER/1000/$SUFFIX | python -m json.tool
 ```
 This gives you the response:
 ```
-{"responseCode":1,"handle":"1000AE919576-226E-412D-BC9D-73682DD207F5"}
+{"responseCode":1,"handle":"1000/AE919576-226E-412D-BC9D-73682DD207F5"}
 ```
 indicating, that the handle was created.
 
@@ -228,7 +229,7 @@ indicating, that the handle was created.
 * 402: Authentication needed (401 Unauthorized)
 * 40x: Other authentication errors (403 Forbidden)
 
-Let’s go to the resolver and see what is stored there
+Let us go to the resolver and see what is stored there
 `http://epic4.storage.surfsara.nl:8001`. 
 We can get some information on the data from the resolver.
 We can retrieve the data object itself via the web-browser.
@@ -242,6 +243,16 @@ We can retrieve the data object itself via the web-browser.
 **Insoect the HS_ADMIN field**
 
 **What happens if you try to reregister the file with the same PID?** 
+
+### Rerieve the handle record
+
+You can retrieve the PID record using the *GET* option of cURL
+```sh
+$CURL -k -X GET $PID_SERVER/1000/$SUFFIX | python -m json.tool
+```
+Here we do not need to authorise since the handle record is public.
+
+**Which answer do you get when only retrieving $PID_SERVER/1000?**
 
 ### Overwrite handles
 We saw in the last exercise, that the data in the handles can be overwritten. That is useful in some cases, as we will see later. However, upon registration you might want to check that you do not overwrite existing data.
@@ -390,6 +401,15 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -X PUT --data '{"index":4, "type":"REPLICA","data":"1000/'$SUFFIX'"}' \
     $PID_SERVER/1000/$SUFFIX2?index=4 | python -m json.tool
 ```
+
+## PID resolving
+How does the handle resolver actually know to which data object to resolve to? In the cases above we explicitely defined the field *URL* at index 1. What happens if index 1 contains different information, i.e. a different key buta URL as value.
+
+**Exercise**
+Create some PIDs and test these options:
+* Change the key *URL* at index 1 to something else
+* Change the value of the *URL* field to something that is not a URL.
+* Define a key avlue pair *URL* and the respective value at a higher index and put somethig else in index 1.
 
 ## Delete handle entries and whole handles
 In case we wish to remove the information on the checksum from the handle do this:

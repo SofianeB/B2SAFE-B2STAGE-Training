@@ -1,5 +1,5 @@
 # Working with Persistent Identifiers - Hands-on
-This lecture takes you through the steps to create and administer PIDs employing the HTTP restful API of the hanlde server version 8.
+This lecture takes you through the steps to create and administer PIDs employing the HTTP restful API of the handle server version 8.
 
 ## Warming-up: Using PIDs
 Below you find three different PIDs and their corresponding global resolver
@@ -62,6 +62,7 @@ Final check
 ```sh
 curl --help
 ```
+##### MAC
 
 The handle server works with certificate authentication and openssl. 
 **On a MAC** you need to install curl via [homebrew](http://brew.sh/) and specify that it should use openssl:
@@ -316,10 +317,9 @@ With the resolver we can access this information. Note, this data is publicly av
 In the previous example we have actually not overwritten the data in the handle but we created a new handle with the same suffix but different content.
 Now let us see how we can add and modify entries.
 
-We want to store information on identity of the file, e.g. the md5 checksum. We first have
-to generate the checksum. However, we can only create checksums for files which we
-have access to with our python compiler. In the step above we can download the file and
-then continue to calculate the checksum. 
+We want to store information on the identity of the file that we have registered in the previous example, e.g. the md5 checksum. The file is called *surveys.csv*.
+We first have to generate the checksum. However, we can only create checksums for files which we
+have locally on our computer. In the step above we downloaded the file. So now we can continue to calculate the checksum. 
 **NOTE** the filename might depend on the download method.
 
 ```sh
@@ -382,7 +382,7 @@ We have now two PIDs one pointing to the public file
 ```sh
 echo 1000/$SUFFIX
 ```
-and one pointing to our local copyof that public file
+and one pointing to our local copy of that public file
 ```sh
 echo 1000/$SUFFIX2
 ```

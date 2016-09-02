@@ -204,14 +204,15 @@ SUFFIX=`uuidgen`
 $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
-    -X PUT --data \ 
-        '{"values": [ 
-            { "index": 1, "type": "URL",
+    -X PUT --data \
+        '{"values": [
+            {"index":1,"type":"URL",
                 "data": {"format": "string",
-                    "value": "data": "https://ndownloader.figshare.com/files/2292172"}}, 
+                "value":"https://ndownloader.figshare.com/files/2292172"}},
             { "index": 100,"type": "HS_ADMIN",
                 "data": {"format": "admin",
-                "value": {"handle": "0.NA/1000","index": 200,"permissions": "011111110011"}}} ]}' 
+                "value": {"handle": "0.NA/1000","index": 200,"permissions": "011111110011"}}}
+        ]}' \
 $PID_SERVER/1000/$SUFFIX | python -m json.tool
 ```
 This gives the response:
@@ -268,13 +269,17 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
     -X PUT --data \
-        ''{"values": [ { "index": 1, "type": "URL",
+        '{"values":[
+            {"index":1,"type":"URL",
                 "data": {"format": "string",
-                    "value": "https://ndownloader.figshare.com/files/2292172"}}, 
-        { "index": 100,"type": "HS_ADMIN",
-            "data": {"format": "admin",
-                "value": {"handle": "0.NA/1000","index": 200,"permissions": "011111110011"}}} ]}' ' \
-$PID_SERVER/$SUFFIX?overwrite=false | python -m json.tool
+                "value":"https://ndownloader.figshare.com/files/2292172"}},
+            {"index":100,"type":"HS_ADMIN",
+                "data":{"value":{"index":200,"handle":"0.NA/1000",
+                "permissions":"011111110011","format":"admin"},
+                "format":"admin"}}
+        ]}' \
+$PID_SERVER/1000/$SUFFIX?overwrite=false | python -m json.tool
+
 ```
 This will return the response *101*, inidicating that the handle already exists.
 
@@ -285,8 +290,9 @@ We have to update the json data
 ```
     -X PUT --data \
         '{"values":[
-        {"index":2,"type":"TYPE",
-            "data":"Data Carpentry pandas example file"},
+            {"index":2,"type":"TYPE",
+                "data": {"format": "string",
+                "value":"Data Carpentry pandas example file"},
         {"index":100,"type":"HS_ADMIN",
             "format":"admin",
             "data":{"value":{"index":200,"handle":"0.NA/1000",
@@ -302,17 +308,20 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H 'Authorization: Handle clientCert="true"' \
     -X PUT --data \
         '{"values":[
-        {"index":1,"type":"URL",
-            "data": {"format": "string","value":"https://ndownloader.figshare.com/files/2292172"}},
-        {"index":2,"type":"TYPE",
-            "data": {"format": "string","value":"Data Carpentry pandas example file"}},
-        {"index":3,"type":"FORMAT",
-            "data": {"format": "string","value":"csv"}}]},
-        {"index":100,"type":"HS_ADMIN",
-            "data":{"value":{"index":200,"handle":"0.NA/1000",
+            {"index":1,"type":"URL",
+                "data": {"format": "string",
+                "value":"https://ndownloader.figshare.com/files/2292172"}},
+            {"index":2,"type":"TYPE",
+                "data": {"format": "string",
+                "value":"Data Carpentry pandas example file"}},
+            {"index":100,"type":"HS_ADMIN",
+                "data":{"value":{"index":200,"handle":"0.NA/1000",
                 "permissions":"011111110011","format":"admin"},
-            "format":"admin"}}]'
+                "format":"admin"}},
+            {"index":101,"type":"FORMAT",
+                "data":"csv"}]}' \
 $PID_SERVER/1000/$SUFFIX | python -m json.tool
+
 ```
 The handle API works with indexes. The very first index *index 1* is used by the resolver which expects a url. That is why we use "URL" as type, which makes it easier to debug if something goes wrong. It is a convention to use capital letters to define keys. 
 Index 100 is reserved for the *HS_ADMIN*. All other indexes can be determined by the user.
@@ -332,23 +341,24 @@ have locally on our computer. In the step above we downloaded the file. So now w
 ```sh
 MD5VALUE=` md5 surveys.csv | awk '{ print $4 }'`
 
-$CURL -k --key $PRIVKEY --cert $CERTIFICATE \    
-    -H "Content-Type:application/json" \     
-    -H 'Authorization: Handle clientCert="true"' \     
-    -X PUT --data '{"index":3, "type":"MD5","data": {"format": "string","value": "'$MD5VALUE'"}}' \    
+$CURL -k --key $PRIVKEY --cert $CERTIFICATE \
+    -H "Content-Type:application/json" \
+    -H 'Authorization: Handle clientCert="true"' \  
+    -X PUT --data '{"index":3, "type":"MD5","data": {"format": "string","value": "'$MD5VALUE'"}}' \
     $PID_SERVER/1000/$SUFFIX?index=3 | python -m json.tool
 ```
 
 We can also update or add more fields at one time:
 ```sh
 $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
-    -H "Content-Type:application/json" \ 
+    -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
     -X PUT --data '{"values": [
         {"index": 2, "ttl": 86400, "type": "TYPE",   "data": {"format": "string","value": "Data Carpentry file"}},
-        {"index": 4,               "type": "SIZE",   "data": {"format": "string","value": "bla"}}, 
-        {"index": 5, "ttl": 86400, "type": "FORMAT", "data": {"format": "string","value": "csv"}} ]}' \
-    $PID_SERVER/1000/$SUFFIX?index=2\&index=4\&index=5
+        {"index": 4,               "type": "SIZE",   "data": {"format": "string","value": "N/A"}},
+        {"index": 5, "ttl": 86400, "type": "FORMAT", "data": {"format": "string","value": "csv"}}
+        ]}' \
+    $PID_SERVER/1000/$SUFFIX?index=2\&index=4\&index=5 | python -m json.tool
 ```
 
 ## Linking files by PIDs
@@ -366,15 +376,17 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H 'Authorization: Handle clientCert="true"' \
     -X PUT --data \
         '{"values":[
-        {"index":1,"type":"URL",  "data": {"format": "string","value":"'$FILELOC'"}}, 
-        {"index":2,"type":"TYPE", "data": {"format": "string","value":"Data Carpentry pandas example file"}},
-        {"index":3,"type":"MD5",  "data": {"format": "string","value":"'$MD5SUM'"}},
+        {"index":1,"type":"URL",  "data": {"format": "string","value":"'$FILELOC'"}},
+        {"index":2,"type":"TYPE", "data": 
+            {"format": "string","value":"Data Carpentry pandas example file"}},
+        {"index":3,"type":"MD5",  
+            "data": {"format": "string","value":"'$MD5SUM'"}},
         {"index":100,"type":"HS_ADMIN",
-            "format":"admin",
-            "data":{"value":{"index":200,"handle":"0.NA/1000",
-                "permissions":"011111110011","format":"admin"}
-            }}]}'
-$PID_SERVER/1000/$SUFFIX | python -m json.tool
+                "data":{"value":{"index":200,"handle":"0.NA/1000",
+                "permissions":"011111110011","format":"admin"},
+                "format":"admin"}}
+        ]}' \
+$PID_SERVER/1000/$SUFFIX2 | python -m json.tool
 ```
 
 **Try to fetch some metadata on the file from the resolver.**

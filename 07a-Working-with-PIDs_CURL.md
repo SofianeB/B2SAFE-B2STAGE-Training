@@ -142,28 +142,31 @@ We are going to create a new PID by using the PUT request.
 The request method is -X PUT followed by the actual json data 
 ```sh
 -X PUT --data '{"values":[ 
+    {
+        "index":1,
+        "type":"URL",
+        "data": {
+            "format": "string",
+            "value": "www.test1.com"
+        }
+    },
     { 
         "index":100,
         "type":"HS_ADMIN",
         "data":{
+            "format":"admin",
             "value":{
                 "index":200,
                 "handle":"0.NA/1000",
                 "permissions":"011111110011",
                 "format":"admin"
-            },
-            "format":"admin"
+            }
         }
-    },
-    {
-        "index":1,
-        "type":"URL",
-        "data":"www.google.com"
     }
 ]
 }'
 ```
-The first member of the list behind *values* sets the ownership of the handle and permission.
+The second member of the list behind *values* sets the ownership of the handle and permission.
 It will appear as *index 100* in the handle entry. The permissions correspond to 
 `[create hdl,delete hdl,read val,modify val,del val,add val,modify admin,del admin,add admin]` 
 where 1 means *allowed* and 0 *prohibited*. 
@@ -202,12 +205,7 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
     -X PUT --data \ 
-        '{"values":[{"index":100,"type":"HS_ADMIN",
-            "data":{"value":{"index":200,"handle":"0.NA/1000", 
-                "permissions":"011111110011","format":"admin"},
-            "format":"admin"}},
-        {"index":1,"type":"URL",
-            "data":"https://ndownloader.figshare.com/files/2292172"}]}' \
+        '{"values": [ { "index": 1, "type": "URL","data": {"format": "string","value": "data": "https://ndownloader.figshare.com/files/2292172"}}, { "index": 100,"type": "HS_ADMIN","data": {"format": "admin","value": {"handle": "0.NA/1000","index": 200,"permissions": "011111110011"}}} ]}' 
 $PID_SERVER/1000/$SUFFIX | python -m json.tool
 ```
 This gives you the response:
@@ -264,12 +262,7 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
     -X PUT --data \
-        '{"values":[{"index":100,"type":"HS_ADMIN",
-            "data":{"value":{"index":200,"handle":"0.NA/1000",
-                "permissions":"011111110011","format":"admin"},
-            "format":"admin"}},
-        {"index":1,"type":"URL",
-            "data":"https://ndownloader.figshare.com/files/2292172"}]}' \
+        ''{"values": [ { "index": 1, "type": "URL","data": {"format": "string","value": "https://ndownloader.figshare.com/files/2292172"}}, { "index": 100,"type": "HS_ADMIN","data": {"format": "admin","value": {"handle": "0.NA/1000","index": 200,"permissions": "011111110011"}}} ]}' ' \
 $PID_SERVER/$SUFFIX?overwrite=false | python -m json.tool
 ```
 This will return the response *101*, inidicating that the handle already exists.
@@ -280,12 +273,14 @@ Lets say that we want to add a new type with data 'Data Carpentry pandas example
 We have to update the json data
 ```
     -X PUT --data \
-        '{"values":[{"index":100,"type":"HS_ADMIN",
-            "data":{"value":{"index":200,"handle":"0.NA/1000",
-                "permissions":"011111110011","format":"admin"},
-            "format":"admin"}},
+        '{"values":[
         {"index":2,"type":"TYPE",
-            "data":"Data Carpentry pandas example file"}]}' \
+            "data":"Data Carpentry pandas example file"},
+        {"index":100,"type":"HS_ADMIN",
+            "format":"admin",
+            "data":{"value":{"index":200,"handle":"0.NA/1000",
+                "permissions":"011111110011","format":"admin"}}}    
+        ]}' \
 ```
 
 And the actual request to add this to the existing handle is:
@@ -295,16 +290,17 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
     -X PUT --data \
-        '{"values":[{"index":100,"type":"HS_ADMIN",
+        '{"values":[
+        {"index":1,"type":"URL",
+            "data": {"format": "string","value":"https://ndownloader.figshare.com/files/2292172"}},
+        {"index":2,"type":"TYPE",
+            "data": {"format": "string","value":"Data Carpentry pandas example file"}},
+        {"index":3,"type":"FORMAT",
+            "data": {"format": "string","value":"csv"}}]},
+        {"index":100,"type":"HS_ADMIN",
             "data":{"value":{"index":200,"handle":"0.NA/1000",
                 "permissions":"011111110011","format":"admin"},
-            "format":"admin"}},
-        {"index":1,"type":"URL",
-            "data":"https://ndownloader.figshare.com/files/2292172"},
-        {"index":2,"type":"TYPE",
-            "data":"Data Carpentry pandas example file"},
-        {"index":101,"type":"FORMAT",
-            "data":"csv"}]}' \
+            "format":"admin"}}]'
 $PID_SERVER/1000/$SUFFIX | python -m json.tool
 ```
 The handle API works with indexes. The very first index *index 1* is used by the resolver which expects a url. That is why we use "URL" as type, which makes it easier to debug if something goes wrong. It is a convention to use capital letters to define keys. 
@@ -328,7 +324,7 @@ MD5VALUE=` md5 surveys.csv | awk '{ print $4 }'`
 $CURL -k --key $PRIVKEY --cert $CERTIFICATE \    
     -H "Content-Type:application/json" \     
     -H 'Authorization: Handle clientCert="true"' \     
-    -X PUT --data '{"index":3, "type":"MD5","data":"'$MD5VALUE'"}' \    
+    -X PUT --data '{"index":3, "type":"MD5","data": {"format": "string","value": "'$MD5VALUE'"}}' \    
     $PID_SERVER/1000/$SUFFIX?index=3 | python -m json.tool
 ```
 
@@ -338,10 +334,10 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \ 
     -H 'Authorization: Handle clientCert="true"' \
     -X PUT --data '{"values": [
-        {"index": 4, "type": "size", "data": ""}, 
-        {"index": 5, "ttl": 86400, "type": "FORMAT", "data": "csv"}, 
-        {"index": 2, "ttl": 86400, "type": "TYPE", "data": "Data Carpentry file"}]}' \
-    $PID_SERVER/1000/$SUFFIX?index=4\&index=5\&index=2
+        {"index": 2, "ttl": 86400, "type": "TYPE",   "data": {"format": "string","value": "Data Carpentry file"}},
+        {"index": 4,               "type": "SIZE",   "data": {"format": "string","value": "bla"}}, 
+        {"index": 5, "ttl": 86400, "type": "FORMAT", "data": {"format": "string","value": "csv"}} ]}' \
+    $PID_SERVER/1000/$SUFFIX?index=2\&index=4\&index=5
 ```
 
 ## Linking files by PIDs
@@ -358,14 +354,15 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
     -X PUT --data \
-        '{"values":[{"index":100,"type":"HS_ADMIN",
+        '{"values":[
+        {"index":1,"type":"URL",  "data": {"format": "string","value":"'$FILELOC'"}}, 
+        {"index":2,"type":"TYPE", "data": {"format": "string","value":"Data Carpentry pandas example file"}},
+        {"index":3,"type":"MD5",  "data": {"format": "string","value":"'$MD5SUM'"}},
+        {"index":100,"type":"HS_ADMIN",
+            "format":"admin",
             "data":{"value":{"index":200,"handle":"0.NA/1000",
-                "permissions":"011111110011","format":"admin"},
-            "format":"admin"}},
-        {"index":1,"type":"URL",
-            "data":"'$FILELOC'"}, 
-        {"index":2, "type":"TYPE", "data":"Data Carpentry pandas example file"},
-        {"index":3, "type":"MD5", "data":"'$MD5SUM'"}]}' \
+                "permissions":"011111110011","format":"admin"}
+            }}]}'
 $PID_SERVER/1000/$SUFFIX | python -m json.tool
 ```
 
@@ -392,13 +389,13 @@ We will link the two files using the keywork *REPLICA* and we will use index 4.
 $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
-    -X PUT --data '{"index":4, "type":"REPLICA","data":"1000/'$SUFFIX2'"}' \
+    -X PUT --data '{"index":4, "type":"REPLICA","data": {"format": "string","value":"1000/'$SUFFIX2'"}}' \
     $PID_SERVER/1000/$SUFFIX?index=4 | python -m json.tool
 
 $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
-    -X PUT --data '{"index":4, "type":"REPLICA","data":"1000/'$SUFFIX'"}' \
+    -X PUT --data '{"index":4, "type":"REPLICA","data": {"format": "string","value":"1000/'$SUFFIX'"}}' \
     $PID_SERVER/1000/$SUFFIX2?index=4 | python -m json.tool
 ```
 

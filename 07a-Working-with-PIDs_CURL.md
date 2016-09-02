@@ -205,10 +205,16 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
     -X PUT --data \ 
-        '{"values": [ { "index": 1, "type": "URL","data": {"format": "string","value": "data": "https://ndownloader.figshare.com/files/2292172"}}, { "index": 100,"type": "HS_ADMIN","data": {"format": "admin","value": {"handle": "0.NA/1000","index": 200,"permissions": "011111110011"}}} ]}' 
+        '{"values": [ 
+            { "index": 1, "type": "URL",
+                "data": {"format": "string",
+                    "value": "data": "https://ndownloader.figshare.com/files/2292172"}}, 
+            { "index": 100,"type": "HS_ADMIN",
+                "data": {"format": "admin",
+                "value": {"handle": "0.NA/1000","index": 200,"permissions": "011111110011"}}} ]}' 
 $PID_SERVER/1000/$SUFFIX | python -m json.tool
 ```
-This gives you the response:
+This gives the response:
 ```
 {"responseCode":1,"handle":"1000/AE919576-226E-412D-BC9D-73682DD207F5"}
 ```
@@ -262,7 +268,12 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
     -X PUT --data \
-        ''{"values": [ { "index": 1, "type": "URL","data": {"format": "string","value": "https://ndownloader.figshare.com/files/2292172"}}, { "index": 100,"type": "HS_ADMIN","data": {"format": "admin","value": {"handle": "0.NA/1000","index": 200,"permissions": "011111110011"}}} ]}' ' \
+        ''{"values": [ { "index": 1, "type": "URL",
+                "data": {"format": "string",
+                    "value": "https://ndownloader.figshare.com/files/2292172"}}, 
+        { "index": 100,"type": "HS_ADMIN",
+            "data": {"format": "admin",
+                "value": {"handle": "0.NA/1000","index": 200,"permissions": "011111110011"}}} ]}' ' \
 $PID_SERVER/$SUFFIX?overwrite=false | python -m json.tool
 ```
 This will return the response *101*, inidicating that the handle already exists.

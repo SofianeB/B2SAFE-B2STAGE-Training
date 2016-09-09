@@ -439,7 +439,7 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
     -X DELETE \
-    $PID_SERVER/$SUFFIX?index=101 | python -m json.tool
+    $PID_SERVER/1000/$SUFFIX?index=101 | python -m json.tool
 ```
 
 Note, if you do not soecify the index in the URL pointing to your PID, the whole PID will be removed.

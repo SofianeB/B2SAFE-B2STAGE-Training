@@ -1,5 +1,5 @@
 # Working with Persistent Identifiers - Hands-on
-This lecture illustrates the use of PIDs, more specifically it shows how to employ [handles](handle.net) using the epicclient and [EPIC API](http://www.pidconsortium.eu/).
+This lecture illustrates the use of PIDs, more specifically it shows how to employ [handles](handle.net) using the epicclient.py, a python wrapper for the [EPIC API](http://www.pidconsortium.eu/).
 
 ## Warming-up: Using PIDs
 Below  you find three different PIDs and their corresponding global resolver

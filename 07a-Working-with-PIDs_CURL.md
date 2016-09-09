@@ -343,9 +343,9 @@ MD5VALUE=` md5 surveys.csv | awk '{ print $4 }'`
 
 $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
-    -H 'Authorization: Handle clientCert="true"' \  
+    -H 'Authorization: Handle clientCert="true"' \
     -X PUT --data '{"index":3, "type":"MD5","data": {"format": "string","value": "'$MD5VALUE'"}}' \
-    $PID_SERVER/1000/$SUFFIX?index=3 | python -m json.tool
+$PID_SERVER/1000/$SUFFIX?index=3 | python -m json.tool
 ```
 
 We can also update or add more fields at one time:

@@ -3,9 +3,16 @@
 - Steer dataflows between iRODS instances with the iRODS native icommands
 - Do automatic data replication between iRODS servers with the B2SAFE module
 - Steer data between our laptop/userinterface and iRODS with gridFTP
-- Execute third party transfers with gridFTP between a gridFTP enabled iRODS server and a 'normal' iRODS server
+- Execute third party transfers with gridFTP between a gridFTP enabled iRODS server and a 'normal' gridFTP server
 
 # iRODS and B2SAFE
+## Login
+You login to iRODS with the command
+```
+iinit
+```
+You will be asked for the iRODS server you would like to connect to the port (standard 1247), the zone name of the iRODS server, your iRODS user name and password.
+
 ## Basic commands
 First we will have a look at some very basic commands to move through the logical namespace in iRPDS. The basic commands in iRODS are very similar to bash/shell commands.
 You can browse through your coollections with:
@@ -328,7 +335,7 @@ ils ExternalColl
 - We can use iRODS to upload, manage and annotate data
 - We can steer dataflows between iRODS instances with the iRODS native icommands
 - We can steer data between our laptop/userinterface and iRODS with gridFTP
-- We can execute third party transfers with gridFTP between a gridFTP enabled iRODS server and a 'normal' iRODS server 
+- We can execute third party transfers with gridFTP between a gridFTP enabled iRODS server and a 'normal' gridFTP server 
 
 
 

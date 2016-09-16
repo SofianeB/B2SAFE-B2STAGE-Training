@@ -3,7 +3,7 @@
 - Steer dataflows between iRODS instances with the iRODS native icommands
 - Do automatic data replication between iRODS servers with the B2SAFE module
 - Steer data between our laptop/userinterface and iRODS with gridFTP
-- Execute third party transfers with gridFTP between a gridFTP enabled iRODS server and a 'normal' iRODS server
+- Execute third party transfers with gridFTP between a gridFTP enabled iRODS server and a 'normal' gridFTP server
 
 # iRODS and B2SAFE
 ## Basic commands
@@ -328,7 +328,7 @@ ils ExternalColl
 - We can use iRODS to upload, manage and annotate data
 - We can steer dataflows between iRODS instances with the iRODS native icommands
 - We can steer data between our laptop/userinterface and iRODS with gridFTP
-- We can execute third party transfers with gridFTP between a gridFTP enabled iRODS server and a 'normal' iRODS server 
+- We can execute third party transfers with gridFTP between a gridFTP enabled iRODS server and a 'normal' gridFTP server 
 
 
 

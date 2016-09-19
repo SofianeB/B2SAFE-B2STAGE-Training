@@ -13,6 +13,16 @@ iinit
 ```
 You will be asked for the iRODS server you would like to connect to the port (standard 1247), the zone name of the iRODS server, your iRODS user name and password.
 
+## Help
+You can get a full list of all commands with:
+```
+ihelp
+```
+If you are unsure how to use a command or what options there are, call the help:
+```
+<command> -h
+```
+
 ## Basic commands
 First we will have a look at some very basic commands to move through the logical namespace in iRPDS. The basic commands in iRODS are very similar to bash/shell commands.
 You can browse through your coollections with:
@@ -27,16 +37,7 @@ ipwd
 ```
 And you can create new collections with:
 ```
-imkdir
-```
-
-You can get a full list of all commands with:
-```
-ihelp
-```
-If you are unsure how to use a command or what options there are, call the help:
-```
-<command> -h
+imkdir TestC
 ```
 
 ## Logical and physical namespaces in iRODS
@@ -48,7 +49,15 @@ We will use this command quite often today to see what happens with files upon r
 With this command you see where the file is stored on the iRODS server.
 
 ## Uploading a Collection to iRODS
-First let's create some data in our home directory on the linux filesystem to upload to iRODS
+We can put a single file into our home-collection or a designated collection.
+
+```
+echo "Some text" > test.txt
+iput -K test.txt TestC
+```
+The flag *-K* triggers the calculation and verification of a checksum, in this case an md5 checksum. We can drop the destination folder *TestC*, in that case, the data will be stored in the current working collection that you can check with *ipwd*.
+
+Let us create some data in our home directory on the linux filesystem to upload to iRODS
 ```
 mkdir -p Collection
 for i in {000..002}; do echo "Collection${i} and some text.">"Collection/File${i}.txt"; done
@@ -76,6 +85,8 @@ alice               0 demoResc           29 2016-08-23.09:04 & File000.txt
 * The last entry is the physical path of the data, in our case the data lies on the iRODS server.
 
 **Exercise**
+
+Data can be downloaded from iRODS to you local machine with the command *iget*.
 Explore the command *iget* to store the data back in you home directory. Do not overwrite your original data!
 
 ## Replication across iRODS Zones

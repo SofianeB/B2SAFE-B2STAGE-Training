@@ -75,7 +75,7 @@ ils Collection -L
 You will see some output like:
 ```
 alice               0 demoResc           29 2016-08-23.09:04 & File000.txt
-    9dcbb372c049bdd4b035c1ccb3798e69    generic    /irodsVault/home/eve/Collection/File000.txt
+    9dcbb372c049bdd4b035c1ccb3798e69    generic    /irodsVault/home/alice/Collection/File000.txt
 ```
 * *alice* is the data owner
 * *0* is the index of this replica. the number only refers to replicas in one iRODS zone and can be used to autpmatically trim the number of replicas or create new ones in case one got lost.
@@ -150,7 +150,7 @@ irule -F hello.r
 #### B2SAFE
 B2SAFE is a ruleset that extends the core rule set of iRODS and provides tools to replicate data and keep track of the replicas by creating persistent identifiers and leaving additional information in the iCAT database.
 
-We will use B2SAFE to replicate our Collection to bobZone, create PIDs for the original data in eveZone, create PIDs for the replicas in bobZone and link the files on PID level.
+We will use B2SAFE to replicate our Collection to bobZone, create PIDs for the original data in aliceZone, create PIDs for the replicas in bobZone and link the files on PID level.
 
 First let us inspect and adapt the corresponding rule in examples/eudatRepl.r .
 ```
@@ -160,7 +160,7 @@ eudatRepl{
     # recursive (4th argument 2nd bool("true"))
     EUDATReplication(*source, *destination, bool("true"), bool("true"), *response)
 }
-INPUT *source='/eveZone/home/alice/Collection', *destination='/bobZone/home/alice#aliceZone/Collection'
+INPUT *source='/aliceZone/home/alice/Collection', *destination='/bobZone/home/alice#aliceZone/Collection'
 OUTPUT ruleExecOut
 ```
 *EUDATReplication* is a rule specified in the B2SAFE module.
@@ -229,8 +229,8 @@ imeta ls -C Collection
 
 
 #### (Optional) Extending the replication chain
-Now adopt the *eudatRepl.r* rule to replicate the Collection you have in bobZone back to a different Collection in eveZone. 
-Simply exchange the values in *source* and *destination* and make sure to rename *Collection* in eveZone (otherwise you will overwrite the previous one).
+Now adopt the *eudatRepl.r* rule to replicate the Collection you have in bobZone back to a different Collection in aliceZone. 
+Simply exchange the values in *source* and *destination* and make sure to rename *Collection* in aliceZone (otherwise you will overwrite the previous one).
 
 ```
 eudatRepl{

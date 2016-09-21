@@ -101,7 +101,7 @@ and it listed automatically all data in */aliceZone/home/<user>*.
 
 To access data on the other iRODS server type in:
 ```
-ils /bobZone/home/<user>#aliceZone/home/<user>
+ils /bobZone/home/<user>#aliceZone
 ```
 * *bobZone* denotes the zone on the different server, they are really physically different machines and they run their own iCAT data base
 * Your username needs to be extended with *#aliceZone* to indicate that on bobZone you are a remote user

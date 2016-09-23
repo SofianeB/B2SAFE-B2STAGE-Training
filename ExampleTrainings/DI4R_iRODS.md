@@ -101,7 +101,7 @@ and it listed automatically all data in */aliceZone/home/<user>*.
 
 To access data on the other iRODS server type in:
 ```
-ils /bobZone/home/<user>#aliceZone/home/<user>
+ils /bobZone/home/<user>#aliceZone
 ```
 * *bobZone* denotes the zone on the different server, they are really physically different machines and they run their own iCAT data base
 * Your username needs to be extended with *#aliceZone* to indicate that on bobZone you are a remote user
@@ -302,8 +302,7 @@ We replaced the iRODS path with the PID for the collection.
 The GridFTP tries to find the file, when this fails it tries to resolve the file path. If this is successful and the URL field in the PID contains a path to which this gridFTP instance has access to, you can retrieve the file(s).
 
 ```
-mkdir NewCollGsi
-globus-url-copy gsiftp://di4r2016-3.novalocal/846/4318901c-6a8c-11e6-a1db-fa163efdf672/ NewCollGsi
+globus-url-copy -cd gsiftp://di4r2016-3.novalocal/846/4318901c-6a8c-11e6-a1db-fa163efdf672/ NewCollGsi/
 ls NewCollGsi
 ```
 
@@ -318,7 +317,7 @@ imeta ls -C Collection
 to the other gridFTP server
 
 ```
-globus-url-copy gsiftp://di4r2016-3.novalocal/846/4318901c-6a8c-11e6-a1db-fa163efdf672/ gsiftp://di4r2016-2.novalocal/tmp/
+globus-url-copy gsiftp://di4r2016-3.novalocal/846/4318901c-6a8c-11e6-a1db-fa163efdf672/ gsiftp://di4r2016-2.novalocal/home/di4r/
 ```
 On the other server the files in *Collection* are saved in *tmp*:
 (Note, you do not have access to the server, so you have to trust me.)

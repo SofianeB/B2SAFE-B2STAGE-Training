@@ -275,12 +275,15 @@ grid-proxy-init
 ```
 then you can use the follwoing command to upload your whole collection to a new iRODS collection
 ```
-imkdir GridFTPColl
+imkdir /aliceZone/home/public/GridFTPColl
 globus-url-copy -r Collection/ gsiftp://di4r2016-3.novalocal/aliceZone/home/alice/GridFTPColl/ 
 ```
 - *gsiftp* dentotes the endpoint and protocol
 - *di4r2016-3.novalocal* is the short cut for the gridFTP server, (inspect mapping in /etc/hosts)
 - *aliceZone/home/alice/GridFTPColl/* is the iRODS path
+
+We created an event hook. All data under the collection public will be labeled with a PID and replicated to the other iRODS server upon deposition.
+Event hooks work like normal rules, but the rule engine executes them automatically, e.g. upon creation of a document or upon put.
 
 Check with 
 ```

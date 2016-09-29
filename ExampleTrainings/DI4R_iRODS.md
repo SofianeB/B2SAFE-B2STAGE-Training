@@ -296,6 +296,9 @@ globus-url-copy -r Collection/ gsiftp://di4r2016-3.novalocal/aliceZone/home/<use
 We created an event hook. All data under the collection public will be labeled with a PID and replicated to the other iRODS server upon deposition.
 Event hooks work like normal rules, but the rule engine executes them automatically, e.g. upon creation of a document or upon put.
 
+We created an event hook. All data under the collection public will be labeled with a PID and replicated to the other iRODS server upon deposition.
+Event hooks work like normal rules, but the rule engine executes them automatically, e.g. upon creation of a document or upon put.
+
 Check with 
 
 ```

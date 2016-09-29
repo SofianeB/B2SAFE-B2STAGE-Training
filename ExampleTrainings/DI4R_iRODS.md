@@ -293,6 +293,9 @@ globus-url-copy -r Collection/ gsiftp://di4r2016-3.novalocal/aliceZone/home/<use
 - *di4r2016-3.novalocal* is the short cut for the gridFTP server, (inspect mapping in /etc/hosts)
 - *aliceZone/home/<username>/GridFTPColl/* is the iRODS path, where `<username>` is replaced with your username.
 
+We created an event hook. All data under the collection public will be labeled with a PID and replicated to the other iRODS server upon deposition.
+Event hooks work like normal rules, but the rule engine executes them automatically, e.g. upon creation of a document or upon put.
+
 Check with 
 
 ```

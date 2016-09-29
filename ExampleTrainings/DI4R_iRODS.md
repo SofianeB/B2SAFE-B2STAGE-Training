@@ -269,26 +269,45 @@ As result you can use gridFTP tools like *globus-url-copy* to copy, delete and m
 ## Upload data to iRODS with *globus-url-copy*
 Reupload your collections again and store it under a different iRODS path.
 
+Ensure you are in your user directory of the remote alice zone: 
+
+```
+ipwd
+icd /aliceZone/home/<username>/
+ipwd
+```
+
 First create a grid proxy from your certificate:
+
 ```
 grid-proxy-init
 ```
+
 then you can use the follwoing command to upload your whole collection to a new iRODS collection
+
 ```
 imkdir GridFTPColl
-globus-url-copy -r Collection/ gsiftp://di4r2016-3.novalocal/aliceZone/home/alice/GridFTPColl/ 
+globus-url-copy -r Collection/ gsiftp://di4r2016-3.novalocal/aliceZone/home/<username>/GridFTPColl/ 
 ```
 - *gsiftp* dentotes the endpoint and protocol
 - *di4r2016-3.novalocal* is the short cut for the gridFTP server, (inspect mapping in /etc/hosts)
-- *aliceZone/home/alice/GridFTPColl/* is the iRODS path
+- *aliceZone/home/<username>/GridFTPColl/* is the iRODS path, where `<username>` is replaced with your username.
 
 Check with 
+
 ```
 ils -L GridFTPColl
 ```
-what happened.
+to see what happened.
 
-With the options *-sync* and *-sync-level* you can determine which files to update. Note, that these commands will perform checksum calculations but will not store them in the iCAT catalogue.
+### Remarks
+
+With the options *-sync* and *-sync-level* of the `globus-url-copy` command you can determine which files to update. Note, that these commands will perform checksum calculations but will not store them in the iCAT catalogue.
+
+With the command `grid-proxy-info` you can get information about the state of the current proxy certificate. Ensure that time left is larger than zero.
+
+What is a proxy certificate? To interact directly with a remote service a certificate can be used to prove identity. However, in the grid world it is often necessary for a remote service to act on a user's behalf.
+One could imagine sending the private key to remote services, however this is very insecure. On the grid, a proxy allows limited delegation of rights. Strictly speaking, a proxy is also a certificate, but usually the unqualified term "certificate" is reserved for something issued by a certificate authority (CA). Proxies normally have a rather short lifetime, typically 12 hours. See [1] for more information on proxy certificates.
 
 ## Retrieve data by PID
 In the previous section we labeled files with PIDs. The B2SAFE module, however, does not only label files with PIDs but also Collections. These PIDs can be used to list and retrieve data with gridFTP.
@@ -298,6 +317,8 @@ imeta ls -C Collection
 globus-url-copy -list gsiftp://di4r2016-3.novalocal/846/4318901c-6a8c-11e6-a1db-fa163efdf672/
 ```
 
+Note: replace the pid value in the `globus-url-copy` command with the correct output from the `imeta ls` command.
+
 We replaced the iRODS path with the PID for the collection.
 The GridFTP tries to find the file, when this fails it tries to resolve the file path. If this is successful and the URL field in the PID contains a path to which this gridFTP instance has access to, you can retrieve the file(s).
 
@@ -305,9 +326,10 @@ The GridFTP tries to find the file, when this fails it tries to resolve the file
 globus-url-copy -cd gsiftp://di4r2016-3.novalocal/846/4318901c-6a8c-11e6-a1db-fa163efdf672/ NewCollGsi/
 ls NewCollGsi
 ```
+Note: make sure to update the pid value again.
 
 ## Third party transfers
-You can steer data flows between gridFTP endpoints. We will not send data from our iRODS server to another gridFTP server (which accidentially also lies on the machine where the iRODS bobZone is located. However, they are NOT connected.).
+You can steer data flows between gridFTP endpoints from an external client. We will not send data from our iRODS server to another gridFTP server (which accidentially also lies on the machine where the iRODS bobZone is located. However, they are NOT connected.).
 We will transfer the data behind a PID:
 
 ```
@@ -330,9 +352,8 @@ File002.txt
 ...
 ```
 
-
 And we can put data from another gridFTP endpoint into iRODS via the gridFTP protocol:
-We fetch one of the data files from  we have just saved in the *tmp* directory of the gridFTP endpoint and save it as *ExternalColl* in our iRODS (alice) instance:
+We fetch one of the data files we have just saved in the *tmp* directory of the gridFTP endpoint and save it as *ExternalColl* in our iRODS (alice) instance:
 
 ```
 imkdir ExternalColl
@@ -340,6 +361,10 @@ globus-url-copy gsiftp://di4r2016-2.novalocal/tmp/File000.txt gsiftp://di4r2016-
 
 ils ExternalColl
 ```
+
+### Remarks
+
+What is a third party transfer? A third party transfers is a transfer between two remote servers.
 
 # What have we learned?
 - We can use iRODS to upload, manage and annotate data

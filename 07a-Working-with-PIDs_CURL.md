@@ -123,13 +123,14 @@ These are the main parameters we are going to use in our examples. For more para
 
 ### Connect to the SURFsara handle server 
 
-To connect to the handle server you need to provide a **prefix** and its respective **private key** and **certificate**, the latter two are pem-files. We will use a prefix *1000* registered as a test prefix at SURFsara. 
+To connect to the handle server you need to provide a **prefix** and its respective **private key** and **certificate**, the latter two are pem-files. We will use the prefix *21.T12995* registered as a test prefix at SURFsara. 
 Since we use these parameters everytime we call curl, it is handy to store them in shell variables:
 
 ```sh
 PRIVKEY=privkey.pem
 CERTIFICATE=certificate_only.pem
-PID_SERVER=https://epic4.storage.surfsara.nl:8001/api/handles
+PID_SERVER=https://epic4.storage.surfsara.nl:8007/api/handles
+PREFIX=21.T12995
 ```
 You will find the key and certificate in the folder *credentials* on the provided VMs. If you are using your own laptop, please contact us to obtain a test prefix and the respective pem-files.
 ```
@@ -157,7 +158,7 @@ The request method is -X PUT followed by the actual json data
             "format":"admin",
             "value":{
                 "index":200,
-                "handle":"0.NA/1000",
+                "handle":"0.NA/'$PREFIX'",
                 "permissions":"011111110011",
                 "format":"admin"
             }
@@ -180,17 +181,17 @@ SUFFIX=`uuidgen`
 ```
 
 - Concatenate your PID prefix and the uuid to create the full PID
-` 1000/$SUFFIX `
+` $PREFIX/$SUFFIX `
 
-Since the prefix is unique and we employed a uuid to create the suffix, we now have an opaque string which is unique to our resolver (1000/$SUFFIX).
+Since the prefix is unique and we employed a uuid to create the suffix, we now have an opaque string which is unique to our resolver ($PREFIX/$SUFFIX).
 
 The URL in the CURL request: 
 ```
-https://epic4.storage.surfsara.nl:8001/api/handles/1000/$SUFFIX 
+https://epic4.storage.surfsara.nl:8007/api/handles/$PREFIX/$SUFFIX 
 ```
 or when you set the variable *PID_SERVER*
 ```
-$PID_SERVER/1000/$SUFFIX
+$PID_SERVER/$PREFIX/$SUFFIX
 ```
 
 ## Registering a file with PUT
@@ -211,13 +212,13 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
                 "value":"https://ndownloader.figshare.com/files/2292172"}},
             { "index": 100,"type": "HS_ADMIN",
                 "data": {"format": "admin",
-                "value": {"handle": "0.NA/1000","index": 200,"permissions": "011111110011"}}}
+                "value": {"handle": "0.NA/'$PREFIX'","index": 200,"permissions": "011111110011"}}}
         ]}' \
-$PID_SERVER/1000/$SUFFIX | python -m json.tool
+$PID_SERVER/$PREFIX/$SUFFIX | python -m json.tool
 ```
 This gives the response:
 ```
-{"responseCode":1,"handle":"1000/AE919576-226E-412D-BC9D-73682DD207F5"}
+{"responseCode":1,"handle":"PREFIX/AE919576-226E-412D-BC9D-73682DD207F5"}
 ```
 indicating, that the handle was created.
 
@@ -236,9 +237,19 @@ indicating, that the handle was created.
 * 40x: Other authentication errors (403 Forbidden)
 
 Let us go to the resolver and see what is stored there
-`http://epic4.storage.surfsara.nl:8001`. 
+`http://hdl.handle.net`. 
 We can get some information on the data from the resolver.
 We can retrieve the data object itself via the web-browser.
+
+### Rerieve the handle record
+
+You can retrieve the PID record using the *GET* option of cURL
+```sh
+$CURL -k -X GET $PID_SERVER/'$PREFIX'/$SUFFIX | python -m json.tool
+```
+Here we do not need to authorise since the handle record is public.
+
+**Which answer do you get when only retrieving $PID_SERVER/$PREFIX?**
 
 **Download the file via the resolver. Try to use *wget* when working remotely on our training machine.**
 
@@ -246,19 +257,9 @@ We can retrieve the data object itself via the web-browser.
 
 **Have a look at the metadata stored in the PID entry.**
 
-**Insoect the HS_ADMIN field**
+**Inspect the HS_ADMIN field**
 
 **What happens if you try to reregister the file with the same PID?** 
-
-### Rerieve the handle record
-
-You can retrieve the PID record using the *GET* option of cURL
-```sh
-$CURL -k -X GET $PID_SERVER/1000/$SUFFIX | python -m json.tool
-```
-Here we do not need to authorise since the handle record is public.
-
-**Which answer do you get when only retrieving $PID_SERVER/1000?**
 
 ### Overwrite handles
 We saw in the last exercise, that the data in the handles can be overwritten. That is useful in some cases, as we will see later. However, upon registration you might want to check that you do not overwrite existing data.
@@ -274,11 +275,11 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
                 "data": {"format": "string",
                 "value":"https://ndownloader.figshare.com/files/2292172"}},
             {"index":100,"type":"HS_ADMIN",
-                "data":{"value":{"index":200,"handle":"0.NA/1000",
+                "data":{"value":{"index":200,"handle":"0.NA/'$PREFIX'",
                 "permissions":"011111110011","format":"admin"},
                 "format":"admin"}}
         ]}' \
-$PID_SERVER/1000/$SUFFIX?overwrite=false | python -m json.tool
+$PID_SERVER/$PREFIX/$SUFFIX?overwrite=false | python -m json.tool
 
 ```
 This will return the response *101*, inidicating that the handle already exists.
@@ -295,7 +296,7 @@ We have to update the json data
                 "value":"Data Carpentry pandas example file"},
         {"index":100,"type":"HS_ADMIN",
             "format":"admin",
-            "data":{"value":{"index":200,"handle":"0.NA/1000",
+            "data":{"value":{"index":200,"handle":"0.NA/'$PREFIX'",
                 "permissions":"011111110011","format":"admin"}}}    
         ]}' \
 ```
@@ -315,12 +316,12 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
                 "data": {"format": "string",
                 "value":"Data Carpentry pandas example file"}},
             {"index":100,"type":"HS_ADMIN",
-                "data":{"value":{"index":200,"handle":"0.NA/1000",
+                "data":{"value":{"index":200,"handle":"0.NA/'$PREFIX'",
                 "permissions":"011111110011","format":"admin"},
                 "format":"admin"}},
             {"index":101,"type":"FORMAT",
                 "data":"csv"}]}' \
-$PID_SERVER/1000/$SUFFIX | python -m json.tool
+$PID_SERVER/$PREFIX/$SUFFIX | python -m json.tool
 
 ```
 The handle API works with indexes. The very first index *index 1* is used by the resolver which expects a url. That is why we use "URL" as type, which makes it easier to debug if something goes wrong. It is a convention to use capital letters to define keys. 
@@ -345,7 +346,7 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
     -X PUT --data '{"index":3, "type":"MD5","data": {"format": "string","value": "'$MD5VALUE'"}}' \
-$PID_SERVER/1000/$SUFFIX?index=3 | python -m json.tool
+$PID_SERVER/$PREFIX/$SUFFIX?index=3 | python -m json.tool
 ```
 
 We can also update or add more fields at one time:
@@ -358,7 +359,7 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
         {"index": 4,               "type": "SIZE",   "data": {"format": "string","value": "N/A"}},
         {"index": 5, "ttl": 86400, "type": "FORMAT", "data": {"format": "string","value": "csv"}}
         ]}' \
-    $PID_SERVER/1000/$SUFFIX?index=2\&index=4\&index=5 | python -m json.tool
+    $PID_SERVER/$PREFIX/$SUFFIX?index=2\&index=4\&index=5 | python -m json.tool
 ```
 
 ## Linking files by PIDs
@@ -382,11 +383,11 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
         {"index":3,"type":"MD5",  
             "data": {"format": "string","value":"'$MD5SUM'"}},
         {"index":100,"type":"HS_ADMIN",
-                "data":{"value":{"index":200,"handle":"0.NA/1000",
+                "data":{"value":{"index":200,"handle":"0.NA/'$PREFIX'",
                 "permissions":"011111110011","format":"admin"},
                 "format":"admin"}}
         ]}' \
-$PID_SERVER/1000/$SUFFIX2 | python -m json.tool
+$PID_SERVER/$PREFIX/$SUFFIX2 | python -m json.tool
 ```
 
 **Try to fetch some metadata on the file from the resolver.**
@@ -400,11 +401,11 @@ That means you can no longer download the data directly, but you have access to 
 
 We have now two PIDs one pointing to the public file
 ```sh
-echo 1000/$SUFFIX
+echo $PREFIX/$SUFFIX
 ```
 and one pointing to our local copy of that public file
 ```sh
-echo 1000/$SUFFIX2
+echo $PREFIX/$SUFFIX2
 ```
 We will link the two files using the keywork *REPLICA* and we will use index 4.
 
@@ -412,14 +413,14 @@ We will link the two files using the keywork *REPLICA* and we will use index 4.
 $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
-    -X PUT --data '{"index":4, "type":"REPLICA","data": {"format": "string","value":"1000/'$SUFFIX2'"}}' \
-    $PID_SERVER/1000/$SUFFIX?index=4 | python -m json.tool
+    -X PUT --data '{"index":4, "type":"REPLICA","data": {"format": "string","value":"'$PREFIX'/'$SUFFIX2'"}}' \
+    $PID_SERVER/$PREFIX/$SUFFIX?index=4 | python -m json.tool
 
 $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
-    -X PUT --data '{"index":4, "type":"REPLICA","data": {"format": "string","value":"1000/'$SUFFIX'"}}' \
-    $PID_SERVER/1000/$SUFFIX2?index=4 | python -m json.tool
+    -X PUT --data '{"index":4, "type":"REPLICA","data": {"format": "string","value":"'$PREFIX'/'$SUFFIX'"}}' \
+    $PID_SERVER/$PREFIX/$SUFFIX2?index=4 | python -m json.tool
 ```
 
 ## PID resolving
@@ -431,6 +432,35 @@ Create some PIDs and test these options:
 * Change the value of the *URL* field to something that is not a URL.
 * Define a key avlue pair *URL* and the respective value at a higher index and put somethig else in index 1.
 
+## Reverse lookups
+Given a certain entry in the PID record, how can you find the repsective PID? This feature is **NOT** part of the standard Handle API.
+Handle servers in the EUDAT domain offer a special reverse-lookup servelet to facilitate this function.
+To authorise with the servelet you need a password with your prefix. The command has the following structure:
+
+```
+$PID_REV=https://epic4.storage.surfsara.nl:8007/hrls/handles
+$CURL -k -u "21.T12995:<password>" $PID_REV?<KEYWORD>=*
+```
+Note that you do not have to access the *api* on the handle server but the *handle reverse lookup servelet (hrls)*.
+
+To get a list of PIDs under the handle instance:
+```sh
+$CURL -k -u "21.T12995:<password>" $PID_REV?URL=*
+```
+This shows the first 1000 PIDs on the server.
+
+And you can set extra parameters:
+```sh
+$CURL -k -u "21.T12995:<password>" $PID_REV?URL=*\&limit=10
+```
+**Exercise**
+What does the parameter *page* do?
+Compare the output of the two following commands:
+```
+$CURL -k -u "21.T12995:<password>" $PID_REV?URL=*\&limit=10\&page=1 |python -m json.tool
+$CURL -k -u "21.T12995:<password>" $PID_REV?URL=*\&limit=10\&page=2 |python -m json.tool
+```
+
 ## Delete handle entries and whole handles
 In case we wish to remove the information on the checksum from the handle do this:
 
@@ -439,7 +469,7 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     -H "Content-Type:application/json" \
     -H 'Authorization: Handle clientCert="true"' \
     -X DELETE \
-    $PID_SERVER/1000/$SUFFIX?index=101 | python -m json.tool
+    $PID_SERVER/$PREFIX/$SUFFIX?index=101 | python -m json.tool
 ```
 
 Note, if you do not soecify the index in the URL pointing to your PID, the whole PID will be removed.

@@ -35,15 +35,15 @@ You can either go to the resolver in your webbrowser and type in the PID to get 
 
 **In the handle resolver you will find a box "Don't redirect to URLs", if you tick this box, what information do you get?**
 
-Each PID consists of a *prefix* which is linked to an administratory domain (e.g. a journal) and a *suffix*. The prefix is handed out by an issuer such as CNRI for handle or DataCite for DOIs. Once you are admin of a prefix, you can register as many data objects as you want by extending the prefix with a suffix. Note, that the suffixes need to be unique for each data object. The epic client helps you with that.
+Each PID consists of a *prefix* which is linked to an administrative domain (e.g. a journal) and a *suffix*. The prefix is handed out by an issuer such as CNRI for handle or DataCite for DOIs. Once you are admin of a prefix, you can register as many data objects as you want by extending the prefix with a suffix. Note, that the suffixes need to be unique for each data object. The epic client helps you with that.
 
 ## Managing PIDs
 
 #### Training machine
-On our user interface machines we already installed all necessary packages and the B2HANDLE library. You will find your credentaials for this tutorials in the folder */home/<user>/credentials/cred_b2handle*. 
+On our user interface machines we already installed all necessary packages and the B2HANDLE library. You will find your credentials for this tutorial in the folder */home/<user>/credentials/cred_b2handle*. 
 
 #### Own laptop
-In case you are working on your own laptop with your own python, please install the B2HANDLE library.
+If you are working on your own laptop with your own python, please install the B2HANDLE library.
 
 ## Managing PIDs 
 How do repositories create PIDs for data objects?
@@ -153,7 +153,7 @@ newHandle = ec.createHandle(pid, fileLocation)
 ### Store some handy information with your file
 - We can store some more information in the PID entry with the function *modifyHandle*
 ```py
-?ec.modify_handle_value
+ec.modify_handle_value
 ```
 We can update and create several key-value pairs in one go. To this end we create a python dictionary and pass it to the function.
 ```py

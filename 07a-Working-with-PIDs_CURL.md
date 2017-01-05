@@ -96,8 +96,7 @@ so it will execute when you type on the shell:
 ### Main Parameters of CURL 
 
 The main command
- 
-  `curl [options] [URL...]`
+`curl [options] [URL...]`
   
   
 Before we start, we explain the main parameters of CURL used as options 
@@ -113,7 +112,7 @@ These are the main parameters we are going to use in our examples. For more para
 
 ### Connect to the SURFsara handle server 
 
-To connect to the handle server you need to provide a **prefix** and its respective **private key** and **certificate**, the latter two are pem-files. We will use the prefix *21.T12995* registered as a test prefix at SURFsara. 
+To connect to the handle server you need to provide a **prefix** and its respective **private key** and **certificate**, the latter two are pem-files. We will use the prefix *21.T12995*, a test prefix at SURFsara. 
 Since we use these parameters everytime we call curl, it is handy to store them in shell variables:
 
 ```sh
@@ -233,26 +232,28 @@ We can retrieve the data object itself via the web-browser.
 
 ### Rerieve the handle record
 
-You can retrieve the PID record using the *GET* option of cURL
+You can retrieve the PID record using the *GET* option of cURL from the local handle server directly
 ```sh
-$CURL -k -X GET $PID_SERVER/'$PREFIX'/$SUFFIX | python -m json.tool
+$CURL -k -X GET $PID_SERVER/$PREFIX/$SUFFIX | python -m json.tool
+```
+or from the global handle resolver
+```sh
+$CURL -k -X GET http://hdl.handle.net/api/handles/$PREFIX/$SUFFIX | python -m json.tool
 ```
 Here we do not need to authorise since the handle record is public.
 
-**Which answer do you get when only retrieving $PID_SERVER/$PREFIX?**
+**Exercises:**
+- File and metadata retrieval
+    - How can you retrieve the document behind the PID?
+    - Download the file via the resolver. Try to use *wget* when working remotely on our training machine.
+    - How is the data stored when downloading via the browser and how via *wget*?
+    - How can you retrieve the handle record in a web browser?
+- Inspect the HS_ADMIN field**
+- What happens if you try to reregister the file with the same PID?
 
-**Download the file via the resolver. Try to use *wget* when working remotely on our training machine.**
-
-**How is the data stored when downloading via the browser and how via *wget*?**
-
-**Have a look at the metadata stored in the PID entry.**
-
-**Inspect the HS_ADMIN field**
-
-**What happens if you try to reregister the file with the same PID?** 
-
-### Overwrite handles
-We saw in the last exercise, that the data in the handles can be overwritten. That is useful in some cases, as we will see later. However, upon registration you might want to check that you do not overwrite existing data.
+### Overwriting handles
+We saw in the last exercise, that the data in the handles can be overwritten. That is useful in some cases, as we will see later. 
+However, upon registration you might want to check that you do not overwrite existing data.
 A secure way to create handles is:
 
 ```sh
@@ -284,9 +285,9 @@ We have to update the json data
             {"index":2,"type":"TYPE",
                 "data": {"format": "string",
                 "value":"Data Carpentry pandas example file"},
-        {"index":100,"type":"HS_ADMIN",
-            "format":"admin",
-            "data":{"value":{"index":200,"handle":"0.NA/'$PREFIX'",
+            {"index":100,"type":"HS_ADMIN",
+                "format":"admin",
+                "data":{"value":{"index":200,"handle":"0.NA/'$PREFIX'",
                 "permissions":"011111110011","format":"admin"}}}    
         ]}' \
 ```
@@ -462,7 +463,7 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
     $PID_SERVER/$PREFIX/$SUFFIX?index=101 | python -m json.tool
 ```
 
-Note, if you do not soecify the index in the URL pointing to your PID, the whole PID will be removed.
+Note, if you do not specify the index in the URL pointing to your PID, the whole PID will be deleted.
 
 
 

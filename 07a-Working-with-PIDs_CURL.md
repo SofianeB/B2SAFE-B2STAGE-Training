@@ -89,19 +89,9 @@ chmod +x filename.sh
 so it will execute when you type on the shell:
 `./filename.sh`
 
-#### Example workflow
-
-1. Obtain a prefix from a resolver admin
-2. Set up an internet connection to the PID server with a client
-3. Create a PID
-4. Link PID and location of the data object
-
-In the tutorial below we will work with a test handle server located at SURFsara. 
-That means the PIDs we create are not resolvable via the global handle resolver or via the DOI resolver.
-
 #### For resolving PIDs please use:
 
-`http://epic4.storage.surfsara.nl:8001`
+`http://hdl.handle.net/`
 
 ### Main Parameters of CURL 
 

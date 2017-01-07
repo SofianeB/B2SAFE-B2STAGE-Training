@@ -58,7 +58,7 @@ How can you create a PID for your own data objects?
 In the tutorial below we will work with a test handle server located at SURFsara. That means the PIDs we create are not resolvable via the global handle resolver or via the DOI resolver.
 
 #### For resolving PIDs please use:
-`http://epic3.storage.surfsara.nl:8001`
+`http://hdl.handle.net`
 
 ### Import necessary libraries:
 
@@ -136,7 +136,7 @@ Handle = ec.register_handle(pid, fileLocation)
 ```
 
 Let’s go to the resolver and see what is stored there
-`http://epic3.storage.surfsara.nl:8001`. 
+`http://hdl.handle.net`. 
 We can get some information on the data from the resolver.
 We can retrieve the data object itself via the web-browser.
 

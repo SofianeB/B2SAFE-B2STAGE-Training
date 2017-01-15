@@ -58,7 +58,7 @@ How can you create a PID for your own data objects?
 In the tutorial below we will work with a test handle server located at SURFsara. That means the PIDs we create are not resolvable via the global handle resolver or via the DOI resolver.
 
 #### For resolving PIDs please use:
-`http://epic3.storage.surfsara.nl:8001`
+`http://hdl.handle.net`
 
 ### Import necessary libraries:
 
@@ -72,23 +72,24 @@ import os, shutil
 ```
 ### Connect to the SURFsara handle server 
 ```json
-To connect to the epic server you need to provide a prefix, the private key and the certificate; alternatively the library also provides authentication with username/password. This information is stored in a json file *cred_file.json* and should look like this:
+To connect to the epic server you need to provide a prefix, the private key and the certificate. This information is stored in a json file *cred_file.json* and should look like this:
 {
-    "handle_server_url": "https://epic3.storage.surfsara.nl:8001",
-    "private_key": "/<full path>/credentials/cred_b2handle/355_841_privkey.pem",
-    "certificate_only": "/<full path>/credentials/cred_b2handle/355_841_certificate_only.pem",
-    "prefix": "841",
-    "handleowner": "200:0.NA/841",
-    "reverselookup_username": "841",
-    "reverselookup_password": "****",
+    "handle_server_url": "https://epic4.storage.surfsara.nl:8007",
+    "baseuri": "https://epic4.storage.surfsara.nl:8007",
+    "private_key": "privkey.pem",
+    "certificate_only": "certificate_only.pem",
+    "prefix": "21.T12995",
+    "handleowner": "200:0.NA/21.T12995",
+    "reverselookup_username": "21.T12995",
+    "reverselookup_password": "<passwd>",
     "HTTPS_verify": "True"
 }
 ```
-On the user interface machines you can find such a file and all necessary certificates and keys in */<full path>/credentials/cred_b2handle/*. Please adopt the *<full path>* appropriately.
+On the user interface machines you can find such a file and all necessary certificates and keys in */<full path>/HandleCerts/*. Please adopt the *<full path>* appropriately.
 
 - Parse credentials
 ```py
-cred = PIDClientCredentials.load_from_JSON('<full_path>/cred_file.json')
+cred = PIDClientCredentials.load_from_JSON('<full_path>/<to_crdentials>.json')
 ```
 - Retrieve some information about the server, this server also hosts the resolver which we will use later
 ```py
@@ -135,7 +136,7 @@ Handle = ec.register_handle(pid, fileLocation)
 ```
 
 Let’s go to the resolver and see what is stored there
-`http://epic3.storage.surfsara.nl:8001`. 
+`http://hdl.handle.net`. 
 We can get some information on the data from the resolver.
 We can retrieve the data object itself via the web-browser.
 
@@ -222,7 +223,7 @@ ec.modify_handle_value(Handle, ttl=None, add_if_not_exist=True, **dict([('REPLIC
 ```
 
 ### Reverse look-ups
-The B2HANDLE library extends the handle API with reverse look-ups. Assume you just know some of the metadata stored with a PID but not the full PID. How can you get to the URL field to retrieve the data?
+In the definition of the credentials file, we found the entries *reverselookup_username* and *reverselookup_password*. These are used to authenticate with a specific local Handle server to retrieve the PID when given some key-value pair in the Handle record. Assume you just know some of the metadata stored with a PID but not the full PID. How can you get to the URL field to retrieve the data?
 
 We can fetch all data with a certain checksum. 
 Make sure that your credential json file contains the keys *reverselookup_username* and *reverselookup_password*.
@@ -240,6 +241,7 @@ Now we can retrieve the location of the first hit in the list.
 url = ec.get_value_from_handle(result[0], 'URL')
 print(url) 
 ```
+**Note,** that this functionality is an EUDAT extension to the standard Handle server functionalities. You can also only query reversely on a local Handle server, not across the global Handle server.
 
 ### Using the epicclient Command Line Interface (CLI)
 For now we directly worked with the library. EUDAT provides an [epicclient](https://github.com/EUDAT-B2SAFE/B2SAFE-core/blob/master/cmd/epicclient2.py) which can be used as command line interface (CLI) based on the B2HANDLE. 

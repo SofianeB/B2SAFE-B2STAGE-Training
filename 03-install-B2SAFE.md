@@ -18,11 +18,11 @@ For a comprehensive documentation please refer to https://github.com/EUDAT-B2SAF
  
 ### 1. Clone code and create packages
 - Clone the github repository of B2SAFE and create the debian package
-```sh
-git clone https://github.com/EUDAT-B2SAFE/B2SAFE-core
-cd ~/B2SAFE-core/packaging
-./create_deb_package.sh
-```
+ ```sh
+ git clone https://github.com/EUDAT-B2SAFE/B2SAFE-core
+ cd ~/B2SAFE-core/packaging
+ ./create_deb_package.sh
+ ```
 - PID configuration with *epicclient.py*
 If you do not want to add the trusted CA of the epic server to your trusted CAs you need to edit the B2SAFE-core/cmd/epicclient.py:
 
@@ -34,9 +34,9 @@ self.http = httplib2.Http(disable_ssl_certificate_validation=True)
 The SSL verfication is given as a parameter in the *credentials* file (see below CRED_FILE_PATH).
 
 - Install the created package as *root*
-```sh
-sudo dpkg -i /home/alice/debbuild/irods-eudat-b2safe_3.1-1.deb
-```
+ ```sh
+ sudo dpkg -i /home/alice/debbuild/irods-eudat-b2safe_3.1-1.deb
+ ```
 ### 2. Configure B2SAFE
 ```sh
 The package b2safe has been installed in /opt/eudat/b2safe.
@@ -137,6 +137,7 @@ For a testing server you might want to set *AUTHZ_ENABLED* and *MSIFREE_ENABLED*
 ### 4. Tests
 #### B2SAFE installation
 ```sh
+iinit
 cd ~/B2SAFE-core/rules
 irule -vF eudatGetV.r
 ```
@@ -146,31 +147,24 @@ irule -vF eudatGetV.r
 ```
 
 ####Generating PIDs
-* Test the epicclient.py:
-```sh
-sudo su - irods
-/opt/eudat/b2safe/cmd/epicclient.py os /opt/eudat/b2safe/conf/credentials create www.test.com
-```
-or
-```sh
-sudo su - irods
-/opt/eudat/b2safe/cmd/epicclient2.py os /opt/eudat/b2safe/conf/credentials create www.test.com
-```
-
-* Create a test collection
-```sh
-mkdir testData
-#save som,e file with content in testData
-vim testData/testfile.txt
-# ingest collection into iRODS
-iput -r testData/
-ils
-```
-* Edit B2SAFE-core/rules/eudatPidsColl.r, adjust coll_path with /\<irodszone\>/home/\<user\>/testData
-```sh
-irule -vF B2SAFE-core/rules/eudatPidsColl.r
-```
-* Output should look like this
-```sh
-*newPID = <prefix>/<somecrypticstring>
-``` 
+- Test the epicclient.py:
+ ```sh
+ sudo su - irods
+ /opt/eudat/b2safe/cmd/epicclient.py os /opt/eudat/b2safe/conf/credentials create www.test.com
+ ```
+- Test the epicclient2.py:
+ ```sh
+ sudo su - irods
+ /opt/eudat/b2safe/cmd/epicclient2.py os /opt/eudat/b2safe/conf/credentials create www.test.com
+ ```
+ 
+- Execute the test rules:
+ ```sh
+ irule -F eudatCreatePid.r
+ irule -F eudatRepl_coll.r
+ ...
+ ```
+ 
+ **Exercise**:
+ Alter the test rules in *rules* such that a real folder is assigned with PIDs and replicated to another folder on that iRODS instance. 
+ 

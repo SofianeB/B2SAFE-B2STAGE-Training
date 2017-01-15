@@ -18,6 +18,7 @@ For a comprehensive documentation please refer to https://github.com/EUDAT-B2SAF
  
 ### 1. Clone code and create packages
 - Clone the github repository of B2SAFE and create the debian package
+
  ```sh
  git clone https://github.com/EUDAT-B2SAFE/B2SAFE-core
  cd ~/B2SAFE-core/packaging
@@ -26,9 +27,9 @@ For a comprehensive documentation please refer to https://github.com/EUDAT-B2SAF
 - PID configuration with *epicclient.py*
 If you do not want to add the trusted CA of the epic server to your trusted CAs you need to edit the B2SAFE-core/cmd/epicclient.py:
 
-```py
-self.http = httplib2.Http(disable_ssl_certificate_validation=True)
-```
+ ```py
+ self.http = httplib2.Http(disable_ssl_certificate_validation=True)
+ ```
 
 - PID configuration with epicclient2.py
 The SSL verfication is given as a parameter in the *credentials* file (see below CRED_FILE_PATH).
@@ -96,6 +97,7 @@ For a testing server you might want to set *AUTHZ_ENABLED* and *MSIFREE_ENABLED*
 
 ### 3. Python dependencies
 - Check dependencies
+
  ```sh
  cd /opt/eudat/b2safe/cmd
  ./authZmanager.py -h
@@ -113,6 +115,7 @@ For a testing server you might want to set *AUTHZ_ENABLED* and *MSIFREE_ENABLED*
 
 
 - Known dependencies
+
  ```sh
  sudo apt-get install python-pip
  sudo pip install queuelib
@@ -125,7 +128,9 @@ For a testing server you might want to set *AUTHZ_ENABLED* and *MSIFREE_ENABLED*
  sudo apt-get install python-simplejson
  ```
 - B2HANDLE python library
+
  Install as user with sudo rights
+ 
  ```sh
  git clone https://github.com/EUDAT-B2SAFE/B2HANDLE
  cd B2HANDLE/
@@ -153,6 +158,7 @@ irule -vF eudatGetV.r
  /opt/eudat/b2safe/cmd/epicclient.py os /opt/eudat/b2safe/conf/credentials create www.test.com
  ```
 - Test the epicclient2.py:
+ 
  ```sh
  sudo su - irods
  /opt/eudat/b2safe/cmd/epicclient2.py os /opt/eudat/b2safe/conf/credentials create www.test.com

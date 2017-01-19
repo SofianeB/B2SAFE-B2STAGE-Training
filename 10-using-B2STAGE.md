@@ -163,9 +163,37 @@ ON($objPath like "/aliceZone/home/irods<x>/*") {
 ```
 More information on the iRODS microservices: https://docs.irods.org/master/doxygen/
 
-[//]: # "I feel this last bit goes a bit too quickly. All we get here are"
-[//]: # "pointers. To me it feels an example is missing, I might be wrong"
-[//]: # "of course..."
+## B2STAGE and iRODS federations
+With iRODS you can easily access data in another zone with:
+```sh
+ils /bobZone/home/alice#aliceZone/
+```
+The *globus-url-copy* client however, will not understand the path due to the sign '#':
+```sh
+globus-url-copy -list gsiftp://eudat-training2/bobZone/home/alice#aliceZone/
+gsiftp://eudat-training2/bobZone/home/alice#aliceZone/
+
+
+error: globus_ftp_client: an invalid value for url was used
+```
+You can use the *uberFTP* client instead:
+```sh
+berftp -ls gsiftp://eudat-training2/bobZone/home/alice#aliceZone/
+drwxr-xr-x   0     root     root            0 Jan  1 00:00 .
+drwxr-xr-x   0     root     root            0 Jan  1 00:00 ..
+-rwxr-xr-x   0     root     root           28 Jan 18 13:08 FileFromAlice.txt
+```
+
+Another way to solve this issue is to wrap your remote iRODS path with a PID:
+With B2HANDLE you can wrap the path `sh irods://130.186.13.14:1247/bobZone/home/alice#aliceZone/testfile-New.txt` with a PID, e.g.
+*21.T12995/eb179104-de28-11e6-911a-fa163edb14ff* and access the file with the *globur-url-copy* client:
+
+```
+globus-url-copy -list gsiftp://eudat-training2/21.T12995/eb179104-de28-11e6-911a-fa163edb14ff/
+gsiftp://eudat-training2/21.T12995/eb179104-de28-11e6-911a-fa163edb14ff/
+    testfile-New.txt
+```
+**Note**, that the URL field in the PID needs to start with *irods*, contains the fully qualified domain name of the gridFTP server that is coupled to the iRODS instance and not the *remote* irods instance.
 
 # Trouble shooting
 When you work with servers in different time zones you might encounter tghis error when you try to reach the gridFTP server:

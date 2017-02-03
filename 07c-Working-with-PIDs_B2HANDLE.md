@@ -75,7 +75,6 @@ import os, shutil
 To connect to the epic server you need to provide a prefix, the private key and the certificate. This information is stored in a json file *cred_file.json* and should look like this:
 {
     "handle_server_url": "https://epic4.storage.surfsara.nl:8007",
-    "baseuri": "https://epic4.storage.surfsara.nl:8007",
     "private_key": "privkey.pem",
     "certificate_only": "certificate_only.pem",
     "prefix": "21.T12995",
@@ -242,6 +241,14 @@ url = ec.get_value_from_handle(result[0], 'URL')
 print(url) 
 ```
 **Note,** that this functionality is an EUDAT extension to the standard Handle server functionalities. You can also only query reversely on a local Handle server, not across the global Handle server.
+
+The reverse look up function works also with wildcards:
+
+```py
+rev = dict([('URL', "*")])
+result = ec.search_handle(**args)
+```
+This will return a list of all PIDs on that server.
 
 ### Using the epicclient Command Line Interface (CLI)
 For now we directly worked with the library. EUDAT provides an [epicclient](https://github.com/EUDAT-B2SAFE/B2SAFE-core/blob/master/cmd/epicclient2.py) which can be used as command line interface (CLI) based on the B2HANDLE. 

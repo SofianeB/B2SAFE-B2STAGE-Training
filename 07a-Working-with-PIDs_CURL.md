@@ -130,6 +130,7 @@ You will find the key and certificate in the folder *credentials* on the provide
 
 We are going to create a new PID by using the PUT request.
 The request method is -X PUT followed by the actual json data 
+
 ```sh
 -X PUT --data '{"values":[ 
     {
@@ -250,6 +251,13 @@ Here we do not need to authorise since the handle record is public.
     - How can you retrieve the handle record in a web browser?
 - Inspect the HS_ADMIN field**
 - What happens if you try to reregister the file with the same PID?
+
+**NOTE** Keys in the Handle entry should always be capitalised, i.e.
+
+```sh
+"type":"URL"
+```
+
 
 ### Overwriting handles
 We saw in the last exercise, that the data in the handles can be overwritten. That is useful in some cases, as we will see later. 

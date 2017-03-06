@@ -319,6 +319,8 @@ This command sums the sizes of all data in each collection starting with *Data*.
 iquest attrs
 ```
 
-**Exercise** Use the iquest command to find all data and collections with an Attribute "DATE". List the object name and the value associated with "Date".
+**Exercise** Use the *iquest* command to find all data and collections with an Attribute "DATE". List the object name and the value associated with "Date".
+
+**Exercise** Select some data with *iquest* and inspect the difference between *DATA_NAME* and *DATA_PATH*. Which of the two is used where in the command `ils -L`? 
 
 

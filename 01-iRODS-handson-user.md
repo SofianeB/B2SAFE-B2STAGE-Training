@@ -63,7 +63,7 @@ NOTICE: created irodsCwd=/aliceZone/home/irods
 []()  | []() 
 ------|------
 iinit       | Log on
-iexit       | Log off
+iexit full       | Log off
 ienv        | Client settings
 ihelp       | List of icommands
 ipasswd     | Change iRODS password

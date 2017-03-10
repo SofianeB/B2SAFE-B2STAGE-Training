@@ -63,7 +63,7 @@ NOTICE: created irodsCwd=/aliceZone/home/irods
 []()  | []() 
 ------|------
 iinit       | Log on
-iexit       | Log off
+iexit full       | Log off
 ienv        | Client settings
 ihelp       | List of icommands
 ipasswd     | Change iRODS password
@@ -106,7 +106,7 @@ ils
 ```
 Since we have not put any data yet, you will receive this as an answer from the system:
 ```sh
-/alicetestZone/home/alice:
+/aliceZone/home/alice:
 ```
 Let's create a subcollection. You may already know the UNIX command *mkdir*. iRODS uses a similar command and syntax for creating collections:
 ```sh
@@ -150,6 +150,12 @@ iRODS will give us the user, which resource it is stored on and as last informat
 /aliceZone/home/alice:
   alice             0 demoResc           13 2016-02-19.13:35 & put1.txt generic    /irodsVault/home/alice/put1.txt
 ```
+- `/aliceZone/home/alice/put1.txt`: Logical path to the file as iRODS exposes it to the user
+- `alice`: owner of the file
+- `0`: Numberof replicas of that file in the iRODS system
+- `13`: File size in KB
+- Date
+- `/irodsVault/home/alice/put1.txt`: Physical path on the linux server, only the linux user "irods" who runs iRODS has access to that path.
 
 *iput* comes with some useful options.
 ```sh
@@ -166,7 +172,7 @@ You can also specify which subcollection and which resource iRODS should use to 
 ```sh
 iput -K -f put1.txt -R demoResc testData
 ```
-will store the data physically on *demoResc* and use /alicetestZone/home/alice/testData as logical path.
+will store the data physically on *demoResc* and use /aliceZone/home/alice/testData as logical path.
 
 To download data from iRODS you can use
 ```sh
@@ -197,11 +203,11 @@ ils -L /aliceZone/trash/home/alice
 ```
 That means you can restore the file with the follwing commands.
 ```sh
-imv /eveZone/trash/home/eve/testData/put1.txt /eveZone/home/eve/testData
+imv /aliceZone/trash/home/alice/testData/put1.txt /aliceZone/home/alice/testData
 ```
 *imv* can be used to move data and subcollections and to rename them.
 ```sh
-imv /eveZone/home/eve/testData/put1.txt /eveZone/home/eve/testData/put2.txt
+imv /aliceZone/home/alice/testData/put1.txt /aliceZone/home/alice/testData/put2.txt
 ```
 
 To remove the file completly from the system, you need to execute
@@ -305,7 +311,7 @@ imeta qu -d Date = "Nov 2015"
 For more sophisticated sql-like queries we can use
 
 ```sh
-iquest "select sum(DATA_SIZE), COLL_NAME where COLL_NAME like '/alicetestZone/home/alice/Data%'"
+iquest "select sum(DATA_SIZE), COLL_NAME where COLL_NAME like '/aliceZone/home/alice/Data%'"
 ```
 This command sums the sizes of all data in each collection starting with *Data*. The command *iquest* already knows some keywords specific to the iRODS environment. You can list them with
 
@@ -313,6 +319,8 @@ This command sums the sizes of all data in each collection starting with *Data*.
 iquest attrs
 ```
 
-**Exercise** Use the iquest command to find all data and collections with an Attribute "DATE". List the object name and the value associated with "Date".
+**Exercise** Use the *iquest* command to find all data and collections with an Attribute "DATE". List the object name and the value associated with "Date".
+
+**Exercise** Select some data with *iquest* and inspect the difference between *DATA_NAME* and *DATA_PATH*. Which of the two is used where in the command `ils -L`? 
 
 

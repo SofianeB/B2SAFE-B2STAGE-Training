@@ -1,6 +1,6 @@
 # iRODS for users
 This lecture introduces you to the basics what iRODS is and how you do simple data management as a user.
-To this end we will make use of the icommands.
+To this end we will make use of the icommands - the commandline client to iRODS
 
 ## Prerequisites
 - A user account on an iRODS 4.1.X system
@@ -34,6 +34,13 @@ Enter your irods zone: <zonename>
 ```
 The default port numer is 1247. The zone name, username and password will be provided by the iRODS admin.
 You can revisit the file and configuration in *.irods/irods_environment.json*. If you want to login as another iRODS user you will have to alter this file.
+
+> ## The iRODS environment
+> You can check with
+> ```sh
+>  ienv
+> ```
+> what the settigns of your iRODS environment is. It provides a full list of variables that you can specify in your *irods_environment.json*
 
 ### Some iRODS concepts
 **iRODS zone**: always contains exactly one so-called iCAT catalogue, which is a database containing user information, the mapping from physical storage to iRODS logical path for data and which hosts metadata attached to data.

@@ -70,7 +70,7 @@ ipasswd     | Change iRODS password
 iuserinfo   | User info
 ierror      | Information on error code
 
-> ### LIsting of physical storage resources (move to advanced user trainign)
+> ### Listing of physical storage resources (move to advanced user training)
 > To see which physical resources are attached to the iRODS instance and what their logical names are, you can use:
 > ```sh
 > ilsresc –l 

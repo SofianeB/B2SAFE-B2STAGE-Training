@@ -58,7 +58,7 @@ NOTICE: created irodsHome=/aliceZone/home/irods
 NOTICE: created irodsCwd=/aliceZone/home/irods
 ```
 
-**Some useful commands for session management**
+## iRODS session management and help
 
 []()  | []() 
 ------|------
@@ -70,123 +70,138 @@ ipasswd     | Change iRODS password
 iuserinfo   | User info
 ierror      | Information on error code
 
-> ### Listing of physical storage resources (move to advanced user training)
-> To see which physical resources are attached to the iRODS instance and what their logical names are, you can use:
-> ```sh
-> ilsresc –l 
-> ```
-> which will yield:
-> ```
-> resource name: demoResc
-> id: 9101
-> zone: aliceZone
-> type: unixfilesystem
-> class: cache
-> location: iRODS4.alice
-> vault: /irodsVault
-> ```
-> This command lists all resources defined in the iRODS zone and their type, i.e. there is one resource of type *unix file system*. The value after *vault* tells us where our data will be stored physically when added to the resource. *location* gives the server name of the resource, in this case it is the iRODS server itself. Check with:
-
-> ```sh
-> hostname
-> ```
-> on your shell.
-
-### Working in the iRODS environment
 The most important icommand will be:
 ```sh
 ihelp
 ```
 This will print out all commands the client knows.
 
-**Navigating through collections**
+You can retrieve help on any icommand with:
 
-Let's have a look at our current iRODS working directory and list the content.
 ```sh
+<command> -h
+```
+or
+```sh
+ihelp <command>
+```
+
+## Data up- and download
+[]()  | []() 
+------|------
+iput       | Upload data to iRODS
+iget       | Download data from iRODS to local file system
+
+Let us first create a first test file in your linux home-directory.
+
+```sh
+nano test.txt
+
+My first test file
+```
+We will now upload the file to iRODS
+
+```sh
+iput -K test.txt
+```
+The flag *-K* triggers iRODS to create a checksum and store this checksum in the iCAT metadata catalogue.
+
+We can safely remove the file from our linux home directory:
+
+```
+rm test.txt
+ls
+```
+since the file is present on the iRODS server:
+```
 ils
-```
-Since we have not put any data yet, you will receive this as an answer from the system:
-```sh
-/aliceZone/home/alice:
-```
-Let's create a subcollection. You may already know the UNIX command *mkdir*. iRODS uses a similar command and syntax for creating collections:
-```sh
-imkdir testData
-```
-We can change our current working collection to the newly created directory
-```sh
-icd testData
-```
-Now the *ils* command will by default give you the content of *testData*.
 
-We can remove a file and collection by
-```sh
-irm -r testData
+ubuntu@ubuntu:~$ ils
+/aliceZone/home/\<user\>:
+  test.txt
 ```
+To restore the file (copy it from iRODS to your linux home) you can do:
 
-[]()    | []()
---------|------
-ils     | Change working collection
-icd     | List collection
-ilocate | Locate object
-
-### Adding data to iRODS and retrieveing data from iRODS
-Let's create a file and put it into iRODS
-
-```sh
-echo "test content" > put1.txt
 ```
-This creates a test file *put1.txt* with *test content* which we upload to iRODS by:
-```sh
-iput put1.txt
+iget -K test.txt test-restore.txt
 ```
-We can list the content again, when using the option *-L* we can also see where iRODS stored the file physically on the server.
+We store the iRODS file *test.txt* in a new file called *test-restore.txt* in our linux home directory.
+Here the flag *-K* triggers iRODS to verify the checksum.
 
+The two commands also work for directories and collections, simply use the *-r* (for recursive) flag.
+
+## Connection between iRODS logical namespace and physical location of the data
+The file *test.txt* lies on the logical iRODS path */aliceZone/home/\<user\>/test.txt*. This path we can use to address the file.
+We can find out where the file is actually stored:
 ```sh
 ils -L
 ```
 
 iRODS will give us the user, which resource it is stored on and as last information the physical path on the iRODS server.
 ```sh
-/aliceZone/home/alice:
-  alice             0 demoResc           13 2016-02-19.13:35 & put1.txt generic    /irodsVault/home/alice/put1.txt
+\<user\>              0 demoResc      13 2017-02-22.12:40 & test.txt
+4db84b43c8abd49beaf2254ad25b9e5a        generic    /irodsVault/home/rods/test.txt
 ```
 - `/aliceZone/home/alice/put1.txt`: Logical path to the file as iRODS exposes it to the user
 - `alice`: owner of the file
-- `0`: Numberof replicas of that file in the iRODS system
+- `0`: Index of replica of that file in the iRODS system, in iRODS the same file can lie on different 
+- `demoResc`: the name of the physical data resource, e.g. a unix folder
 - `13`: File size in KB
 - Date
-- `/irodsVault/home/alice/put1.txt`: Physical path on the linux server, only the linux user "irods" who runs iRODS has access to that path.
+- Checksum
+- `/irodsVault/home/alice/put1.txt`: Physical path on the server that hosts iRODS, only the linux user "irods" who runs iRODS has access to that path.
 
-*iput* comes with some useful options.
-```sh
-iput -K put1.txt
-```
-Will store a checksum with your file. If you now execute this command iRODS will complain that the file already exists.
-With the *-f* option you can force iRODS to overwrite existing data.
-```sh
-iput -K -f put1.txt
-```
-If you now list the collection content again with the *-L* option you can inspect the md5 checksum.
-You can also specify which subcollection and which resource iRODS should use to store the data.
+All the information above is stored in the iCAT metadata catalogue and can also be retrieved in sql-like queries (see below).
 
-```sh
-iput -K -f put1.txt -R demoResc testData
-```
-will store the data physically on *demoResc* and use /aliceZone/home/alice/testData as logical path.
+## iRODS file organisation
 
-To download data from iRODS you can use
+[]()    | []()
+--------|------
+ils     | List collection
+icd     | Change working collection
+ipwd    | Current working collection
+ilocate | Locate object
+icp     | Creates a new copy of that object on the physical and logical namespace level, will not inherit any metadata.
+
+How come that all our data automatically ended up in the iRODS collection */aliceZone/home/\<user\>*?
 ```sh
-iget -K -P -f put1.txt
+ipwd
 ```
-The option *-K* tells iRODS to verify the checksum.
-To list all options for the command use
+tells you your current working collection, which is by default your home-collection. This path is taken as a prefix to any iRODS file or collection path you use if you do not provide the full iRODS path.
+
+Let's create a subcollection. You may already know the UNIX command *mkdir*. iRODS uses a similar command and syntax for creating collections:
 ```sh
-iget -h
+imkdir testData
 ```
+Let us move our test file to the collection:
+```sh
+imv test.txt testData
+```
+
+We can change our current working collection to the newly created directory
+```sh
+icd testData
+ipwd
+```
+Now the *ils* command will by default give you the content of *testData*.
+
+We can change back to our home collection by
+```sh
+icd /aliceZone/home/\<user\>
+```
+or by
+```sh
+iexit
+```
+
+With 
+```sh
+ils -r
+```
+we can list all collections and subcollections in iRODS recursively.
 
 ### Removing data
-To remove our put1.txt from iRODS use
+To remove our test.txt from iRODS use
 
 ```sh
 irm put1.txt
@@ -217,19 +232,15 @@ irmtrash
 ```
 This is called a hard delete. Now the file is removed from the system and from the iCAT catalogue.
 
-**Object/collection manipulation**
-
-[]()        | []()
-------------|------
-iput        | Upload
-iget        | Download
-ichecksum   | File checksum
-irm         | Move to trash
-irmtrash    | Empty trash
-icp         | Copy to other colletion
-imv         | Rename/move
-
 ### Accession control
+
+[]()    | []()
+--------|------
+ils -A    | List collection and ACLs
+ichmod     | Set read, write, own permissions; set inhertiance for collections
+ipwd    | Current working collection
+ilocate | Locate object
+
 With the option *-A* we can list the accession control list of files and collections.
 ```sh 
 ils -A
@@ -248,40 +259,29 @@ imkdir DataCollection
 ichmod inherit DataCollection
 ichmod ichmod read bob DataCollection
 ```
-With *ichmod inherit* we assure that all data and subcollections in *DataCollection* will inherit their ACL from the parent collection. After that we grant read-access to another user in the iRODS system.
+With *ichmod inherit* we assure that all data and subcollections in *DataCollection* will inherit their ACL from the parent collection. After that we grant read-access to another user in the iRODS system. Data tat was put into the collection before the *inherit* flag was set, will keep their original ACLs.
+
 Check the ACL settings of the collection.
 ```sh
 ils -A DataCollection
 ```
 Now we put some data into the collection.
 ```sh
-iput -K put1.txt DataCollection
+iput -K test-restore.txt DataCollection/test-share.txt
 ```
-put1.txt inhertited the ACLs from its parent collection.
+The file *test-share.txt* inhertited the ACLs from its parent collection.
 Note that when you change the ACLs of the parent collection, the ACLs of all files and subcollections are not automatically updated!
 
 Our user bob can now list the collection and read put1.txt.
 ```sh
 bob@irods4:~$ ils /aliceZone/home/alice/DataCollection
 /aliceZone/home/alice/DataCollection:
-  put1.txt
+  test-share.txt
 ```
 **Exercise** Give read and write access to put1.txt to your neighbour.
 
 **Important**: When giving access to files and subcollections, the parent collection needs also to be read or writeable.
 Copy put1.txt to your home collection and give access to user.
-
-```sh
-icp -f DataCollection/put1.txt put1.txt
-ichmod read bob put1.txt
-```
-If user *bob* now tries to list or retrieve put1.txt in our home collection he will receive the follwing error, although the ACLs on the file itself have been set correctly.
-
-```
-ERROR: lsUtil: srcPath /aliceZone/home/alice/put1.txt does not exist or user lacks access permission
-```
-This is due to the fact, that *bob* has no read rights on the parent collection /aliceZone/home/
-
 
 ### Annotating data and queries
 iRODS provides the user with the possibility to create **A**ttribute **V**alue **U**nit triplets and store them with the data. The triplets are stored in the iCAT catalogue, which can be queried to identify and retrieve the correct objects.
@@ -324,4 +324,38 @@ iquest attrs
 
 **Exercise** Select some data with *iquest* and inspect the difference between *DATA_NAME* and *DATA_PATH*. Which of the two is used where in the command `ils -L`? 
 
+
+> ### Listing of physical storage resources (move to advanced user training)
+> To see which physical resources are attached to the iRODS instance and what their logical names are, you can use:
+> ```sh
+> ilsresc –l 
+> ```
+> which will yield:
+> ```
+> resource name: demoResc
+> id: 9101
+> zone: aliceZone
+> type: unixfilesystem
+> class: cache
+> location: iRODS4.alice
+> vault: /irodsVault
+> ```
+> This command lists all resources defined in the iRODS zone and their type, i.e. there is one resource of type *unix file system*. The value after *vault* tells us where our data will be stored physically when added to the resource. *location* gives the server name of the resource, in this case it is the iRODS server itself. Check with:
+
+> ```sh
+> hostname
+> ```
+> on your shell.
+
+> Old iRODS version 
+> ```sh
+> icp -f DataCollection/put1.txt put1.txt
+> ichmod read bob put1.txt
+> ```
+> If user *bob* now tries to list or retrieve put1.txt in our home collection he will receive the follwing error, although the ACLs on the file itself have been set correctly.
+
+> ```
+> ERROR: lsUtil: srcPath /aliceZone/home/alice/put1.txt does not exist or user lacks access permission
+> ```
+> This is due to the fact, that *bob* has no read rights on the parent collection /aliceZone/home/
 

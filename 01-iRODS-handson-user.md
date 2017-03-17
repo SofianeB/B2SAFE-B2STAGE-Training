@@ -35,13 +35,6 @@ Enter your irods zone: <zonename>
 The default port numer is 1247. The zone name, username and password will be provided by the iRODS admin.
 You can revisit the file and configuration in *.irods/irods_environment.json*. If you want to login as another iRODS user you will have to alter this file.
 
-> ## The iRODS environment
-> You can check with
-> ```sh
->  ienv
-> ```
-> what the settigns of your iRODS environment is. It provides a full list of variables that you can specify in your *irods_environment.json*
-
 ### Some iRODS concepts
 **iRODS zone**: always contains exactly one so-called iCAT catalogue, which is a database containing user information, the mapping from physical storage to iRODS logical path for data and which hosts metadata attached to data.
 
@@ -77,26 +70,27 @@ ipasswd     | Change iRODS password
 iuserinfo   | User info
 ierror      | Information on error code
 
-To see which physical resources are attached to the iRODS instance and what their logical names are, you can use:
-```sh
-ilsresc –l 
-```
-which will yield:
-```
-resource name: demoResc
-id: 9101
-zone: aliceZone
-type: unixfilesystem
-class: cache
-location: iRODS4.alice
-vault: /irodsVault
-```
-This command lists all resources defined in the iRODS zone and their type, i.e. there is one resource of type *unix file system*. The value after *vault* tells us where our data will be stored physically when added to the resource. *location* gives the server name of the resource, in this case it is the iRODS server itself. Check with:
+> ### LIsting of physical storage resources (move to advanced user trainign)
+> To see which physical resources are attached to the iRODS instance and what their logical names are, you can use:
+> ```sh
+> ilsresc –l 
+> ```
+> which will yield:
+> ```
+> resource name: demoResc
+> id: 9101
+> zone: aliceZone
+> type: unixfilesystem
+> class: cache
+> location: iRODS4.alice
+> vault: /irodsVault
+> ```
+> This command lists all resources defined in the iRODS zone and their type, i.e. there is one resource of type *unix file system*. The value after *vault* tells us where our data will be stored physically when added to the resource. *location* gives the server name of the resource, in this case it is the iRODS server itself. Check with:
 
-```sh
-hostname
-```
-on your shell.
+> ```sh
+> hostname
+> ```
+> on your shell.
 
 ### Working in the iRODS environment
 The most important icommand will be:

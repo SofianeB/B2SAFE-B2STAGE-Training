@@ -107,10 +107,10 @@ sudo apt-get -f install
 ```
 
 ### 7. Configuring iRODS
-- First we create the irods vault (where data put into iRODS will be physically stored).
+- First we create the irods vault (where data put into iRODS will be physically stored) and grant the user who runs iRODS (usually *irods*) read and write access:
 ```sh
 sudo mkdir /irodsVault 
-sudo chmod 777 /irodsVault
+sudo chown -R irods /irodsVault
 ```
 
 - Configure iRODS
@@ -154,6 +154,6 @@ Add
 11      1       *       *       *       root    find /var/lib/irods/iRODS/server/log/{re,rods}Log.* -mtime +14  -exec rm {} \;
 ```
 to the file. 
-Now root will delete all reLog and rodsLog files that are older than 14 days. The command will be executed everyday at 11.01am.
+Now *root* will delete all reLog and rodsLog files that are older than 14 days. The command will be executed everyday at 11.01am.
 
 

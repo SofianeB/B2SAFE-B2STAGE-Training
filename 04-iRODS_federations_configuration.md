@@ -2,7 +2,7 @@
 This hands-on takes you through the configuration steps necessary to set up an iRODS federation.
 
 ## Prerequisites
-Two iRODS 4.1 zones.
+Two iRODS 4.1 zones e.g. *aliceZone* and *bobZone*. You will need *rodsadmin* rights on both zones.
 
 ## Configuring the iRODS federation
 ### Creating remote zones and users
@@ -67,7 +67,7 @@ ERROR: rcObjStat of /aliceZone failed status = -913000 REMOTE_SERVER_SID_NOT_DEF
 ]
 ```
 
-- In some cases you will also have edit the /etc/irods/hosts_config.json. 
+- In some cases you will also have to edit the /etc/irods/hosts_config.json. 
  This is the case if you encounter the following error after editing the server_config.json you will have to go through another step.
 ```sh
 bob@irods4:~$ ils /aliceZone/home/bob#bobZone
@@ -81,7 +81,7 @@ ERROR: _rcConnect: connectToRhost error, server on localhost:1247 is probably do
 {
             "address_type" : "remote",
             "addresses" : [
-                   {"address" : "bob.sip.adddr.ess"}, #ip address
+                   {"address" : "bob.ipa.dddr.ess"}, #ip address
                    {"address" : "<fully qualified hostname>"}, #full server name
                    {"address" : "<localhost>"} #hostname
              ]

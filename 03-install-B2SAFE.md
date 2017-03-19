@@ -215,8 +215,9 @@ PID 21.T12995/7dee7516-0cd1-11e7-ae28-040091643b25 removed
 Removed collection /aliceZone/home/rods/t_coll
  ```
  
-**Exercise**:
+### Exercise
 (For this exercise you will first need to follow the part on **iRODS rule writing**.)
+
 Alter the test rules in *rules* such that a real folder is assigned with PIDs and replicated to another folder on that iRODS instance. 
 Do not remove files, folders and PIDs and verify the correct linking in the iCAT metadata catalogue (*imeta ls*) and the handle system (hdl.handle.org/\<PID\>?noredirect)
  

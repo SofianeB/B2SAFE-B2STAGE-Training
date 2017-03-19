@@ -2,10 +2,11 @@
 This document describes how to install B2SAFE 2 with iRODS4.1 on a Ubunutu 14.04 system.
 
 ## Environment
-Ubuntu 14.04 server, iRODS 4.1 with postgresql 9.3
-You will also need a handle prefix and the respective credentials to configure B2SAFE.
+Ubuntu 14.04 server, iRODS 4.1 with postgresql 9.3.
+You will need to have *root* rights on an iRODS server, a handle prefix and the respective credentials to configure B2SAFE.
+To test B2SAFE in a federation you will also need to setup a federation between this iRODS server and another one.
 
-##Prerequisites
+## Prerequisites
 For a comprehensive documentation please refer to https://github.com/EUDAT-B2SAFE/B2SAFE-core/wiki.
 
 - Install git:
@@ -14,7 +15,8 @@ For a comprehensive documentation please refer to https://github.com/EUDAT-B2SAF
  ```
 
 - Obtain a (test) prefix to create PIDs. 
- For a prefix for the **Handle server v7** you will be provided with a prefix and a password. When working with **Handle server v8** you will be provided with certficates (private key and certificate) and a password for the reverse lookup servelet.
+ 1. For a prefix for the **Handle server v7** you will be provided with a prefix and a password. (legacy)
+ 2. When working with **Handle server v8** you will be provided with certficates (private key and certificate) and a password for the reverse lookup servelet. You will also need to install the B2HANDLE library (see section below).
  
 ### 1. Clone code and create packages
 - Clone the github repository of B2SAFE and create the debian package
@@ -24,7 +26,7 @@ For a comprehensive documentation please refer to https://github.com/EUDAT-B2SAF
  cd ~/B2SAFE-core/packaging
  ./create_deb_package.sh
  ```
-- PID configuration with *epicclient.py*
+- PID configuration with *epicclient.py* (legacy)
 If you do not want to add the trusted CA of the epic server to your trusted CAs you need to edit the B2SAFE-core/cmd/epicclient.py:
 
  ```py
@@ -82,7 +84,6 @@ The resulting json file should look like this:
 ```sh
 {
     "handle_server_url": "https://epic4.storage.surfsara.nl:8007",
-    "baseuri": "https://epic4.storage.surfsara.nl:8007",
     "private_key": "/<path>/<to>/308_21.T12995_USER01_privkey.pem",
     "certificate_only": "/<path>/<to>/308_21.T12995_USER01_certificate_only.pem",
     "prefix": "21.T12995",
@@ -92,7 +93,6 @@ The resulting json file should look like this:
     "HTTPS_verify": "False"
 }
 ```
-
 For a testing server you might want to set *AUTHZ_ENABLED* and *MSIFREE_ENABLED* to false.
 
 ### 3. Python dependencies
@@ -105,6 +105,7 @@ For a testing server you might want to set *AUTHZ_ENABLED* and *MSIFREE_ENABLED*
  ./messageManager.py -h
  ./metadataManager.py -h
  ```
+ With
  ```sh
  ./epicclient.py --help
  ```
@@ -112,7 +113,7 @@ For a testing server you might want to set *AUTHZ_ENABLED* and *MSIFREE_ENABLED*
  ```sh
  ./epicclient2.py --help
  ```
-
+ you can check whether all additional modules are available.
 
 - Known dependencies
 
@@ -151,7 +152,7 @@ irule -vF eudatGetV.r
 *version = 3.1-0
 ```
 
-####Generating PIDs
+#### Generating PIDs
 - Test the epicclient.py:
  ```sh
  sudo su - irods
@@ -163,14 +164,58 @@ irule -vF eudatGetV.r
  sudo su - irods
  /opt/eudat/b2safe/cmd/epicclient2.py os /opt/eudat/b2safe/conf/credentials create www.test.com
  ```
- 
-- Execute the test rules:
+#### B2SAFE tests
+In the folder *B2SAFE-core/rules* you will find some test rules that
+- Create some PIDs with your installed prefix and deletes them again:
  ```sh
- irule -F eudatCreatePid.r
- irule -F eudatRepl_coll.r
- ...
+ ubuntu@ubuntu:~$ irule -F rules/eudatCreatePid.r
+ userNameClient: rods
+ rodsZoneClient: aliceZone
+ Object /aliceZone/home/rods/test_data.txt written with success!
+ Object contents:
+ Hello World!
+ The Object /aliceZone/home/rods/test_data.txt has PID = 21.T12995/4412d58a-0cd1-11e7-bdac-040091643b25
+ PID 21.T12995/4412d58a-0cd1-11e7-bdac-040091643b25 removed
+ Object /aliceZone/home/rods/test_data.txt removed
+ ```
+- Create a collection with a file, attache some PIDs, replicate the collection to another colletion on the same iRODS server
+ ```sh
+ ubuntu@ubuntu:~$ irule -F rules/eudatRepl_coll.r
+userNameClient: rods
+rodsZoneClient: aliceZone
+Created collection /aliceZone/home/rods/t_coll
+Object /aliceZone/home/rods/t_coll/test_data.txt written with success!
+Object contents:
+Hello World!
+The Collection /aliceZone/home/rods/t_coll has PID = 21.T12995/7dee7516-0cd1-11e7-ae28-040091643b25
+
+Collection /aliceZone/home/rods/t_coll replicated to Collection /aliceZone/home/rods/t_coll2!
+The content of the replicated collection is: /aliceZone/home/rods/t_coll2/test_data.txt
+The content of the replicated object /aliceZone/home/rods/t_coll2/test_data.txt is:
+Hello World!
+
+PIDs for data:
+The Original /aliceZone/home/rods/t_coll/test_data.txt has PID = 21.T12995/7ec3c5c2-0cd1-11e7-b1d1-040091643b25
+The Replica /aliceZone/home/rods/t_coll2/test_data.txt has PID = 21.T12995/7f3ddf88-0cd1-11e7-8084-040091643b25
+Remove replicated data object
+PID 21.T12995/7f3ddf88-0cd1-11e7-8084-040091643b25 removed
+Replicated object removed
+
+PIDs for collections:
+The Original /aliceZone/home/rods/t_coll has PID = 21.T12995/7dee7516-0cd1-11e7-ae28-040091643b25
+The Replica /aliceZone/home/rods/t_coll2 has PID = 21.T12995/7e75fe32-0cd1-11e7-84e2-040091643b25
+Remove replica Collection and PID.
+PID 21.T12995/7e75fe32-0cd1-11e7-84e2-040091643b25 removed
+Replicated collection removed
+
+Remove original data and their PIDs
+PID 21.T12995/7ec3c5c2-0cd1-11e7-b1d1-040091643b25 removed
+Object /aliceZone/home/rods/t_coll/test_data.txt removed
+PID 21.T12995/7dee7516-0cd1-11e7-ae28-040091643b25 removed
+Removed collection /aliceZone/home/rods/t_coll
  ```
  
  **Exercise**:
  Alter the test rules in *rules* such that a real folder is assigned with PIDs and replicated to another folder on that iRODS instance. 
+ Do not remove files, folders and PIDs and verify the correct linking in the iCAT metadata catalogue (*imeta ls*) and the handle system (hdl.handle.org/\<PID\>?noredirect)
  

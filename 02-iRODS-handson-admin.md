@@ -1,15 +1,16 @@
 # iRODS hands-on for admins
 This tutorial explains how to administrate users and resources as irods admin.
-We will work with the *icommands* installed on the user interface machine. You will need *irodsadmin* rights and *sudo* rights on the iRODS server.
+We will work with the *icommands* installed on the user interface machine. You will need *irodsadmin* rights and *sudo* rights on the 
+iRODS server (e.g. alice-server).
 
 ## The *iadmin* mode
-Creating users and resources are done under the iadmin mode. You can enter this mode by typing
+Creating users and resources are done under the *iadmin* mode. You can enter this mode by typing
 ```sh
 iadmin #start mode
 help
 q #quit mode
 ```
-In this mode you can only execute iadmin commands listed under *help* but not the 'normal' icommands such as iput.
+In this mode you can only execute iadmin commands listed under *help* but not the 'normal' icommands such as *iput*.
 Alternatively, all iadmin commands can be executed directly on the shell predeeded with 'iadmin'.
 
 ```sh
@@ -18,7 +19,7 @@ iadmin help
 
 ## User admnistration with iadmin
 
-**Exercise** Inspect the function *iadmin mkuser* and *iadmin moduser* and create a rods user and a rods admin.
+**Exercise** Inspect the function *iadmin mkuser* and *iadmin moduser* and create a "rodsuser" and a "rodsadmin".
 
 []()  | []()
 ------|------
@@ -29,10 +30,12 @@ iadmin mkgroup     | create group
 
 ## iRODS resources
 In iRODS you can create so-called resources which correspond to different physical locations such as resource servers and storage devices.
-There are two types of of resources, **coordinating** and **storage** resources. By combining them you can create large decision trees with storage resources as leaves and coordinating resources to decide where the data should go to.
+There are two types of of resources, **coordinating** and **storage** resources. By combining them you can create large decision 
+trees with storage resources as leaves and coordinating resources to decide where the data should go to.
 
 Recall that with *ilsresc* you can list all existing resources in your iRODS zone.
-Let's create a new resource in your home directory. To this end we create a new directory called *newVault* and declare it as a new storage resource.
+Let's create a new resource in your home directory on **alice-server** (the server on which iRODS is installed). To this end we create a new directory called *newVault* and declare it as a 
+new storage resource.
 
 ```sh
 iadmin mkresc newResc unixfilesystem <fully qualified hostname>:/home/alice/newVault
@@ -50,27 +53,31 @@ Usually resources are created directly under */var/lib/irods*.
 
 ### Composable resource trees
 
-We will now create a resource tree in which data will be replicated automatically between two resource.
+We will now create a resource tree in which data will be replicated automatically between two resources.
 When you are working on our training machines please create the resources in your home directory and set the read and write access for the *irods* user. If you are working on your own machine you can create the resources directly under */var/lib/irods* or somewhere higher up the directory tree.
+
+**1. Create a the physical resource**
+First we will create the physical locations for the resources on the iRODS server:
 ```sh
 sudo mkdir /var/lib/irods/iRODS/storage1
 sudo mkdir /var/lib/irods/iRODS/storage2
 ```
 
-**Create two unix file system resources**
+**2. Create two unix file system resources**
+Now we can include these two resources as storage resources in iRODS:
 ```sh
 iadmin mkresc storage1 unixfilesystem <fully qualified hostname>:/var/lib/irods/iRODS/storage1
 iadmin mkresc storage2 unixfilesystem <fully qualified hostname>:/var/lib/irods/iRODS/storage2
 ```
-All iRODS users will have access to these two resources, specific access control to data in iRODS can be done by setting ACLs with *ichmod* on logical namespace level.
+All iRODS users will have access to these two resources.
 
-**Create a coordinating replication resource**
+**3. Create a coordinating replication resource**
 ```sh
 iadmin mkresc replResc replication
 ```
 The keyword *replication* triggers the behaviour of this cordinating resource. All data in this resource will be automatically replicated between the two storage resources.
 
-**Connect the resources**
+**4. Connect the resources**
 ```sh
 iadmin addchildtoresc replResc storage1
 iadmin addchildtoresc replResc storage2
@@ -81,7 +88,7 @@ From there the data replicated to the two leaves, *storage1* and *storage2*.
 
 ```sh
 ilsresc
-iput -R replResc put2.txt
+iput -R replResc test.txt
 ```
 
 ```sh
@@ -92,15 +99,17 @@ ils -L put2.txt
         generic    /var/lib/irods/iRODS/storage1/home/alice/put2.txt
 ```
 
+Resource trees implement data policies on the system level. You can find a full list of preimplemented coordinating storage resources [here](https://docs.irods.org/master/plugins/composable_resources/#coordinating-resources)
+
 []()  | []()
 ------|------
 iadmin mkresource  | create a resource
 iadmin rmresc      | delete a resource
 iadmn modresc     | modify resource attributes
 
-**Exercise** Modify the replication resource to the type *compound* and test where newly ingested data will be saved.
-
-If you are working on our training machines, you can use */var/lib/irods/iRODS/Vault1-10* to create and bundle resources.
+### Exercises
+1. Try to send data directly to *storage2* or *storage1*.
+2. Modify the replication resource to the type *roundrobin* and test where newly ingested data will be saved. Hint: upload several files.
 
 ### Compound resources
 Compound resources consist of a cache resource and an archive resource. Data is entered to the cache resource and passed later to the archive resource.

@@ -384,5 +384,6 @@ In this example we will get all PIDs with a defined URL field.
 
 **Exercise** Register several replicas of a data file and retrieve them with the command above. Which metadata needs to be stored to achieve that?
 
+[Go back to Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)
 
 

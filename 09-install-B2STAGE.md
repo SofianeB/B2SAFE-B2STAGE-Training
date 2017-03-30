@@ -187,4 +187,6 @@ irods://192.168.17.53:1247/aliceZone/home/alice/testfile.txt
 
 To make sure that B2SAFE mints the PIDs correctly,  you need to adjust the serverID in */opt/eudat/b2safe/rulebase/local.re*.
 
-
+[]()|[]()|[]()
+----|----|----
+[Previous](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/08-install-gridFTP-server.md)|[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | [Next](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/10-using-B2STAGE.md)

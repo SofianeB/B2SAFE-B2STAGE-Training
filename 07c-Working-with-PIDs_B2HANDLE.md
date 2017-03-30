@@ -276,3 +276,6 @@ The functions are adjusted to the functionality in the EUDAT B2SAFE service, but
 - [Utilities](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#module-b2handle.utilhandle)
 - [Client credentials](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#module-b2handle.clientcredentials)
 - [Exceptions](http://eudat-b2safe.github.io/B2HANDLE/handleclient.html#module-b2handle.handleexceptions)
+
+[Go back to Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)
+

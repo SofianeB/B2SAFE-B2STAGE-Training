@@ -260,3 +260,5 @@ You can list all options for the CLI on the commandline with:
 ```
 
 The functions are adjusted to the functionality in the EUDAT B2SAFE service, but can serve as reference implementation for other use cases.
+
+[Go back to Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)

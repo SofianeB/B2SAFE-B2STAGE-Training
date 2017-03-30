@@ -192,3 +192,7 @@ The first argument of *msiExecCmd* is the actual command. In that case the pytho
 
 ### Exercise
 Write a rule that periodically checks whether new data is ingested into a certain collection and automatically replicate the data to a dedicated storage resource. You can make use of delayed iRODS rules. Some microservices can be of help.
+
+[]()|[]()|[]()
+----|----|----
+[Previous](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/04-iRODS_federations_configuration.md)|[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | [Next](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/06-B2SAFE-handson.md)

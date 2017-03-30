@@ -191,7 +191,9 @@ control_interface 0.0.0.0
 It forces the server to listen to all ipv4 interfaces.
 
 
-
+[]()|[]()
+----|----
+[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | [Next](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/09-install-B2STAGE.md)
 
 
 

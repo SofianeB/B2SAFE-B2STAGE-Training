@@ -114,3 +114,8 @@ bob@irods4:~$ ils /aliceZone/home/bob#bobZone
 
 We explain [HERE](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/05-iRODS-advanced-users.md) the basics of how you can manage data across different iRODS zones.
 In our [B2SAFE-HANDS-ON](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/06-B2SAFE-handson.md) we illustrate how to employ policies for data management in iRODS federations.
+
+
+[]()|[]()|[]()
+----|----|----
+[Previous](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/03-install-B2SAFE.md)|[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | [Next](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/05-iRODS-advanced-users.md)

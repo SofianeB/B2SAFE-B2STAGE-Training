@@ -53,7 +53,7 @@ COMMIT
 /etc/init.d/iptables-persistent restart
 ```
 
-Add newuser to sudoers
+Create a user under which you want to work and add the account to the sudoers file.
 
 ### 3. Install postgresql
 ```sh
@@ -66,11 +66,13 @@ sudo apt-get install postgresql
 hostnamectl set-hostname <new-hostname>
 echo "IPa.ddr.ess <new-hostname>" >> /etc/hosts
 ```
+You can use *alice-server* to be consistent with this tutorial.
+
 Example hosts-file:
 ```sh
 127.0.0.1   localhost
-127.0.1.1   alice.eudat-sara.vm.surfsara.nl
-IPa.ddr.ess  alice.eudat-sara.vm.surfsara.nl
+127.0.1.1	alice-server
+IPa.ddr.ess  alice.eudat-sara.vm.surfsara.nl alice-server
 ```
 
 ## Installing iRODS
@@ -85,6 +87,7 @@ GRANT ALL PRIVILEGES ON DATABASE "ICAT" to irods;
 exit
 ```
 ### 6. Download and install iRODS packages
+We are installing iRODS 4.1.8. If you want to install a different version simply replace *4.1.8* with the version you would like to use.
 ```sh
 wget ftp://ftp.renci.org/pub/irods/releases/4.1.8/ubuntu14/irods-icat-4.1.8-ubuntu14-x86_64.deb
 wget ftp://ftp.renci.org/pub/irods/releases/4.1.8/ubuntu14/irods-database-plugin-postgres-1.8-ubuntu14-x86_64.deb
@@ -107,9 +110,9 @@ sudo apt-get -f install
 ```
 
 ### 7. Configuring iRODS
-- First we create the irods vault (where data put into iRODS will be physically stored) and grant the user who runs iRODS (usually *irods*) read and write access:
+- First we create the iRODS vault. This is the place where by default (*demoResc* later in iRODS) all data will be stored physically that enters iRODS. We need to grant the user who runs iRODS (usually *irods*) read and write access:
 ```sh
-sudo mkdir /irodsVault 
+sudo mkdir /irodsVault
 sudo chown -R irods /irodsVault
 ```
 

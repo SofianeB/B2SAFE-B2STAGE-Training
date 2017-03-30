@@ -227,3 +227,6 @@ sudo ntpdate -s ntp1.nl.uu.net
 ```
 on both of them.
 
+[]()|[]()|[]()
+----|----|----
+[Previous](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/09-install-B2STAGE.md)|[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | **The end**

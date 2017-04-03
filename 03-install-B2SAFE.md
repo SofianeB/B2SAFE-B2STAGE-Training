@@ -80,6 +80,18 @@ If you are using **the B2HANDLE library and epicclient2.py** you need to fill in
 - REVERSELOOKUP_USERNAME: Usually your prefix
 - HTTPS_VERIFY: If you did not install the handle servers certificates, set this variable to "False".
 
+The resulting config file should look like this:
+```sh
+HANDLE_SERVER_URL="https://epic4.storage.surfsara.nl:8007"
+PRIVATE_KEY=/home/ubuntu/HandleTestPre/308_21.T12995_USER01_privkey.pem
+CERTIFICATE_ONLY=/home/ubuntu/HandleTestPre/308_21.T12995_USER01_certificate_only.pem
+PREFIX="21.T12995"
+HANDLEOWNER="200:0.NA/21.T12995"
+REVERSELOOKUP_USERNAME="21.T12995"
+#REVERSELOOKUP_PASSWORD=5f22530b03a4f024c0422e24b6a27eac
+HTTPS_VERIFY="False"
+```
+
 The resulting json file should look like this:
 ```sh
 {

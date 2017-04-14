@@ -27,14 +27,21 @@ For a comprehensive documentation please refer to https://github.com/EUDAT-B2SAF
  ./create_deb_package.sh
  ```
 - PID configuration with *epicclient.py* (legacy)
-If you do not want to add the trusted CA of the epic server to your trusted CAs you need to edit the B2SAFE-core/cmd/epicclient.py:
+ If you do not want to add the trusted CA of the epic server to your trusted CAs you need to edit the B2SAFE-core/cmd/epicclient.py:
 
  ```py
  self.http = httplib2.Http(disable_ssl_certificate_validation=True)
  ```
 
 - PID configuration with epicclient2.py
-The SSL verfication is given as a parameter in the *credentials* file (see below CRED_FILE_PATH).
+ The SSL verfication is given as a parameter in the *credentials* file (see below CRED_FILE_PATH). Set this flag to 'false'.
+
+ By default B2SAFE uses the python script *epicclient.py* which does not make use of the B2HANDLE python library. Copy *epicclient2.py* to *epicclient.py*:
+ 
+ ```sh
+ cp /opt/eudat/b2safe/cmd/epicclient.py /opt/eudat/b2safe/cmd/epicclient.py_backup
+ cp /opt/eudat/b2safe/cmd/epicclient2.py /opt/eudat/b2safe/cmd/epicclient.py
+ ```
 
 - Install the created package as *root*
  ```sh

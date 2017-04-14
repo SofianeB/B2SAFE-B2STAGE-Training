@@ -36,13 +36,6 @@ For a comprehensive documentation please refer to https://github.com/EUDAT-B2SAF
 - PID configuration with epicclient2.py
  The SSL verfication is given as a parameter in the *credentials* file (see below CRED_FILE_PATH). Set this flag to 'false'.
 
- By default B2SAFE uses the python script *epicclient.py* which does not make use of the B2HANDLE python library. Copy *epicclient2.py* to *epicclient.py*:
- 
- ```sh
- cp /opt/eudat/b2safe/cmd/epicclient.py /opt/eudat/b2safe/cmd/epicclient.py_backup
- cp /opt/eudat/b2safe/cmd/epicclient2.py /opt/eudat/b2safe/cmd/epicclient.py
- ```
-
 - Install the created package as *root*
  ```sh
  sudo dpkg -i /home/alice/debbuild/irods-eudat-b2safe_3.1-1.deb
@@ -79,8 +72,9 @@ REVERSELOOKUP_USERNAME="21.T12995"
 #REVERSELOOKUP_PASSWORD="" <-- the script will ask for the password upon execution
 HTTPS_VERIFY="False"
 ```
+If you added the trusted CA of the epic server to your trusted CAs you can set *HTTPS_VERIFY="True"*
 
-The resulting json file should look like this:
+After running the configuration script the resulting json file */opt/eudat/b2safe/conf/credentials* should look like this:
 ```sh
 {
     "handle_server_url": "https://epic4.storage.surfsara.nl:8007",
@@ -95,6 +89,12 @@ The resulting json file should look like this:
 ```
 For a testing server you might want to set *AUTHZ_ENABLED* and *MSIFREE_ENABLED* to false.
 
+By default B2SAFE uses the python script *epicclient.py* which does not make use of the B2HANDLE python library. Copy *epicclient2.py* to *epicclient.py*:
+ 
+ ```sh
+ cp /opt/eudat/b2safe/cmd/epicclient.py /opt/eudat/b2safe/cmd/epicclient.py_backup
+ cp /opt/eudat/b2safe/cmd/epicclient2.py /opt/eudat/b2safe/cmd/epicclient.py
+ ```
 
 #### B2SAFE with Handle v7 and the epicclient.py
 **Legacy documentation**

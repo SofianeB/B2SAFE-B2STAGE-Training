@@ -1,4 +1,5 @@
 # B2STAGE-gridFTP for users
+Please follow first part 1 on B2SAFE.
 
 ## What will we learn?
 - Steer data between our laptop/userinterface and iRODS with gridFTP
@@ -163,3 +164,10 @@ ils aliceStories
 ### Remarks
 
 What is a third party transfer? A third party transfers is a transfer between two remote servers.
+
+# What have we learned?
+- We can use iRODS to upload, manage and annotate data
+- We can steer dataflows between iRODS instances with the iRODS native icommands
+- We can steer data between our laptop/userinterface and iRODS with gridFTP
+- We can execute third party transfers with gridFTP between a gridFTP enabled iRODS server and a 'normal' gridFTP server 
+

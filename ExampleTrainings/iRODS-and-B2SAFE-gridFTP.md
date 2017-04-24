@@ -1,4 +1,4 @@
-# iRODS, B2SAFE and B2STAGE-gridFTP
+# iRODS, B2SAFE and B2STAGE-gridFTP for users
 
 ## What will we learn?
 - Use iRODS to upload, manage and annotate data

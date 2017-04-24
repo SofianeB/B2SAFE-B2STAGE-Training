@@ -1,5 +1,6 @@
 # EUDAT B2SAFE hands-on
 This hands-on will illustrate how B2SAFE rules can be employed to manage data across iRODS zones by policies.
+It explicitely uses **B2SAFE v4**.
 The tutorial makes use of the icommands. If you did not so then please first follow the tutorial on [using iRODS](https://github.com/chStaiger/B2SAFE-B2STAGE-Training/blob/master/01-iRODS-handson-user.md).
 
 ## B2SAFE data transfer workflow (Using B2SAFE)
@@ -44,7 +45,7 @@ In your /home directory do
 ```sh
 git clone https://github.com/EUDAT-B2SAFE/B2SAFE-core
 ```
-You will find the B2SAFE rulebase here *B2SAFE-core/rulebase* and some testrules here *B2SAFE-core/rules*.
+You will find the B2SAFE rulebase in *B2SAFE-core/rulebase* and some testrules in *B2SAFE-core/rules*.
 
 ### Example: Using B2SAFE to register a file
 You can use the B2SAFE rule *EUDATCreatePID* to register a single file. The rule is located in *B2SAFE-core/rulebase/pid-service.re*.
@@ -56,13 +57,23 @@ iput -f test.txt
 Now let's write a rule which calls *EUDATCreatePID* and registers our *put1.txt*.
 ```sh
 registerFile {
-        EUDATCreatePID(*parent_pid, *path, *ror, bool("false"), *newPID);
+        #parameters: *parent_pid , *source, *ror, *fio, "true"(fixed content) , *newPID
+        # *newPID is the return value
+        EUDATCreatePID("None", *path, "None", "None", "false", *newPID);
 }
 INPUT *path = "/aliceZone/home/alice/put1.txt", *ror = "", *parent_pid =""
 OUTPUT *newPID, ruleExecOut
 ```
-And save this file as MyTestRules/registerFile.r
-The rule takes our *test.txt* as input file. We also communicate that there does not exist a repository of resources yet (\*ror). If the file we would like to register is a replica of another file, we can give the PID of the so-called parent with the parameter \*parent_pid to introduce the correct linking of the PID entries (see also the PID tutorial).
+Replace the variable *\*path* with the iRODS path to a file you uploaded and save this file as registerFile.r
+
+The function takes several input parameters:
+- *parent_pid*: If the data object or the collection is a replica, you can gove here the PID to the direct parent.
+- *source*: The iRODS path to the data object or collection you want to label with a PID.
+- *ror*: The repository of records. Of your file is a replica of a file from a repository you can provide the PID to the repository
+- *fio*: The very first ingest point in the EUDAT domain. If the data object/collection is a replica of another data object/collection in EUDAT you can link here to the PID of the very first ingest point.
+- *fixed-conetent*: Sets the policy to the collection/data object. If true, the object or collection is not to change anymore.
+
+For replication B2SAFE uses these fields to introduce the correct linking between original data, parent data and replicas.
 In *OUTPUT* we define which variables should be prompted on the command line, in this case we would like to receive the newly created PID.
 
 Execute the rule:
@@ -71,88 +82,101 @@ irule -F testRules/registerFile.r
 ```
 The answer will be the PID, e.g.:
 ```sh
-*newPID = 846/b2f56c02-d987-11e5-8ef9-04040a64000c
+*newPID = 21.T12995/2F2D7ED6-28F6-11E7-96FE-FA163EDB14FF
 ```
-This PID has been created at the SURFsara epic test server and can be resolved here: http://hdl.handle.net. 
 
-Enter the full PID string and tick the box *do not redirect to URLs*. This will show you the metadata stored with the PID. *URL* contains the iRODS path where to find the file. You will find that the B2SAFE rule also automatically calculated and stored a sha256 checksum. The field *100/LOC* also contains the location of our file. This field will become interesting when we create chains of replicas of files.
+### Metadata in iRODS and the Handle registry for registered data
+
+As soon as data is registered with the EUDAT rules some extra metadata in the iCAT metadata catalogue is stored:
+
+```sh
+imeta ls -d <FILE>
+```
+
+```
+attribute: eudat_dpm_checksum_date:demoResc
+value: 01493042347
+units:
+----
+attribute: PID
+value: 21.T12995/2f2d7ed6-28f6-11e7-96fe-fa163edb14ff
+units:
+----
+attribute: EUDAT/FIXED_CONTENT
+value: False
+units:
+```
+
+This PID can be resolved here: http://hdl.handle.net. 
+
+Enter the full PID string and tick the box *do not redirect to URLs*. This will show you the metadata stored with the PID. *URL* contains the iRODS path where to find the file. You will find that the B2SAFE rule also automatically calculated and stored a checksum. 
 
 ### B2SAFE Replication workflow
 
 
-1. Copy the user's data to location und B2SAFE administrator home collection
+1. Copy the some user's data to an iRODS collection, here we take the example collection *aliceInWonderland*
 
-        icp -r /aliceZone/home/<irodsuser>/DataCollection /aliceZone/home/b2safe/
+        iput -K -r aliceInWonderland
 
 2. Register all files in the collection using *EUDATPidsForColl*. Save the following file as testRules/eudatPidsColl.r and replace the user and collection name with your respective user and collection name.
-        
-        eudatPidsColl{
-            # Create PIDs for all collections and objects in the collection recursively
-            # ROR is assumed to be "None"
-            EUDATPidsForColl(*coll_path);
-        }
-        INPUT *coll_path='/aliceZone/home/<b2safe>/<collection>'
-        OUTPUT ruleExecOut
- We see that here there is no output of the newly generated PIDs. However, we can retrieve this information by querying the iCAT catalogue.
 
-        imeta ls -d DataCollection/test.txt
- This will return:
-
-        attribute: eudat_dpm_checksum_date:demoResc
-        value: 01455887784
-        units:
-        ----
-        attribute: PID
-        value: 846/6e67a674-d98a-11e5-b634-04040a64000c
-        units:
-        
+ ```sh
+ eudatPidsColl{
+ # Create PIDs for all collections and objects in the collection recursivel            
+ # The second variable designates the 'fixed_content'
+ EUDATPidsForColl(*coll_path, *fixed_content);
+ }
+ INPUT *coll_path='/aliceZone/home/<user>/aliceInWonderland', *fixed_content="false"
+ OUTPUT ruleExecOut
+ ```    
 **Exercise**: Write a script, an iRODS rule or use a simple icommand to retrieve all PIDs of a data collection.
+
+**Exercise**: Do the PIDs change when you call the rule several times on a data object?
 
 3. Replicate the data collection from aliceZone to bobZone. 
 
  Merely transferring the data could also be done by the icommand *irsync*. However, we would like to 1) calculate checksums, create PIDs  and link the replicas' PIDs with their parent counterparts. This is all already implemented by B2SAFE rules.
  Create the file testRules/Replication.r with the following content:
-        
-        Replication {
-            *registered=bool("true");
-            *recursive=bool("true");
-            *status = EUDATReplication(*source, *destination, *registered, *recursive,  *response);
-            if (*status) {writeLine("stdout", "Success!");}
-            else {writeLine("stdout", "Failed: *response");}
-        }
-        INPUT *source="/aliceZone/home/<b2safe>/<collection>",*destination="/bobZone/home/<b2safe>#aliceZone/<collection>"
-        OUTPUT ruleExecOut
- Now let's have a closer look at the PID entries of the parent data on aliceZone. The resolver will show you some information like that:
+ ```sh       
+ Replication {
+  EUDATReplication(*source, *destination, "true", "true", *response)
+ }
+ INPUT *source="/aliceZone/home/<user>/aliceInWonderland",*destination="/bobZone/home/<user>#aliceZone/aliceInWonderland"
+ OUTPUT ruleExecOut
+ ```
+### Metadata for replication
 
- Index |  Type |   Timestamp |  Data
- ------|--------|--------------|--------
- 1 |  URL| 2016-02-22 17:33:49Z |   irods://\<ipaddress\>:1247/aliceZone/home/alice/DataCollection/put1.txt
- 2 |  10320/LOC |  2016-02-22 17:46:04Z |   \<locations\>\<location  href="irods://\<ipaddress\>:1247/aliceZone/home/alice/DataCollection/put1.txt" id="0"/\>\<location href="http://hdl.handle.net/841/244bb240-d98c-11e5-aa5b-04040a640018" id="1"/\>\</locations>
- 3 |  CHECKSUM  |  2016-02-22 17:33:49Z |   d6eb32081c822ed572b70567826d9d9d
+Let us first inspect the iCat metadata for our collection on *alice*.
+- The previous metadata information was extended with a field *EUDAT/REPLICA*:
 
-The *100/LOC* of the parent file has been extended with the PID of it's replica.
+ ```
+attribute: EUDAT/REPLICA
+value: 21.T12996/fc186a38-28fa-11e7-8059-fa163ed79f1d
+units:
+----
+attribute: EUDAT/FIXED_CONTENT
+value: False
+units:
+----
+attribute: PID
+value: 21.T12995/877cb306-28f9-11e7-b391-fa163edb14ff
+units:
+ ```
 
-Let's have a look at the content of the replica's PID
+**Exercise** Inspect the Handle entry of the PID.
 
-Index |  Type |   Timestamp |  Data
-------|--------|--------------|--------
-1 |  URL | 2016-02-22 17:46:04Z  |  irods://\<ipaddress\>/bobZone/home/alice#aliceZone/DataCollection/put1.txt
-2 |  10320/LOC |  2016-02-22 17:46:04Z |   \<locations\>\<location href="irods://\<ipaddress\>:1247/bobZone/home/alice#aliceZone/DataCollection/put1.txt" id="0"/\>\</locations\>
-3 |  CHECKSUM  |  2016-02-22 17:46:04Z |   d6eb32081c822ed572b70567826d9d9d
-4 |  EUDAT/ROR |  2016-02-22 17:46:04Z  |  846/6e67a674-d98a-11e5-b634-04040a64000c
-5 |  EUDAT/PPID |  2016-02-22 17:46:04Z  |  846/6e67a674-d98a-11e5-b634-04040a64000c
+Via the Handle system we can get to the replica. Here we find much more metadata:
+- *EUDAT/ROR*: Repository of records, a (community) repository holding the very original file
+- *EUDAT/FIO*: First ingest point in the EUDAT domain, i.e. first EUDAT repository holding a copy or the original
+- *EUDAT/PARENT*: Direct parent of the replica
 
-The replica contains two extra fields. 
-*EUDAT/ROR* indicates the original file in the repository of resources. 
-*EUDAT/PPID* contains the PID to the direct parent. 
+Via the iCAT keys and PID entries *EUDAT/REPLICA* and *EUDAT/PARENT*, a double linked list is introduced which can be employed to fetch all replicated data.
 
-The ROR-entry is important to verify that the replica is indeed the same as the original file, which has to be done by integrity checks. Every replica, also a replica of a replica, will inherit this entry. The PPID entry is important to build the linked list of replicas in case replicas are further replicated to other sites.
-
-### Retrieve the PIDs of the replicas
+### Exercise: Using the linked PIDs. Retrieve the PIDs of the replicas.
 
 Option 1)
 
-As B2SAFE admin you have access to the PIDs of the parent PID in your iCAT catalogue. 
+Via iRODS you have access to the PIDs of the parent PID in your iCAT catalogue. 
 
 **Exercise** If you already followed the [PID tutorial](https://github.com/eudat-training/B2SAFE-B2STAGE-Training) write a script to fetch all PIDs of the replicas and check whether original and replica indeed have the same checksum
 
@@ -167,6 +191,8 @@ imeta ls -d /bobZone/home/alice#aliceZone/DataCollection/test.txt
 You can also use the *iquest* command to fetch information and files from the iCAT metadata catalogue.
 
 **Exercise** Replicate the data from bobZone in a different collection in aliceZone, inspect the PID entries and write a script to communicate the whole linked list of PIDs to your irods user, e.g. as a text file.
+
+For more exercises please refer to the [ExampleTrainings](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/tree/master/ExampleTrainings).
 
 []()|[]()|[]()
  +----|----|----

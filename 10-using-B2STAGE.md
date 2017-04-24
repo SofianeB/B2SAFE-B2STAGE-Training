@@ -3,7 +3,7 @@ This section is divided into two parts. In the first part we explain how to inst
 The second part will take you through the commands how to work on an iRODS system by means of gridFTP and how to combine the gridFTP commands with the icommands to steer your data flow.
 
 ## Setup a gridFTP client
-If you are working on one of the provisioned user interface machines, please skip this section.
+If you are working on one of the provisioned user interface machines, please skip this section and proceed with "Working with gridFTP".
 
 ### Prerequisites
 - Ubuntu 14.04
@@ -45,7 +45,7 @@ To connect to the gridFTP server you need a certificate. The admin of the gridFT
 mkdir /home/<user>/.globus
 ```
 
-## Hostname resolving
+### Hostname resolving
 To map the actual server name and the distinguished name of the gridFTP server you can adjust the */etc/hosts*. Here we show an example:
 ```sh
 <ip.add.re.ss>   localname of the gridFTP server
@@ -78,16 +78,15 @@ globus-url-copy -help
 
 List the iRODS home collection of the iRODS user *alice*:
 ```sh
-globus-url-copy -vb -ipv6 -list gsiftp://<fqdn>/aliceZone/home/alice/
+globus-url-copy -vb -list gsiftp://alice-server/aliceZone/home/alice/
 ```
-[//]: # "The '''/<zone_name>/<collection>/<collection>/``` part below"
-[//]: # "does not show in the redendered result. It show '''////``` instead."
-Since this GridFTP server is integrated with iRODS, the url to list consists of */zone_name/home/alice/collection/*. Where the collection part is the logical path of the iRODS zone.
+
+Since this GridFTP server is integrated with iRODS, the URL to list consists of */zone_name/home/alice/collection/*. Where the collection part is the iRODS logical path.
 **Note**, that you cannot use this gridFTP instance any longer to list, add and fetch data from the normal file system on the server in this setting. Try to list the folder */tmp* on the gridFTP server:
 
 ```sh
-globus-url-copy -vb -ipv6 -list gsiftp://<fqdn>/tmp/
-gsiftp://<fqdn>/tmp/
+globus-url-copy -vb -list gsiftp://alice-server/tmp/
+gsiftp://alice-server/tmp/
 
 
 error: globus_ftp_client: the server responded with an error
@@ -102,7 +101,7 @@ error: globus_ftp_client: the server responded with an error
 
 Single files can be uploaded to iRODS via:
 ```sh
-globus-url-copy -dbg -ipv6 file:/home/alice/test.txt gsiftp://<fqdn>/aliceZone/home/alice/
+globus-url-copy file:/home/alice/test.txt gsiftp://alice-server/aliceZone/home/alice/
 ```
 This will add *test.txt* to the iRODS collection *alice*. To rename the file in iRODS you can extend the iRODS path pointing to the collection with a filename.
 
@@ -123,10 +122,10 @@ Use the *globus-url-copy* to retrieve a single file and folder from iRODS.
 In the previous parts of the tutorial we have seen how we can employ the icommands to ingest data and how to synchronise this data with another iRODS grid using B2SAFE.
 
 **Exercise: Synchronising collections**
-Develop a script that will synchronise a directory tree on your client machine with the gridFTP/iRODS server. The script should only process changed and deleted files when run several times.
+Develop a script that will synchronise a directory tree on your client machine with the gridFTP/iRODS server (alice-server). The script should only process changed and deleted files when run several times.
 
 * Consult the help on *globus-url-copy* and search for convenient options.
-* Synchronise your `gridftp<xyz>` directory on your client machine to */aliceZone/home/alice/irods<x>/data/* on the iRODS server.
+* Synchronise your `gridftp\<xyz\>` directory on your client machine to */aliceZone/home/alice/irods\<x\>/data/* on the iRODS server.
 * Verify that the data is properly updated, think of how to create and employ checksums and where to store them, on the client machine and on the iRODS/gridFTP server.
 * Synchronise again and verify no files are transfered.
 * Change a file.

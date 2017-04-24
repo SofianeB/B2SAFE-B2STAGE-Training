@@ -1,4 +1,4 @@
-# iRODS and B2SAFE-gridFTP
+# iRODS, B2SAFE and B2STAGE-gridFTP
 
 ## What will we learn?
 - Use iRODS to upload, manage and annotate data
@@ -58,8 +58,8 @@ ihelp
 `ihelp iuserinfo` or `iuserinfo -h`
 
 
-## Basic commands
-### Basic commands
+## Basic commands (15min)
+### Listing and collection creation
 First we will have a look at some very basic commands to move through the logical namespace in iRPDS. The basic commands in iRODS 
 are very similar to bash/shell commands.
 You can browse through your collections with:
@@ -130,35 +130,18 @@ To keep data safe you sometimes want to store them at a different site belonging
 iRODS offers to federate iRODS Zones for specific users.
 In our little example we set up such a federation.
 
-Remember: to check what data we have stored in our iRODS home collection we used
-
-```
-ils 
-```
-and it listed automatically all data in */aliceZone/home/<user>*.
-
-To access data on the other iRODS server type in:
-
-```
-ils /bobZone/home/<user>#aliceZone
-```
-* *bobZone* denotes the zone on the different server, they are really physically different machines and they run their own iCAT data base
-* Your username needs to be extended with *#aliceZone* to indicate that on bobZone you are a remote user
-* Authentication: You authenticate with your iRODS instance. System administrators at the other iRODS instance added you as a remote 
-users and your corresponding rights.
-
-## iRODS federations (10 min)
+### iRODS federations (15 min)
 iRODS federations are connections between different iRODS servers or - in iRODS terms - *zones*. iRODS federations are setup by the 
 system administrators. They also exchange users which allows you as a user to read and write data at a different iRODS zones.
 
 In our example our users are known and authenticated at *aliceZone*. Each of your accounts has a counter part at the remote zone *bobZone*. 
 
-Let us have a look at how we can access our **remote** home directory.
-
 ```
-ils /bobZone/home/di4r-user1#aliceZone
-/bobZone/home/di4r-user1#aliceZone:
+ils /bobZone/home/<user>#aliceZone
 ```
+* *bobZone* denotes the zone on the different server, i.e a physically different machines and running an own iCAT database
+* Your username needs to be extended with *#aliceZone* to indicate that you are a remote user
+* Authentication: You authenticate with your iRODS instance 'aliceZone'. System administrators at the other iRODS instance added you as a remote user and gave you user rights on 'bobZone'.
 
 Note that when you are accessing your remote home you have to state at which iRODS zone you are authenticated. 
 This is indicated with the *#aliceZone*.
@@ -178,14 +161,11 @@ ils /bobZone/home/di4r-user1#aliceZone -L
     /irodsVault/home/di4r-user1#aliceZone/aliceInWonderland-DE.txt.utf-8
 ```
 
-#### Small exercise (10min)
-- Try to use *imv* to move *aliceInWonderland-DE.txt.utf-8* from *aliceZone* to *bobZone*. Can you use *icp*? What could be the 
-reasoning for the different behaviour?
-- Download the German version from *bobZone* to your local linux filesystem (store it under a different file name). Which commands 
-can you use?
+ ### Small exercise (10min)
+ - Try to use *imv* to move *aliceInWonderland-DE.txt.utf-8* from *aliceZone* to *bobZone*. Can you use *icp*? What could be the reasoning for the different behaviour?
+- Download the German version from *bobZone* to your local linux filesystem (store it under a different file name). Which commands can you use?
 
-The command *imv* edits the corresponding entry in the iCAT metadata catalogue at *aliceZone* and moves the data physically to a new 
-location in the *Vault*.
+The command *imv* edits the corresponding entry in the iCAT metadata catalogue at *aliceZone* and moves the data physically to a new location in the *Vault*.
 
 ```
 ils -L aliceInWonderland-DE.txt.utf-8
@@ -200,48 +180,40 @@ As with *gridFTP* and *rsync* iRODS offers a command to synchronise data between
 iRODS zones.
 In contrast to pure iRODS replication with *irepl* this will create new data objects and collections at the remote zone.
 
-In the following we will use the remote iRODS zone as a backup server. The iRODS collection *archive* will serve as source collection 
-for the backup.
+In the following we will use the remote iRODS zone as a backup server. 
 
-Upload one of the files in *aliceInWonderland* to your home-collection on **aliceZone**. Do not use the *-K* flag.
-
-```
-iput aliceInWonderland/aliceInWonderland-EN.txt.utf-8
-```
-
-We can replicate the file to *bobZone*
+We can replicate the collection *lewiscarroll* to *bobZone*
 
 ```
-irsync i:/aliceZone/home/di4r-user1/aliceInWonderland-EN.txt.utf-8 \
-i:/bobZone/home/di4r-user1#aliceZone/aliceInWonderland-EN.txt.utf-8
+irsync -r i:/aliceZone/home/di4r-user1/lewiscarroll \
+i:/bobZone/home/di4r-user1#aliceZone/lewiscarroll
 ```
 
 Check 
 
 ```
-ils -L /bobZone/home/di4r-user1#aliceZone/aliceInWonderland-EN.txt.utf-8 
+ils -L /bobZone/home/di4r-user1#aliceZone/lewiscarroll 
 ```
 
-You see that at the remote site there is a checksum calculated. *irsync* calculates the checksums and uses them to determine 
-whether the file needs to be transferred. After some delay you will also see with *ils -L* on **aliceZone** that iROD calcuated and 
-stored a checksum for the file.
+You see that the data at the remote site carries a checksum. *irsync* calculates the checksums and uses them to determine 
+whether the file needs to be transferred.
 File transfers with *irsync* are quicker when first calculating the checksum and then transferring them.
 
-#### Small Exercise
+### Small Exercise
 Which commands can you use to download the data from the remote iRODS zone to your local unix file system?
 
 ### Exercise (15min)
 Verify that *irsync* really just updates data when necessary.
 
-1. Create a collection on *aliceZone*, e.g. *archive*
-2. Add some files to this collection, e.g. the German version of Alice in Wonderland (use *icp* or *imv*).
+1. Create a collection on *aliceZone*, e.g. *archive* or reuse the collection *lewiscarroll*
+2. Add some (new) files to this collection, e.g. the English version of Alice in Wonderland (use *icp* or *imv* to move data from *aliceInWonderland*).
 3. Check what needs to be synchronised with *irsync -l* flag. What does this flag do?
 4. Synchronise the whole collection with *bobZone* (not only the file). Which flag do you have to use?
 5. Check again if there is something to be synchronised.
 6. Add another file to * aliceInWonderland* on *aliceZone*, e.g. the Italian version of Alice in Wonderland.
 7. Check the synchronisation status. (It can take some time until the iRODS system marks the new files as 'synchronised')
 
-#### Solution
+### Solution
 
 1. Synchronising
 
@@ -270,15 +242,15 @@ Verify that *irsync* really just updates data when necessary.
  If you did not calculate the checksums for the source files, the sync-status needs some time to be updated.
 
 ### Metadata for remote data (5min)
-We created a nother copy of the *archive* collection at *bobZone* but we lost the link to the data at *aliceZone*.
-We will now have a loko at how we can use the iCAT metadat catalogues at *bobZone* and at *aliceZone* to link the data.
+We created another copy of the *archive* (*lewiscarroll*) collection at *bobZone* but we lost the link to the data at *aliceZone*.
+We will now have a look at how we can use the iCAT metadat catalogues at *bobZone* and at *aliceZone* to link the data.
 
 We can create metadata for iRODS data objects and collections on our home iRODS zone like this:
 
 ```
 imeta add -C aliceInWonderland "Original" "/aliceZone/home/di4r-user1/aliceInWonderland"
-imeta add -d aliceInWonderland/aliceInWonderland-EN.txt.utf-8 \
-"Original" "/aliceZone/home/di4r-user1/aliceInWonderland/aliceInWonderland-EN.txt.utf-8"
+imeta add -d lewiscarroll/aliceInWonderland-DE.txt.utf-8 \
+"Original" "/aliceZone/home/di4r-user1/lewiscarroll/aliceInWonderland-DE.txt.utf-8"
 ```
 
 With 
@@ -289,20 +261,20 @@ imeta ls -C aliceInWonderland
 and
 
 ```
-imeta ls -d aliceInWonderland/aliceInWonderland-EN.txt.utf-8
+imeta ls -d lewiscarroll/aliceInWonderland-DE.txt.utf-8
 ```
 we can list all metadata.
 
 We can do exactly the same for the data at the remote site
 
 ```
-imeta add -d /bobZone/home/di4r-user1#aliceZone/aliceInWonderland-DE.txt.utf-8 \
-"Original" "/aliceZone/home/di4r-user1/aliceInWonderland-DE.txt.utf-8"
+imeta add -d /bobZone/home/di4r-user1#aliceZone/lewiscarroll/aliceInWonderland-DE.txt.utf-8 \
+"Original" "/aliceZone/home/di4r-user1/lewiscarroll/aliceInWonderland-DE.txt.utf-8"
 ```
 
 #### Small exercise (5min)
 
-1. Label the files in */bobZone/home/di4r-user1#aliceZone/archive* with information on its original source.
+1. Label the files in */bobZone/home/di4r-user1#aliceZone/archive* (or *lewiscarroll*) with information on its original source.
 2. Introduce anonther metadata field in the original data to link to the replicas. Use the key "Replica".
 
 ## Automatic replication with B2SAFE
@@ -369,163 +341,236 @@ irule -vF exampleRules/eudatReplication.r \
 The execution of the rule takes some time due to several checks and the creation of the PIDs.
 
 We did not specify any output, so we need to find out what happened.
-First we inspect the iCAT metadata entry for our data in aliceZone:
+B2SAFE creates metadata for our data in aliceZone which is stored in the iCAT:
 
 ```
 imeta ls -C aliceInWonderland
 ```
 
 ```
-AVUs defined for collection aliceInWonderland:
-attribute: EUDAT/ROR
-value: 21.T12995/88ea102c-1cff-11e7-a500-040091643b25
-units:
-----
 attribute: PID
-value: 21.T12995/88ea102c-1cff-11e7-a500-040091643b25
+value: 21.T12995/94e4e9b4-28ea-11e7-ada6-040091643b25
 units:
 ----
-attribute: Original
-value: /aliceZone/home/di4r-user1/aliceInWonderland
+attribute: EUDAT/REPLICA
+value: 21.T12996/92916c0a-28ea-11e7-a883-04040a6400c1
+units:
+----
+attribute: EUDAT/FIXED_CONTENT
+value: False
 units:
 ```
+The collection received a PID and is marked as 'none-fixed content', a data policy which allows this collection to change.
+And we see that the collection has a replica.
 
-The source collection is labeled with a PID, as is every data object:
+Replicated files in that collection also receive a PID and a special iCAT entry
 
 ```
 imeta ls -d aliceInWonderland/aliceInWonderland-EN.txt.utf-8
 ```
 
 ```
-AVUs defined for dataObj aliceInWonderland/aliceInWonderland-EN.txt.utf-8:
-attribute: PID
-value: 21.T12995/89f6c500-1cff-11e7-96d7-040091643b25
+attribute: EUDAT/REPLICA
+value: 21.T12996/93c8530e-28ea-11e7-89ed-04040a6400c1
 units:
 ----
-attribute: EUDAT/ROR
-value: 21.T12995/89f6c500-1cff-11e7-96d7-040091643b25
+attribute: PID
+value: 21.T12995/968ac9aa-28ea-11e7-9e3e-040091643b25
+units:
+----
+attribute: EUDAT/FIXED_CONTENT
+value: False
 units:
 ----
 attribute: eudat_dpm_checksum_date:demoResc
-value: 01491726434
-units:
-----
-attribute: Original
-value: /aliceZone/home/di4r-user1/aliceInWonderland/aliceInWonderland-EN.txt.utf-8
+value: 01493036011
 units:
 ```
 
 The B2SAFE rules automatically calculate a checksum and store the date of the last check as an AVU in the iCAT. They also assign a PID. 
 You can inspect the information stored in the PID at:
 
-http://hdl.handle.net/21.T12995/88ea102c-1cff-11e7-a500-040091643b25?noredirect
-
-http://hdl.handle.net/21.T12995/aa10125a-1cfb-11e7-802d-040091643b25?noredirect
+- Collection:
+	http://hdl.handle.net/21.T12995/94e4e9b4-28ea-11e7-ada6-040091643b25?noredirect
+- File:
+	http://hdl.handle.net/21.T12995/968ac9aa-28ea-11e7-9e3e-040091643b25?noredirect
 
 *NOTE*, do not forget the *?noredirect*, our data is not publicly avaiable and accessible via a URL. Without the *?noredirect* the 
 request will fail.
 
 * The field URL shows you the iRODS logical path.
 * There is a field with the MD5 checksum
-* There is a special field *10320/LOC*. It contains the iRODS path of our file and some other PID.
+* There is a special field *EUDAT/REPLICA*. It contains the iRODS path of our file and the replica PID.
 
-Let us inspect the PID in the *LOC* field:
+Let us inspect the replica PID for the collection:
 
-```
-https://epic4.storage.surfsara.nl:8007/21.T12996/a95d31b2-1cfb-11e7-b9e6-04040a6400c1?noredirect
-```
-or
+http://hdl.handle.net/21.T12996/92916c0a-28ea-11e7-a883-04040a6400c1?noredirect
 
-```
-https://hdl.handle.net/21.T12996/a95d31b2-1cfb-11e7-b9e6-04040a6400c1?noredirect
-```
-
-We see here that this file resides in *bobZone*, so it is one of the previously created replicas.
-It contains the same checksum as our original file.
-There are two additional entries *ROR* and *PPID*. The *ROR* conatins the PID of the original file, the *PPID* contains the PID 
-of the direct parent file. In our case both are identical.
-You see that the *10320/LOC* only contains the path to the replica. Usually this field collects all direct children of a data file.
+- URL: We see here that this collection resides in *bobZone*, so it is one of the previously created replicas.
+- It contains the same checksum as our original file.
+- There are three additional entries *EUDAT/ROR*, *EUDAT/PARENT* and *EUDAT/FIO*. Here all three are the same, but the can contain ifferent information:
+	- *EUDAT/ROR*: Repository of records, a (community) repository holding the very original file
+	- *EUDAT/FIO*: First ingest point in the EUDAT domain, i.e. first EUDAT repository holding a copy or the original
+	- *EUDAT/PARENT*: Direct parent of the replica
 
 These are all B2SAFE specifiactions and have been implemented by EUDAT.
 
-Now let us go back to iRODS verify the information we drew from the PID sytem and go to bobZone on our shell.
+The replicated file holds the same information:
+
+http://hdl.handle.net/21.T12996/93c8530e-28ea-11e7-89ed-04040a6400c1?noredirect
+
+Now let us go back to iRODS verify the information we drew from the PID sytem and go to bobZone on our shell. We can use the irods paths to the replicated files from the Handle registry:
 
 The metadata of the replicated collection *aliceInWonderland*
 
 ```
 imeta ls -C /bobZone/home/di4r-user1#aliceZone/aliceInWonderland
-AVUs defined for collection /bobZone/home/di4r-user1#aliceZone/aliceInWonderland:
-attribute: EUDAT/ROR
-value: 21.T12995/88ea102c-1cff-11e7-a500-040091643b25
+attribute: EUDAT/PARENT
+value: 21.T12995/94e4e9b4-28ea-11e7-ada6-040091643b25
 units:
 ----
-attribute: EUDAT/PPID
-value: 21.T12995/88ea102c-1cff-11e7-a500-040091643b25
+attribute: EUDAT/ROR
+value: 21.T12995/94e4e9b4-28ea-11e7-ada6-040091643b25
+units:
+----
+attribute: EUDAT/FIXED_CONTENT
+value: False
 units:
 ----
 attribute: PID
-value: 21.T12996/886fe52c-1cff-11e7-b046-04040a6400c1
+value: 21.T12996/92916c0a-28ea-11e7-a883-04040a6400c1
+units:
+----
+attribute: EUDAT/FIO
+value: 21.T12995/94e4e9b4-28ea-11e7-ada6-040091643b25
 units:
 ```
 
 The metadata of one of the replicated data objects:
 
 ```
-imeta ls -d /bobZone/home/di4r-user1#aliceZone/aliceInWonderland/aliceInWonderland-IT.txt.utf-8
-AVUs defined for dataObj /bobZone/home/di4r-user1#aliceZone/aliceInWonderland/aliceInWonderland-IT.txt.utf-8:
-attribute: eudat_dpm_checksum_date:demoResc
-value: 01491726948
+imeta ls -d /bobZone/home/di4r-user1#aliceZone/aliceInWonderland/aliceInWonderland-EN.txt.utf-8
+attribute: EUDAT/FIXED_CONTENT
+value: False
 units:
 ----
-attribute: EUDAT/PPID
-value: 21.T12995/8e54b8a0-1cff-11e7-8219-040091643b25
+attribute: EUDAT/FIO
+value: 21.T12995/968ac9aa-28ea-11e7-9e3e-040091643b25
+units:
+----
+attribute: eudat_dpm_checksum_date:demoResc
+value: 01493037359
 units:
 ----
 attribute: EUDAT/ROR
-value: 21.T12995/8e54b8a0-1cff-11e7-8219-040091643b25
+value: 21.T12995/968ac9aa-28ea-11e7-9e3e-040091643b25
 units:
 ----
 attribute: PID
-value: 21.T12996/8d9a231e-1cff-11e7-9c51-04040a6400c1
+value: 21.T12996/93c8530e-28ea-11e7-89ed-04040a6400c1
+units:
+----
+attribute: EUDAT/PARENT
+value: 21.T12995/968ac9aa-28ea-11e7-9e3e-040091643b25
 units:
 ```
 
-### Exercise: Local replication
-Adopt the calling of the replication rule to replicate *aliceInWonderland* to another collection in *aliceZone*, e.g. 'lewiscarroll'.
+### Exercise: Local replication (5min)
+Adopt the calling of the replication rule to replicate *aliceInWonderland* to another collection in *aliceZone*, e.g. 'lewiscarroll/aliceIW'.
 
-#### Solution
+Inspect the metadata and PID handles of the original data *aliceInWonderland*.
 
-```
+### Solution
+
+```sh
 irule -vF exampleRules/eudatReplication.r \
 "*source='/aliceZone/home/di4r-user1/aliceInWonderland'"\
-"*destination='/aliceZone/home/di4r-user1/lewiscarroll'"
+"*destination='/aliceZone/home/di4r-user1/lewiscarroll/aliceIW'"
 ```
 
+With
+
+```sh
+imeta ls -C aliceInWonderland
+```
+you can see that the entry *EUDAT/REPLICA* was extended with another PID.
+
 ### Exercise: Extending the replication chain
-Now adopt the input to *eudatReplication.r* to replicate *lewiscarroll* from *aliceZone* back to *bobZone*. 
+Now adopt the input to *eudatReplication.r* to replicate *aliceIW* from *aliceZone* back to *bobZone*. 
 
-- Inspect the new PIDs for the data in *lewiscarroll* on *bobZone*, especially the fields *PPID* and *ROR*
-- What changed in the PID entries of the ROR-PID and the PPID-PID?
+- Inspect the metadata of lewiscarroll/aliceIW. How is it extended?
+- How does the metadata of aliceIW at bobZone look like.
+- It helps to draw a picture to keep track of the replication chain.
 
-#### Solution
+### Solution
 
 ```
 irule -vF exampleRules/eudatReplication.r \
-"*source='/aliceZone/home/di4r-user1/lewiscarroll'" \
-"*destination='/bobZone/home/di4r-user1#aliceZone/lewiscarroll'"
+"*source='/aliceZone/home/di4r-user1/lewiscarroll/aliceIW'" \
+"*destination='/bobZone/home/di4r-user1#aliceZone/aliceIW'"
+```
+Metadata entry of *lewiscarroll/aliceIW* (the previous replica which now serves as new parent)
+```
+attribute: EUDAT/PARENT
+value: 21.T12995/94e4e9b4-28ea-11e7-ada6-040091643b25
+units:
+----
+attribute: EUDAT/ROR
+value: 21.T12995/94e4e9b4-28ea-11e7-ada6-040091643b25
+units:
+----
+attribute: EUDAT/FIXED_CONTENT
+value: False
+units:
+----
+attribute: EUDAT/FIO
+value: 21.T12995/94e4e9b4-28ea-11e7-ada6-040091643b25
+units:
+----
+attribute: EUDAT/REPLICA
+value: 21.T12996/b726985c-28ee-11e7-a909-04040a6400c1
+units:
+----
+attribute: PID
+value: 21.T12995/c6a3ac80-28ed-11e7-8b29-040091643b25
+units:
+```
+
+Metadata entry of *aliceIW* at bobZone (the very last replica in the chain)
+
+```
+attribute: EUDAT/FIO
+value: 21.T12995/94e4e9b4-28ea-11e7-ada6-040091643b25
+units:
+----
+attribute: EUDAT/FIXED_CONTENT
+value: False
+units:
+----
+attribute: EUDAT/PARENT
+value: 21.T12995/c6a3ac80-28ed-11e7-8b29-040091643b25
+units:
+----
+attribute: EUDAT/ROR
+value: 21.T12995/94e4e9b4-28ea-11e7-ada6-040091643b25
+units:
+----
+attribute: PID
+value: 21.T12996/b726985c-28ee-11e7-a909-04040a6400c1
+units:
 ```
 
 Example Chain:
 
-- **ROR**
+- **ROR** and **FIO**
 
-   http://hdl.handle.net/21.T12995/8e54b8a0-1cff-11e7-8219-040091643b25?noredirect
+   http://hdl.handle.net/21.T12995/94e4e9b4-28ea-11e7-ada6-040091643b25?noredirect
 - **Direct child** of the ROR
 
-   http://hdl.handle.net/21.T12995/01932d36-1d02-11e7-8122-040091643b25?noredirect
+   http://hdl.handle.net/21.T12995/c6a3ac80-28ed-11e7-8b29-040091643b25?noredirect
 - **Child of the replica**
 
-   http://hdl.handle.net/21.T12996/4d4d928e-1d02-11e7-9346-04040a6400c1?noredirect
+   http://hdl.handle.net/21.T12996/b726985c-28ee-11e7-a909-04040a6400c1?noredirect
 
 
 ## B2STAGE: Data management in iRODS with gridFTP

@@ -1,7 +1,7 @@
 #Handout - iRODS, B2SAFE and B2STAGE-gridFTP
 
 
-<img align="centre" src="/Users/christines/Teaching/B2SAFE-B2STAGE/Slide10.jpg" width="800px">
+<img align="centre" src="https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/develop/ExampleTrainings/iRODS-B2SAFE-B2STAGE/Slide10.jpg" width="800px">
 
 Login to the user interface machine. This machine provides you with:
 
@@ -96,12 +96,20 @@ Now adopt the input to eudatReplication.r to replicate aliceIW from aliceZone ba
 - How does the metadata of aliceIW at bobZone look like.
 - It helps to draw a picture to keep track of the replication chain.
 
-## B2STAGE
+## B2STAGE-gridFTP
 
 ### CLI: globus-url-copy and uberftp
 
 globus-url-copy  | uberftp | Meaning
 ------|------|-----
--help | -help |Help-list | -ls |List directory |-cat| List contents of file-p <n> | -parallel <n>-r | -r (for deleting, transferring only single files) |Recurse-cd | | Create destination upon transfer|-mkdir |Create remote directory-sync, -sync-level |  |Synchronise data| -rm (-r), -rmdir | Remove files and folders
+-help | -help |Help
+-list | -ls |List directory
+ |-cat| List contents of file
+-p <n> | -parallel <n>
+-r | -r (for deleting, transferring only single files) |Recurse
+-cd | | Create destination upon transfer
+|-mkdir |Create remote directory
+-sync, -sync-level |  |Synchronise data
+| -rm (-r), -rmdir | Remove files and folders
 
 

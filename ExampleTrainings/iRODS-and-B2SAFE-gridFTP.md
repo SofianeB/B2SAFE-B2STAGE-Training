@@ -272,7 +272,7 @@ imeta add -d /bobZone/home/di4r-user1#aliceZone/lewiscarroll/aliceInWonderland-D
 "Original" "/aliceZone/home/di4r-user1/lewiscarroll/aliceInWonderland-DE.txt.utf-8"
 ```
 
-#### Small exercise (5min)
+### Small exercise (5min)
 
 1. Label the files in */bobZone/home/di4r-user1#aliceZone/archive* (or *lewiscarroll*) with information on its original source.
 2. Introduce anonther metadata field in the original data to link to the replicas. Use the key "Replica".
@@ -386,6 +386,7 @@ attribute: eudat_dpm_checksum_date:demoResc
 value: 01493036011
 units:
 ```
+### B2SAFE: iCAT metadata and the Handle records
 
 The B2SAFE rules automatically calculate a checksum and store the date of the last check as an AVU in the iCAT. They also assign a PID. 
 You can inspect the information stored in the PID at:

@@ -246,7 +246,7 @@ The reverse look up function works also with wildcards:
 
 ```py
 rev = dict([('URL', "*")])
-result = ec.search_handle(**args)
+result = ec.search_handle(**rev)
 ```
 This will return a list of all PIDs on that server.
 

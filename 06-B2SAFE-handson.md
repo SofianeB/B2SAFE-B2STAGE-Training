@@ -120,18 +120,18 @@ Enter the full PID string and tick the box *do not redirect to URLs*. This will 
 
 2. Register all files in the collection using *EUDATPidsForColl*. Save the following file as testRules/eudatPidsColl.r and replace the user and collection name with your respective user and collection name.
 
- ```sh
- eudatPidsColl{
- # Create PIDs for all collections and objects in the collection recursivel            
- # The second variable designates the 'fixed_content'
- EUDATPidsForColl(*coll_path, *fixed_content);
- }
- INPUT *coll_path='/aliceZone/home/<user>/aliceInWonderland', *fixed_content="false"
- OUTPUT ruleExecOut
- ```    
-**Exercise**: Write a script, an iRODS rule or use a simple icommand to retrieve all PIDs of a data collection.
+  ```sh
+  eudatPidsColl{
+  # Create PIDs for all collections and objects in the collection recursivel            
+  # The second variable designates the 'fixed_content'
+  EUDATPidsForColl(*coll_path, *fixed_content);
+  }
+  INPUT *coll_path='/aliceZone/home/<user>/aliceInWonderland', *fixed_content="false"
+  OUTPUT ruleExecOut
+  ```    
+ **Exercise**: Write a script, an iRODS rule or use a simple icommand to retrieve all PIDs of a data collection.
 
-**Exercise**: Do the PIDs change when you call the rule several times on a data object?
+ **Exercise**: Do the PIDs change when you call the rule several times on a data object?
 
 3. Replicate the data collection from aliceZone to bobZone. 
 
@@ -195,5 +195,5 @@ You can also use the *iquest* command to fetch information and files from the iC
 For more exercises please refer to the [ExampleTrainings](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/tree/master/ExampleTrainings).
 
 []()|[]()|[]()
- +----|----|----
- +[Previous](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/05-iRODS-advanced-users.md)|[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | Next **PID Training - Module 07a, b, c, or d **
+----|----|----
+[Previous](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/05-iRODS-advanced-users.md)|[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | Next **PID Training - Module 07a, b, c, or d **

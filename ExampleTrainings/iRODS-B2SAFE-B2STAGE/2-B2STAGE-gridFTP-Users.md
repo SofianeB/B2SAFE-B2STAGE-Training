@@ -31,7 +31,7 @@ then you can use the follwoing command to upload your whole collection to a new 
 
 ```
 imkdir GridFTPColl
-globus-url-copy -r aliceInWonderland/ gsiftp://alice-server/aliceZone/home/di4r-user1/GridFTPColl/ 
+globus-url-copy -r aliceInWonderland/ gsiftp://alice-server/aliceZone/home/di4r-userX/GridFTPColl/ 
 ```
 - *gsiftp* dentotes the endpoint and protocol
 - *alice-server* is the short cut for the gridFTP server, (inspect mapping in /etc/hosts)
@@ -64,7 +64,7 @@ These PIDs can be used to list and retrieve and list data with gridFTP.
 
 ```
 imeta ls -C aliceInWonderland
-globus-url-copy -list gsiftp://alice-server/21.T12995/88ea102c-1cff-11e7-a500-040091643b25/
+globus-url-copy -list gsiftp://alice-server/21.T12995/877cb306-28f9-11e7-b391-fa163edb14ff/
 ```
 
 Note: replace the pid value in the `globus-url-copy` command with the correct output from the `imeta ls` command.
@@ -76,7 +76,7 @@ PID contains a path to which this gridFTP instance has access to, you can retrie
 Download data via PID from iRODS to your local file system:
 
 ```
-globus-url-copy -cd gsiftp://alice-server/21.T12995/88ea102c-1cff-11e7-a500-040091643b25/ NewCollGsi/
+globus-url-copy -cd gsiftp://alice-server/21.T12995/877cb306-28f9-11e7-b391-fa163edb14ff/ NewCollGsi/
 ls NewCollGsi
 ```
 Note: make sure to update the pid value again.
@@ -91,7 +91,7 @@ Try the following options, which work and why?
 
  ```
  globus-url-copy -list \
- gsiftp://alice-server/aliceZone/home/di4r-user1/aliceInWonderland/
+ gsiftp://alice-server/aliceZone/home/di4r-userX/aliceInWonderland/
  ```
 - List data in *bobZone* via the logical path with respect to *aliceZone*
 
@@ -99,19 +99,19 @@ Try the following options, which work and why?
 
  ```
  globus-url-copy -list \
- gsiftp://alice-server/bobZone/home/di4r-user1#aliceZone/aliceInWonderland/
+ gsiftp://alice-server/bobZone/home/di4r-userX#aliceZone/aliceInWonderland/
  ```
  
  With *uberftp*
 
  ```
  uberftp -ls \
- gsiftp://alice-server/bobZone/home/di4r-user1#aliceZone/aliceInWonderland/
+ gsiftp://alice-server/bobZone/home/di4r-userX#aliceZone/aliceInWonderland/
  ```
 - List data in *aliceZone* referring to the by PID
  
  ```
- imeta ls -C /aliceZone/home/di4r-user1/aliceInWonderland
+ imeta ls -C /aliceZone/home/di4r-userX/aliceInWonderland
  ```
  
  ```
@@ -120,7 +120,7 @@ Try the following options, which work and why?
 - List data in *bobZone* referring to the by PID
 
  ```
- imeta ls -C /bobZone/home/di4r-user1#aliceZone/aliceInWonderland
+ imeta ls -C /bobZone/home/di4r-userX#aliceZone/aliceInWonderland
  ```
  Note, the PIDs referring to data in *bobZone* use the prefix **21.T12996**
  ```
@@ -142,21 +142,23 @@ to the other gridFTP server.
 You all have access to the same unix account on the second gridFTP server. So it is wise to create and own folder there upon transfer.
 
 ```
-globus-url-copy -cd gsiftp://alice-server/21.T12995/88ea102c-1cff-11e7-a500-040091643b25/ gsiftp://bob-server/home/di4r/collUser1/
+globus-url-copy -cd \
+gsiftp://alice-server/21.T12995/94e4e9b4-28ea-11e7-ada6-040091643b25/ \
+gsiftp://bob-server/home/di4r-userX#aliceZone/aliceStories/
 ```
 
 ```
-globus-url-copy -list gsiftp://bob-server/home/di4r/collUser1/
+globus-url-copy -list gsiftp://bob-server/home/di4r-userX#aliceZone/aliceStories/
 ```
 
-On the other server the files in *aliceInWonderland* are saved in *collUser1*.
+On the other server the files from *aliceInWonderland* are saved in *aliceStories*.
 
 And we can put data from another gridFTP endpoint into iRODS via the gridFTP protocol:
 We fetch one of the data files we have just saved in the *di4r/collUser1* directory of the gridFTP endpoint and save it as *aliceStories* 
 in our iRODS (alice) instance:
 
 ```
-globus-url-copy -cd gsiftp://bob-server/home/di4r/collUser1/ gsiftp://alice-server/aliceZone/home/di4r-user1/aliceStories/
+globus-url-copy -cd gsiftp://bob-server/home/di4r-userX/aliceStories/ gsiftp://alice-server/aliceZone/home/di4r-user1/aliceStories/
 
 ils aliceStories
 ```

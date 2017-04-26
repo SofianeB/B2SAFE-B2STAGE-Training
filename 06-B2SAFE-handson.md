@@ -192,6 +192,7 @@ You can also use the *iquest* command to fetch information and files from the iC
 
 **Exercise** Replicate the data from bobZone in a different collection in aliceZone, inspect the PID entries and write a script to communicate the whole linked list of PIDs to your irods user, e.g. as a text file.
 
+
 For more exercises please refer to the [ExampleTrainings](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/tree/master/ExampleTrainings).
 
 []()|[]()|[]()

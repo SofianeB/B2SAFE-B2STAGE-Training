@@ -359,3 +359,6 @@ iquest attrs
 > ```
 > This is due to the fact, that *bob* has no read rights on the parent collection /aliceZone/home/
 
+[]()|[]()|[]()
+----|----|----
+[Previous](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/00-install-iRODS4.md)|[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | [Next](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/02-iRODS-handson-admin.md)

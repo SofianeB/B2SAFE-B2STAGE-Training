@@ -119,7 +119,9 @@ To create such a compound resource, please refer to this [setup](https://github.
 
 *Exercise* Inspect the *univMSSInterface.sh* and adopt it to work with *rsync* or another transfer protocol.
 
-
+[]()|[]()|[]()
+----|----|----
+[Previous](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/01-iRODS-handson-user.md)|[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | [Next](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/03-install-B2SAFE.md)
 
 
 

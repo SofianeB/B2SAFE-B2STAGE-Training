@@ -473,5 +473,5 @@ $CURL -k --key $PRIVKEY --cert $CERTIFICATE \
 
 Note, if you do not specify the index in the URL pointing to your PID, the whole PID will be deleted.
 
-
+[Go back to Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)
 

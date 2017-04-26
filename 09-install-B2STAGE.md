@@ -9,6 +9,7 @@ sudo apt-get install libglobus-gridftp-server-dev
 sudo apt-get install libglobus-gridmap-callout-error-dev
 sudo apt-get install libcurl4-openssl-dev
 sudo apt-get install build-essential make cmake git
+sudo apt-get install -y cdbs
 ```
 
 ## Necessary iRODS packages and code
@@ -28,6 +29,7 @@ git clone https://github.com/EUDAT-B2STAGE/B2STAGE-GridFTP.git
 
 ### Installation
 ```sh
+cd B2STAGE-GridFTP
 cp setup.sh.template setup.sh
 ```
 
@@ -59,7 +61,7 @@ vim ~/.irods/irods_environment.json
 "irods_host" : "<fully-qualified-hostname>",
 "irods_port" : 1247,
 "irods_user_name" : "alice",
-"irods_zone_name" : "alicetestZone",
+"irods_zone_name" : "aliceZone",
 "irods_default_resource" : "demoResc"
 }
 ```
@@ -90,15 +92,18 @@ $irodsConnectAsAdmin "rods"
 load_dsi_module iRODS
 auth_level 4
 ```
-and add the line below to */etc/init.d/globus-gridftp-server*:
-```sh
-LD_PRELOAD="$LD_PRELOAD:/usr/lib/x86_64-linux-gnu/libglobus_gridftp_server.so:/home/alice/iRODS_DSI/libglobus_gridftp_server_iRODS.so"
-export LD_PRELOAD
-```
 
 Restart the gridFTP server:
 ```sh
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:/home/ubuntu/iRODS_DSI/B2STAGE-GridFTP/"
 /etc/init.d/globus-gridftp-server restart
+```
+
+### Adjusting the grid-mapfile
+In the previous step we set up a gridFTP server that uses the unix file system. Thus, in the grid-mapfile the certficate DN was mapped to a unix user. We can reuse the same certficates but need to couple them to the respective iRODS accounts:
+
+```sh
+"/O=Grid/OU=GlobusTest/OU=simpleCA-eve-server/OU=Globus Simple CA/CN=ubuntu" rods
 ```
 
 ### Enabling PID resolution on the server
@@ -113,8 +118,9 @@ To enable this feature simply add
 ```sh
 #Resolution of PIDs
 $pidHandleServer "http://<handle-server>:<port>/api/handles"
+$pidHandleServer "http://hdl.handle.net/api/handles"
 ```
-E.g.
+E.g. for a local Handle server add: 
 ```sh
 $pidHandleServer "http://epic3.storage.surfsara.nl:8001/api/handles"
 ```
@@ -122,7 +128,7 @@ to your *gridftp.conf* and restart the gridFTP server.
 
 ### Combining B2SAFE and B2STAGE
 PIDs are usually created with the respective rule in B2SAFE. B2STAGE is capable of resolving the PIDs to their data in iRODS. To this end the URL field in the PID entry needs to contain a path which B2STAGE links to its iRODS instance.
-The URL field is set by B2SAFE automatically employing the *serverID* from B2SAFE. This variable needs to match exactly the fullyqualified hostname you used to request the host certficate during the [gridFTP server installation](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/08-install-gridFTP-server.md).
+The URL field is set by B2SAFE automatically employing the *serverID* from B2SAFE. This variable needs to match exactly the hostname you used to request the host certficate during the [gridFTP server installation](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/08-install-gridFTP-server.md).
 
 Alternatively, you can also adopt the variable *serverID* in */opt/eudat/b2safe/rulebase/local.re* - getEpicApiParameters to make both server names match.
 
@@ -187,4 +193,6 @@ irods://192.168.17.53:1247/aliceZone/home/alice/testfile.txt
 
 To make sure that B2SAFE mints the PIDs correctly,  you need to adjust the serverID in */opt/eudat/b2safe/rulebase/local.re*.
 
-
+[]()|[]()|[]()
+----|----|----
+[Previous](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/08-install-gridFTP-server.md)|[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | [Next](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/10-using-B2STAGE.md)

@@ -177,9 +177,9 @@ grid-proxy-init
 Try to list the */tmp* directory via gridFTP and create and copy a file to that directory.
 The protocol to use is *gsiftp* and the server name needs to match the field *CN* in the host certificate.
 ```sh
-globus-url-copy -dbg -list gsiftp://irods4-alice.eudat-sara.vm.surfsara.nl/tmp/
+globus-url-copy -dbg -list gsiftp://alice-server/tmp/
 echo "kjsbdj" > /home/alice/test.txt
-globus-url-copy file:/home/alice/test.txt gsiftp://irods4-alice.eudat-sara.vm.surfsara.nl/tmp/test.txt
+globus-url-copy file:/home/alice/test.txt gsiftp://alice-server/tmp/test.txt
 ```
 
 ## Trouble shooting
@@ -191,7 +191,9 @@ control_interface 0.0.0.0
 It forces the server to listen to all ipv4 interfaces.
 
 
-
+[]()|[]()
+----|----
+[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | [Next](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/09-install-B2STAGE.md)
 
 
 

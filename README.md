@@ -10,8 +10,8 @@ Please consult the user [documentation on the services](https://eudat.eu/service
 
 The order of the markdown files proposes the curriculum of the training. Each component takes about 1 hour. 
 
-File | Target audience
-------|-------------------
+File | Target audience | Status
+------|--------------|-----
 <span class="css-truncate css-truncate-target"><a href="/00-install-iRODS4.md" class="js-navigation-open" title="00-install-iRODS4.md">00-install-iRODS4.md</a></span> | site admins
 <span class="css-truncate css-truncate-target"><a href="/01-iRODS-handson-user.md" class="js-navigation-open" title="01-iRODS-handson-user.md">01-iRODS-handson-user.md</a></span> | researchers
 <span class="css-truncate css-truncate-target"><a href="/02-iRODS-handson-admin.md" class="js-navigation-open" title="02-iRODS-handson-admin.md">02-iRODS-handson-admin.md</a></span>	| site admins and interested researchers
@@ -19,10 +19,17 @@ File | Target audience
 <span class="css-truncate css-truncate-target"><a href="/04-iRODS_federations_configuration.md" class="js-navigation-open"  title="04-iRODS_federations_configuration.md">04-iRODS_federations_configuration.md</a></span>	| site admins and interested researchers
 <span class="css-truncate css-truncate-target"><a href="/05-iRODS-advanced-users.md" class="js-navigation-open" title="05-iRODS-advanced-users.md">05-iRODS-advanced-users.md</a></span>| site admins and researchers
 <span class="css-truncate css-truncate-target"><a href="/06-B2SAFE-handson.md" class="js-navigation-open" title="06-B2SAFE-handson.md">06-B2SAFE-handson.md</a></span>| site admins and data managers
-<span class="css-truncate css-truncate-target"><a href="/07a-Working-with-PIDs_CURL.md" class="js-navigation-open" title="07a-Working-with-PIDs_CURL.md">07a-Working-with-PIDs_CURL.md</a></span> <p><span class="css-truncate css-truncate-target"><a href="/07b-Working-with-PIDs_epicclient.md" class="js-navigation-open" title="07b-Working-with-PIDs_epicclient.md">07b-Working-with-PIDs_epicclient.md</a></span> <p><span class="css-truncate css-truncate-target"><a href="/07c-Working-with-PIDs_B2HANDLE.md" class="js-navigation-open" title="07c-Working-with-PIDs_B2HANDLE.md">07c-Working-with-PIDs_B2HANDLE.md</a></span> <p><span class="css-truncate css-truncate-target"><a href="/07d-Working-with-PIDs_EPIC.md" class="js-navigation-open" title="07d-Working-with-PIDs_EPIC.md">07d-Working-with-PIDs_EPIC.md</a></span> | site admins and interested researchers
+<span class="css-truncate css-truncate-target"><a href="/07a-Working-with-PIDs_CURL.md" class="js-navigation-open" title="07a-Working-with-PIDs_CURL.md">07a-Working-with-PIDs_CURL.md</a></span> <p><span class="css-truncate css-truncate-target"><a class="js-navigation-open" title="07b-Working-with-PIDs_epicclient.md">07b-Working-with-PIDs_epicclient.md</a></span> <p><span class="css-truncate css-truncate-target"><a href="/07c-Working-with-PIDs_B2HANDLE.md" class="js-navigation-open" title="07c-Working-with-PIDs_B2HANDLE.md">07c-Working-with-PIDs_B2HANDLE.md</a></span> <p><span class="css-truncate css-truncate-target"><a class="js-navigation-open" title="07d-Working-with-PIDs_EPIC.md">07d-Working-with-PIDs_EPIC.md</a></span> | site admins and interested researchers | [Legacy material] Module 07b and Module 07d \*
 <span class="css-truncate css-truncate-target"><a href="/08-install-gridFTP-server.md" class="js-navigation-open" title="08-install-gridFTP-server.md">08-install-gridFTP-server.md</a></span> | site admins
 <span class="css-truncate css-truncate-target"><a href="/09-install-B2STAGE.md" class="js-navigation-open" title="09-install-B2STAGE.md">09-install-B2STAGE.md</a></span> | site admins
 <span class="css-truncate css-truncate-target"><a href="/10-using-B2STAGE.md" class="js-navigation-open" title="10-using-B2STAGE.md">10-using-B2STAGE.md</a></span> | researchers, last exercise is a joint effort between researchers and site admins
+
+\* To get back to the old versions do:
+```sh
+git clone https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training.git
+git checkout 7b22697f13efce29465d97dfb3177be5db2e33dc 07d-Working-with-PIDs_EPIC.md
+git checkout 7b22697f13efce29465d97dfb3177be5db2e33dc 07b-Working-with-PIDs_epicclient.md
+```
 
 ## Set up
 During the tutorial site admins learn how to set up an infrastructure like indicated in the picture below. Users can make use of a pre-deployed instance of this infratructure on the EUDAT Training Sandbox. 

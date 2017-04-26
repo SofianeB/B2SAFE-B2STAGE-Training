@@ -9,6 +9,7 @@ sudo apt-get install libglobus-gridftp-server-dev
 sudo apt-get install libglobus-gridmap-callout-error-dev
 sudo apt-get install libcurl4-openssl-dev
 sudo apt-get install build-essential make cmake git
+sudo apt-get install -y cdbs
 ```
 
 ## Necessary iRODS packages and code

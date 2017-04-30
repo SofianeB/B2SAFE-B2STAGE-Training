@@ -243,12 +243,13 @@ print(url)
 **Note,** that this functionality is an EUDAT extension to the standard Handle server functionalities. You can also only query reversely on a local Handle server, not across the global Handle server.
 
 The reverse look up function works also with wildcards:
+We know that B2SAFE uses PIDs and stores the iRODS path in te field **URL**
 
 ```py
-rev = dict([('URL', "*")])
+rev = dict([('URL', 'irods:*')])
 result = ec.search_handle(**rev)
 ```
-This will return a list of all PIDs on that server.
+This will return a list of all PIDs stored in iRODS.
 
 ### Using the epicclient Command Line Interface (CLI)
 For now we directly worked with the library. EUDAT provides an [epicclient](https://github.com/EUDAT-B2SAFE/B2SAFE-core/blob/master/cmd/epicclient2.py) which can be used as command line interface (CLI) based on the B2HANDLE. 

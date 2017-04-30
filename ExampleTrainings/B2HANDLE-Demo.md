@@ -169,3 +169,20 @@ What would be the workflow to do so without breaking the PID linking?
   ```
   
 Verify that we did not break the linking between the local and the public file.
+
+## (Extra) Reverse look-ups
+We have seen how to retreieve data and PID entries when given the PID. Assume you only know some characteristic like the checksum or the URL. How can you retrieve the PID?
+
+```py
+rev = dict([('URL', 'irods:*')])
+result = ec.search_handle(**rev)
+result
+```
+This fetches all PIDs stored in iRODS (B2SAFE) on the local Handle server with the respective string in the field **URL** no matter under which prefix they were created.
+
+The reverse lookup works with wildcards.
+
+If we saved the checksum with our files, we could retrieve how many times the same file has been saved.
+
+**Note**, that reverse lookups only work on the local Handle server. I.e. you cannot retrieve PIDs registered on other Handle servers.
+

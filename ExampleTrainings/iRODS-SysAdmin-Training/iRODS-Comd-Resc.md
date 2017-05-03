@@ -6,7 +6,7 @@ Explanations and guidance for iRODS system administrators.
 Compound resources allow to install cache-archive constructs. I.e. you have an iRODS cache resource e.g. of type UNIX file system which communicates with an archive resource that can be of any storage type, even the ones iRODS does not support via a plugin.
 You will have to setup the two resources, link them in a composable resource fo type compound and you have to provide a script that defines how the cache resource communicates with the archive resource.
 
-<img align="centre" src="/Users/christines/Teaching/iRODS-SysAdmin-Training/CompoundResc.png" width="400
+<img align="centre" src="CompoundResc.png" width="400
 px">
 
 

@@ -24,13 +24,6 @@ File | Target audience | Status
 <span class="css-truncate css-truncate-target"><a href="/09-install-B2STAGE.md" class="js-navigation-open" title="09-install-B2STAGE.md">09-install-B2STAGE.md</a></span> | site admins
 <span class="css-truncate css-truncate-target"><a href="/10-using-B2STAGE.md" class="js-navigation-open" title="10-using-B2STAGE.md">10-using-B2STAGE.md</a></span> | researchers, last exercise is a joint effort between researchers and site admins
 
-\* To get back to the old versions do:
-```sh
-git clone https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training.git
-git checkout 7b22697f13efce29465d97dfb3177be5db2e33dc 07d-Working-with-PIDs_EPIC.md
-git checkout 7b22697f13efce29465d97dfb3177be5db2e33dc 07b-Working-with-PIDs_epicclient.md
-```
-
 ## Set up
 During the tutorial site admins learn how to set up an infrastructure like indicated in the picture below. Users can make use of a pre-deployed instance of this infratructure on the EUDAT Training Sandbox. 
 
@@ -54,3 +47,11 @@ You will also need extra credentials for the persistent identifiers part; see be
 In the tutorial we  explain how to create, update and delete PIDs. The infrastructure to manage PIDs is provided by SURFsara. Note that all instances (B2SAFE, user modules) will make use of the same PID prefix. 
 
 To follow this part of the tutorial you need extra credentials. We will provide you with these credentials via [EUDAT contact pages](https://eudat.eu/support-request?service=DOCUMENTATION); please provide some details on which community you are from and in which context you would like to follow the tutorial. 
+
+## Legacy material
+\* To get back to the old versions do:
+```sh
+git clone https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training.git
+git checkout 7b22697f13efce29465d97dfb3177be5db2e33dc 07d-Working-with-PIDs_EPIC.md
+git checkout 7b22697f13efce29465d97dfb3177be5db2e33dc 07b-Working-with-PIDs_epicclient.md
+```

@@ -4,7 +4,7 @@ Explanations and guidance for iRODS system administrators.
 
 ## Context
 Compound resources allow to install cache-archive constructs. I.e. you have an iRODS cache resource e.g. of type UNIX file system which communicates with an archive resource that can be of any storage type, even the ones iRODS does not support via a plugin.
-You will have to setup the two resources, link them in a composable resource fo type compound and you have to provide a script that defines how the cache resource communicates with the archive resource.
+You will have to setup the two resources, link them in a composable resource og type compound and you have to provide a script that defines how the cache resource communicates with the archive resource.
 
 <img align="centre" src="CompoundResc.png" width="400
 px">
@@ -350,14 +350,14 @@ ls /home/<USER>/iRODS-archive/trash/home/rods
  we see that file was really deleted.
 
 ## Fine-tuning
-We have seen that the put command only finishes when the data is successfully transferred to the archive resource. For large files this might take some time. So we want the iRODS system to switch back to theprompt as soon as the data is stored in the cache resource and later do the transfer to archive.
+We have seen that the put command only finishes when the data is successfully transferred to the archive resource. For large files this might take some time. So we want the iRODS system to switch back to the prompt as soon as the data is stored in the cache resource and later do the transfer to archive.
 
 To do so you need to switch the auto-replication off in the composable resource by setting:
 
 ```
 iadmin modresc eudat context "auto_repl=off"
 ```
-Now the put-command will finish as sson as the data is written to the cache resource.
+Now the put-command will finish as soon as the data is written to the cache resource.
 
 To move the data automatically to the archive resource we need to define the *acPostProcForPut*, *acPostProcForRepl* and *acPostProcForCopy* in the iRODS rule set, e.g. */etc/irods/core.re*.
 

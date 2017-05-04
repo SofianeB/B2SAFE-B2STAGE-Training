@@ -14,9 +14,9 @@
 # function for the synchronization of file ${1:?} on local disk resource to file ${2:?} in the MSS
 
 
-export ST_AUTH=https://proxy.swift.surfsara.nl/auth/v1.0
-export ST_USER=christine
-export ST_KEY=supersmurf
+export ST_AUTH=https://<server>/auth/v1.0
+export ST_USER=<user>
+export ST_KEY=<key>
 
 syncToArch () {
 	# <your command or script to copy from cache to MSS> ${1:?} ${2:?} 

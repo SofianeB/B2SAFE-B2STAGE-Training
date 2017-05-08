@@ -197,4 +197,4 @@ For more exercises please refer to the [ExampleTrainings](https://github.com/EUD
 
 []()|[]()|[]()
 ----|----|----
-[Previous](../05-iRODS-advanced-users.md)|[Index](../B2SAFE-B2STAGE-Training)  | Next **PID Training - Module 07 **
+[Previous](05-iRODS-advanced-users.md)|[Index](B2SAFE-B2STAGE-Training)  | Next **PID Training - Module 07 **

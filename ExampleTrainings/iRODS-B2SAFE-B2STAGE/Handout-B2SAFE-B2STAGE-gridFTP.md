@@ -1,4 +1,4 @@
-#Handout - iRODS, B2SAFE and B2STAGE-gridFTP
+# Handout - iRODS, B2SAFE and B2STAGE-gridFTP
 
 
 <img align="centre" src="https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/develop/ExampleTrainings/iRODS-B2SAFE-B2STAGE/Slide10.jpg" width="800px">

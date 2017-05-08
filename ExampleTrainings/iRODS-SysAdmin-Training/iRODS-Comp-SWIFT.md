@@ -32,8 +32,8 @@ sudo chown -R <user who runs iRODS> /S3cache
 ```
 
 ```sh
-iadmin mkresc S3cache unixfilesystem 145.100.59.37:/S3cache
-iadmin mkresc SWIFTresc univmss 145.100.59.37:iRODS-Vault univMSSInterface_swift.sh
+iadmin mkresc S3cache unixfilesystem <fqdn of your iRODS server>:/S3cache
+iadmin mkresc SWIFTresc univmss <fqdn of your iRODS server>:iRODS-Vault univMSSInterface_swift.sh
 iadmin mkresc S3compound compound
 ```
 

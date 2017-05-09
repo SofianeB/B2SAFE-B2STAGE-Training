@@ -247,4 +247,4 @@ Do not remove files, folders and PIDs and verify the correct linking in the iCAT
  
 []()|[]()|[]()
 ----|----|----
-[Previous](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/02-iRODS-handson-admin.md)|[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | [Next](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/04-iRODS_federations_configuration.md)
+[Previous](02-iRODS-handson-admin.md)|[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | [Next](04-iRODS_federations_configuration.md)

@@ -195,4 +195,4 @@ To make sure that B2SAFE mints the PIDs correctly,  you need to adjust the serve
 
 []()|[]()|[]()
 ----|----|----
-[Previous](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/08-install-gridFTP-server.md)|[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | [Next](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/10-using-B2STAGE.md)
+[Previous](08-install-gridFTP-server.md)|[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | [Next](10-using-B2STAGE.md)

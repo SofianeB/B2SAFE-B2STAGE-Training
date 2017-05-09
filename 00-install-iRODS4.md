@@ -161,4 +161,4 @@ Now *root* will delete all reLog and rodsLog files that are older than 14 days. 
 
 []()|[]()
 ----|----
- [Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | [Next](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/01-iRODS-handson-user.md)
+ [Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | [Next](01-iRODS-handson-user.md)

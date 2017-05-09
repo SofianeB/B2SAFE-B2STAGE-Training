@@ -121,7 +121,7 @@ To create such a compound resource, please refer to this [setup](https://github.
 
 []()|[]()|[]()
 ----|----|----
-[Previous](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/01-iRODS-handson-user.md)|[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | [Next](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training/blob/master/03-install-B2SAFE.md)
+[Previous](01-iRODS-handson-user.md)|[Index](https://github.com/EUDAT-Training/B2SAFE-B2STAGE-Training)  | [Next](03-install-B2SAFE.md)
 
 
 

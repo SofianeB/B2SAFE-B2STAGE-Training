@@ -1,17 +1,6 @@
 #!/bin/bash
 
-## Copyright (c) 2009 Data Intensive Cyberinfrastructure Foundation. All rights reserved.
-## For full copyright notice please refer to files in the COPYRIGHT directory
-## Written by Jean-Yves Nief of CCIN2P3 and copyright assigned to Data Intensive Cyberinfrastructure Foundation
-
-# This script is a template which must be updated if one wants to use the universal MSS driver.
-# Your working version should be in this directory server/bin/cmd/univMSSInterface.sh.
-# Functions to modify: syncToArch, stageToCache, mkdir, chmod, rm, stat
-# These functions need one or two input parameters which should be named ${1:?} and ${2:?}.
-# If some of these functions are not implemented for your MSS, just let this function as it is.
-#
- 
-# function for the synchronization of file ${1:?} on local disk resource to file ${2:?} in the MSS
+# based on https://github.com/irods/irods/blob/master/msiExecCmd_bin/univMSSInterface.sh
 
 
 export ST_AUTH=https://<server>/auth/v1.0

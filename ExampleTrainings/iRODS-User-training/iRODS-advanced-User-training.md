@@ -4,6 +4,7 @@
 - iRODS federations
 - iRODS rule language and write your own backup data policy
 
+
 ## Recap icommands (15 min)
 
 Command 	| Meaning
@@ -37,23 +38,31 @@ iquest "select COLL_NAME, DATA_NAME where \
 META_DATA_ATTR_NAME like 'author' and META_DATA_ATTR_VALUE like 'Alice'"
 ```
 
-Remember: '%' is a wildcard in iquest.
+Remember: in *iquest*, the percent sign (%) is the wildcard character that
+matches zero or more characters.
 
 ### Login
+
 You login to iRODS with the command
 
 ```
 iinit
 ```
-You will be asked for the iRODS server you would like to connect to the port (standard 1247), the zone name of the iRODS server, your iRODS user name and password.
+
+You will be asked for the iRODS server you would like to connect to the port
+(standard 1247), the zone name of the iRODS server, your iRODS user name and
+password.
 
 ### Basic commands
-First we will have a look at some very basic commands to move through the logical namespace in iRODS. The basic commands in iRODS are very similar to bash/shell commands.
-You can browse through your collections with:
+
+First we will have a look at some very basic commands to move through the
+logical namespace in iRODS. The basic commands in iRODS are very similar to
+bash/shell commands. You can browse through your collections with:
 
 ```
 ils
 ```
+
 And you can create new collections with:
 
 ```
@@ -61,27 +70,30 @@ imkdir lewiscarroll
 ```
 
 ### Uploading data to iRODS
+
 We can put a single file into our home-collection or a designated collection.
 
 ```
 iput -K aliceInWonderland-DE.txt.utf-8
 ```
+
 The flag *-K* triggers the calculation and verification of a checksum, in this case an MD5 checksum.
 Now upload a collection to iRODS:
 
 ```
 iput -r -K aliceInWonderland lewiscarroll/book-aliceInWonderland
 ```
-The option *K* triggers the calculation of checksums and verifies them upon upload.
 
 ### Logical and physical namespaces in iRODS
-The *ils* command gives you an option to extract the physical location of a file:
+
+The *ils* command gives you an option to extract the physical location of a
+file with the *-L* flag:
 
 ```
 ils -L -r lewiscarroll/book-aliceInWonderland
 ```
 
-You will see some output like:
+You will see some output similar to:
 
 ```
 alice               0 demoResc           29 2016-08-23.09:04
@@ -90,20 +102,27 @@ alice               0 demoResc           29 2016-08-23.09:04
     /irodsVault/home/alice/lewiscarroll/book-aliceInWonderland/aliceInWonderland-EN.txt.utf-8
 ```
 
-We will use this command quite often today to see what happens with files upon replication.
-With this command you see where the file is stored on the iRODS server.
+We will use this command quite often today to see what happens with files upon
+replication. With this command you see where the file is stored on the iRODS
+server.
 
 - *alice* is the data owner.
-- *0* is the index of this replica. The number only refers to replicas in one iRODS zone and can be used to automatically trim the number of replicas or create new ones in case one got lost.
-- *demoResc* is the resource on which the data is stored. Resources can refer to certain paths on the iRODS server or other storage servers and clusters.
-* The next entry is the time of the upload and the file name.
-* The following entry is the checksum, in our case it is an MD5 checksum.
-* The last entry is the physical path of the data, in our case the data lies on the iRODS server.
+- *0* is the index of this replica. The number only refers to replicas in one
+  iRODS zone and can be used to automatically trim the number of replicas or
+  create new ones in case one got lost.
+- *demoResc* is the resource on which the data is stored. Resources can refer
+  to certain paths on the iRODS server or other storage servers and clusters.
+
+- The next entry is the time of the upload and the file name.
+- The following entry is the checksum, in our case it is an MD5 checksum.
+- The last entry is the physical path of the data, in our case the data lies on
+  the iRODS server.
 
 ### Exercise (5 min)
 
-Data can be downloaded from iRODS to your local machine with the command *iget*.
-Explore the command *iget* to **store the data in you home directory**. Do **not overwrite** your original data and **verify checksums**!
+Data can be downloaded from iRODS to your local machine with the command
+*iget*. Explore the command *iget* to **store the data in you home directory**.
+Do **not overwrite** your original data and do **verify checksums**!
 
 
 ## iRODS federations (10 min)

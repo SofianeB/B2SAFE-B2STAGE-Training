@@ -25,7 +25,7 @@ icd			| Change current working collection
 imeta add [-d -C] Name AttName AttValue [AttUnits]	| Create metadata [file, collection]
 imeta ls [-d -C]	| List metadata [file, collection]
 iquest		| Find data by query on metadata
-iquest attrs	| List of attributes to query 
+iquest attrs	| List of attributes to query
 
 **Some predefined attributes for iquest:**
 
@@ -49,8 +49,8 @@ iinit
 You will be asked for the iRODS server you would like to connect to the port (standard 1247), the zone name of the iRODS server, your iRODS user name and password.
 
 ### Basic commands
-First we will have a look at some very basic commands to move through the logical namespace in iRPDS. The basic commands in iRODS are very similar to bash/shell commands.
-You can browse through your coollections with:
+First we will have a look at some very basic commands to move through the logical namespace in iRODS. The basic commands in iRODS are very similar to bash/shell commands.
+You can browse through your collections with:
 
 ```
 ils
@@ -67,7 +67,7 @@ We can put a single file into our home-collection or a designated collection.
 ```
 iput -K aliceInWonderland-DE.txt.utf-8
 ```
-The flag *-K* triggers the calculation and verification of a checksum, in this case an md5 checksum. 
+The flag *-K* triggers the calculation and verification of a checksum, in this case an MD5 checksum.
 Now upload a collection to iRODS:
 
 ```
@@ -85,20 +85,20 @@ ils -L -r lewiscarroll/book-aliceInWonderland
 You will see some output like:
 
 ```
-alice               0 demoResc           29 2016-08-23.09:04 
+alice               0 demoResc           29 2016-08-23.09:04
 & aliceInWonderland-EN.txt.utf-8
-    9dcbb372c049bdd4b035c1ccb3798e69    generic    
+    9dcbb372c049bdd4b035c1ccb3798e69    generic
     /irodsVault/home/alice/lewiscarroll/book-aliceInWonderland/aliceInWonderland-EN.txt.utf-8
 ```
 
 We will use this command quite often today to see what happens with files upon replication.
 With this command you see where the file is stored on the iRODS server.
 
-- *alice* is the data owner
-- *0* is the index of this replica. the number only refers to replicas in one iRODS zone and can be used to automatically trim the number of replicas or create new ones in case one got lost.
+- *alice* is the data owner.
+- *0* is the index of this replica. The number only refers to replicas in one iRODS zone and can be used to automatically trim the number of replicas or create new ones in case one got lost.
 - *demoResc* is the resource on which the data is stored. Resources can refer to certain paths on the iRODS server or other storage servers and clusters.
-* The next entry is the time of the upload and the file name
-* the follwing entry is the checksum, in our case it is a MD5 sum
+* The next entry is the time of the upload and the file name.
+* The following entry is the checksum, in our case it is an MD5 checksum.
 * The last entry is the physical path of the data, in our case the data lies on the iRODS server.
 
 ### Exercise (5 min)
@@ -118,7 +118,7 @@ You can list all resources you have available with:
 
 ```
 ilsresc
-``` 
+```
 You will see the resource tree.
 
 ```
@@ -147,7 +147,7 @@ echo "Some test text" > test.txt
 iput -K -R storage3 test.txt testfile-on-storage3.txt
 ```
 
-BIG advantage: As a user you do not need to know which storage medium is hidden behind the resource, you simply use the 
+BIG advantage: As a user you do not need to know which storage medium is hidden behind the resource, you simply use the
 icommands to steer your data movements in the backend.
 
 ### User-defined replication of data
@@ -170,7 +170,7 @@ The replicas are enumerated. With this number you can specifically remove a repl
 
 ```
 irm -n 0 lewiscarroll/book-aliceInWonderland/aliceInWonderland-EN.txt.utf-8
-``` 
+```
 We still have a copy of the English version in our system, so the logical name still exists:
 
 ```
@@ -181,12 +181,12 @@ ils lewiscarroll/book-aliceInWonderland
   aliceInWonderland-IT.txt.utf-8
 ```
 
-If you do an 
+If you do an
 
 ```
 irm aliceInWonderland-EN.txt.utf-8
 ```
-all replicas will be removed. 
+all replicas will be removed.
 
 ### Small exercise
 1. Replicate a file to three different resources
@@ -201,7 +201,7 @@ ils -L testfile-on-rr.txt
 ```
 
 ### Small exercise
-- Where is your data stored physically. 
+- Where is your data stored physically.
 - Where is your neighbours data stored?
 - Upload several files after each other. Where does the data land physically?
 - Try to put data on storage1 directly.
@@ -212,13 +212,13 @@ ils -L testfile-on-rr.txt
 2. Where are all the resources located? (`ilsresc -l`)
 3. How many servers does the iRODS system use?
 
-**Note** As an iRODS user you do not need to know which servers and storage systems are involved. 
+**Note** As an iRODS user you do not need to know which servers and storage systems are involved.
 You only need an idea about the policies hidden behind grouped resources.
 
 ## iRODS federations (10 min)
 iRODS federations are connections between different iRODS servers or - in iRODS terms - *zones*. iRODS federations are setup by the system administrators. They also exchange users which allows you as a user to read and write data at a different iRODS zones.
 
-In our example our users are known and authenticated at *aliceZone*. Each of your accounts has a counter part at the remote zone *bobZone*. 
+In our example our users are known and authenticated at *aliceZone*. Each of your accounts has a counter part at the remote zone *bobZone*.
 
 Let us have a look at how we can access our **remote** home directory.
 
@@ -238,9 +238,9 @@ iput -K aliceInWonderland-DE.txt.utf-8 /bobZone/home/di4r-user1#aliceZone
 ```
 ils /bobZone/home/di4r-user1#aliceZone -L
 /bobZone/home/di4r-user1#aliceZone:
-  di4r-user1        0 demoResc       187870 2017-03-27.10:20 
+  di4r-user1        0 demoResc       187870 2017-03-27.10:20
   & aliceInWonderland-DE.txt.utf-8
-    7bdfc92a31784e0ca738704be4f9d088    generic    
+    7bdfc92a31784e0ca738704be4f9d088    generic
     /irodsVault/home/di4r-user1#aliceZone/aliceInWonderland-DE.txt.utf-8
 ```
 
@@ -277,10 +277,10 @@ irsync i:/aliceZone/home/di4r-user1/aliceInWonderland-EN.txt.utf-8 \
 i:/bobZone/home/di4r-user1#aliceZone/aliceInWonderland-EN.txt.utf-8
 ```
 
-Check 
+Check
 
 ```
-ils -L /bobZone/home/di4r-user1#aliceZone/aliceInWonderland-DE.txt.utf-8 
+ils -L /bobZone/home/di4r-user1#aliceZone/aliceInWonderland-DE.txt.utf-8
 ```
 
 You see that at the remote site there is a checksum calculated. *irsync* calculates the checksums and uses them to determine whether the file needs to be transferred. After some delay you will also see with *ils -L* on **aliceZone** that iROD calcuated and stored a checksum for the file.
@@ -316,23 +316,23 @@ Verify that *irsync* really just updates data when necessary.
  iput aliceInWonderland/aliceInWonderland-IT.txt.utf-8 archive/
  ```
 3. Check sync-status
- 
+
  ```
  irsync -r -l i:archive i:/bobZone/home/di4r-user1#aliceZone/archive
  /aliceZone/home/di4r-user1/archive/aliceInWonderland-IT.txt.utf-8   175251   N
  ```
 4. Synchronising and checking sync-status
- 
+
  ```
  irsync -r i:archive i:/bobZone/home/di4r-user1#aliceZone/archive
  irsync -r -l i:archive i:/bobZone/home/di4r-user1#aliceZone/archive
  ```
- 
+
  If you did not calculate the checksums for the source files, the sync-status needs some time to be updated.
 
 ### Metadata for remote data (5min)
-We created a nother copy of the *archive* collection at *bobZone* but we lost the link to the data at *aliceZone*.
-We will now have a loko at how we can use the iCAT metadat catalogues at *bobZone* and at *aliceZone* to link the data.
+We created another copy of the *archive* collection at *bobZone* but we lost the link to the data at *aliceZone*.
+We will now have a loko at how we can use the iCAT metadata catalogues at *bobZone* and at *aliceZone* to link the data.
 
 Recall, we can create metadata for iRODS data objects and collections on our home iRODS zone like this:
 
@@ -342,7 +342,7 @@ imeta add -d archive/aliceInWonderland-EN.txt.utf-8 \
 "Original" "/aliceZone/home/di4r-user1/archive/aliceInWonderland-EN.txt.utf-8"
 ```
 
-With 
+With
 
 ```
 imeta ls -C archive
@@ -364,7 +364,7 @@ imeta add -C /bobZone/home/di4r-user1#aliceZone/archive \
 #### Small exercise (5min)
 
 1. Label the files in */bobZone/home/di4r-user1#aliceZone/archive* with information on its original source.
-2. Introduce anonther metadata field in the original data to link to the replicas. Use the key "Replica".
+2. Introduce another metadata field in the original data to link to the replicas. Use the key "Replica".
 
 ### Retrieving data by metadata (10min)
 It is worth mentioning that you are not able to query the iCAT catalogue of a remote zone.
@@ -423,7 +423,7 @@ and execute the rule with
 irule -F exampleRules/helloworld.r
 ```
 
-### Passing arguments, variables and ouput
+### Passing arguments, variables and output
 The rule has an input variable which we did not set in the previous call. The default value for the variable is "YourName".
 To customise the function, we could alter the code, or we could pass on the right value for the variable.
 
@@ -623,7 +623,7 @@ irule -F exampleRules/conditionalhelloon.r
 The *hello* rules implement single cases of data policies. The *hellorule* puts them together in a sort workflow.
 iRODS executes the first *hello* rule that matches the input and leads to some action.
 
-iRODS is a not a real programming language but a rule/policy language. Thus, rules should not be seen as functions but as policies. 
+iRODS is a not a real programming language but a rule/policy language. Thus, rules should not be seen as functions but as policies.
 
 The rules work like a filter. Rules can have the same name and different bodies. The first rule that matches the parameters is executed. Hence, the most general rule (policy) should go to the back.
 
@@ -638,7 +638,7 @@ On-statements enable us to define different policies and update them without bre
 	- In all other cases the data should go to the "demoResc"
 	
 - Implement the policies using *if* or *on*.
-- Which of the two is more advantagous if you think of what you need to alter when one of the cases (policies) changes?
+- Which of the two is more advantageous if you think of what you need to alter when one of the cases (policies) changes?
 - Why would you put the cases tested with *on* in different rules (all carrying the same rule name)?
 
 ### Solution framework
@@ -658,7 +658,7 @@ storagepolicy(*size, *privacy, *availability){
 	on(*availability=="high"){"replResc"}
 }
 
-INPUT *size=<FILL IN>, *privacy=<FILL IN>, *availability=<FILL_IN> 
+INPUT *size=<FILL IN>, *privacy=<FILL IN>, *availability=<FILL_IN>
 OUTPUT ruleExecOut
 ```
 
@@ -721,7 +721,7 @@ replication{
     #msiDataObjRsync(*home++"/"++*source,"IRODS_TO_IRODS","null",
     #	*destination++"/aliceText.txt",*rsyncStatus);
     writeLine("stdout", "Irsync status: *rsyncStatus");
-    
+
     # create some metadata and link it to the source and
     # example for the collection "archive"
     # Verify with icommands imeta ls -C archive
@@ -733,11 +733,11 @@ replication{
     createAVU(*MDKey, *MDValue, *Path);
 
     writeLine("stdout", "");
-    
+
     # Loop over all data objects in your archive collection in aliceZone
     # Set the field REPLICA for all data objects in archive
     # Set the field ORIGINAL for all replicated data objects
-    
+
     #foreach(*row in SELECT COLL_NAME, DATA_NAME where COLL_NAME like <FILL_IN>){
         #*coll = *row.COLL_NAME;
         #*data = *row.DATA_NAME; # this is your local file on alice
@@ -745,7 +745,7 @@ replication{
         #*path = <FILL IN your local path on aliceZone>;
         #writeLine("stdout", *path);
         #writeLine("stdout", "Metadata for *path:");
-        
+
         #createAVU("TYPE", <FILL IN>, <FILL IN>);
         #createAVU("REPLICA", <FILL IN>, <FILL IN>);
         #writeLine("stdout", "");
@@ -758,7 +758,7 @@ replication{
 }
 
 createAVU(*key, *value, *path){
-	#Creates a key-value pair and connects it to a data object or collection 
+	#Creates a key-value pair and connects it to a data object or collection
     msiAddKeyVal(*Keyval,*key, *value);
     writeKeyValPairs("stdout", *Keyval, " is : ");
     msiGetObjType(*path,*objType);

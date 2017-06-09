@@ -7,29 +7,37 @@
 
 ## Recap icommands (15 min)
 
-Command 	| Meaning
----------|--------
-iinit		| Login
-ienv		| iRODS environment
-iuserinfo	| User attributes
-**ihelp**		| List of all commands
-**\<command\> -h** | Help
-**Up- and down load**	|
-iput	[-K -r -f -R \<resc\>]	| Upload data, create checksum, recursively, overwrite, specify resource
-iget [-K -r -f]	| Check checksum, recursively, overwrite
-**Data organisation** |
-ils [-L -A -l] | List collection [Long format, Accessions, less long format]
-imkdir		| Create collection
-icd			| Change current working collection
-**Metadata** 		|
-imeta add [-d -C] Name AttName AttValue [AttUnits]	| Create metadata [file, collection]
-imeta ls [-d -C]	| List metadata [file, collection]
-iquest		| Find data by query on metadata
-iquest attrs	| List of attributes to query
+|                      Command                       |                                Meaning                                 |
+|----------------------------------------------------|------------------------------------------------------------------------|
+| iinit                                              | Login                                                                  |
+| ienv                                               | iRODS environment                                                      |
+| iuserinfo                                          | User attributes                                                        |
+| **ihelp**                                          | List of all commands                                                   |
+| **\<command\> -h**                                 | Help                                                                   |
+| **Up- and down load**                              |                                                                        |
+| iput [-K -r -f -R \<resc\>]                        | Upload data, create checksum, recursively, overwrite, specify resource |
+| iget [-K -r -f]                                    | Check checksum, recursively, overwrite                                 |
+| **Data organisation**                              |                                                                        |
+| ils [-L -A -l]                                     | List collection [long format, access control list, less long format]   |
+| imkdir                                             | Create collection                                                      |
+| icd                                                | Change current working collection                                      |
+| **Metadata**                                       |                                                                        |
+| imeta add [-d -C] Name AttName AttValue [AttUnits] | Create metadata [file, collection]                                     |
+| imeta ls [-d -C]                                   | List metadata [file, collection]                                       |
+| iquest                                             | Find data by query on metadata                                         |
+| iquest attrs                                       | List of attributes to query                                            |
 
 **Some predefined attributes for iquest:**
 
-USER\_ID, USER\_NAME, RESC\_ID, RESC\_NAME, RESC\_TYPE\_NAME, RESC\_CHILDREN, RESC\_PARENT, DATA\_NAME, DATA\_REPL\_NUM, DATA\_SIZE, DATA\_RESC\_NAME, DATA\_PATH, DATA\_OWNER\_NAME, DATA\_CHECKSUM, COLL\_ID, COLL\_NAME, COLL\_PARENT\_NAME, COLL\_OWNER,\_NAME META\_DATA\_ATTR\_NAME, META\_DATA\_ATTR\_VALUE, META\_DATA\_ATTR\_UNITS, META\_DATA\_ATTR\_ID, META\_COLL\_ATTR\_NAME, META\_COLL\_ATTR\_VALUE, META\_COLL\_ATTR\_UNITS, META\_COLL\_ATTR\_ID, META\_COLL\_CREATE\_TIME, META\_COLL\_MODIFY\_TIME, META\_NAMESPACE\_COLL, META\_RESC\_ATTR\_NAME, META\_RESC\_ATTR\_VALUE, META\_RESC\_ATTR\_UNITS
+USER\_ID, USER\_NAME, RESC\_ID, RESC\_NAME, RESC\_TYPE\_NAME, RESC\_CHILDREN,
+RESC\_PARENT, DATA\_NAME, DATA\_REPL\_NUM, DATA\_SIZE, DATA\_RESC\_NAME,
+DATA\_PATH, DATA\_OWNER\_NAME, DATA\_CHECKSUM, COLL\_ID, COLL\_NAME,
+COLL\_PARENT\_NAME, COLL\_OWNER,\_NAME META\_DATA\_ATTR\_NAME,
+META\_DATA\_ATTR\_VALUE, META\_DATA\_ATTR\_UNITS, META\_DATA\_ATTR\_ID,
+META\_COLL\_ATTR\_NAME, META\_COLL\_ATTR\_VALUE, META\_COLL\_ATTR\_UNITS,
+META\_COLL\_ATTR\_ID, META\_COLL\_CREATE\_TIME, META\_COLL\_MODIFY\_TIME,
+META\_NAMESPACE\_COLL, META\_RESC\_ATTR\_NAME, META\_RESC\_ATTR\_VALUE,
+META\_RESC\_ATTR\_UNITS
 
 **Example query**:
 
@@ -126,9 +134,14 @@ Do **not overwrite** your original data and do **verify checksums**!
 
 
 ## iRODS federations (10 min)
-iRODS federations are connections between different iRODS servers or - in iRODS terms - *zones*. iRODS federations are setup by the system administrators. They also exchange users which allows you as a user to read and write data at a different iRODS zones.
 
-In our example our users are known and authenticated at *aliceZone*. Each of your accounts has a counter part at the remote zone *bobZone*.
+iRODS federations are connections between different iRODS servers or - in iRODS
+terms - *zones*. iRODS federations are setup by the system administrators. They
+also exchange users which allows you as a user to read and write data at a
+different iRODS zones.
+
+In our example your useraccounts are known and authenticated at *aliceZone*.
+Each of your accounts has a counterpart at the remote zone *bobZone*.
 
 Let us have a look at how we can access our **remote** home directory.
 
@@ -137,9 +150,10 @@ ils /bobZone/home/di4r-user1#aliceZone
 /bobZone/home/di4r-user1#aliceZone:
 ```
 
-Note that when you are accessing your remote home you have to state at which iRODS zone you are authenticated. This is indicated with the *#aliceZone*.
+Note that when you are accessing your remote home you have to state at which
+iRODS zone you are authenticated. This is indicated with the *#aliceZone*.
 
-We can put data directly from our linux account in the remote home:
+We can put data directly from your UI Linux account in the remote home:
 
 ```
 iput -K aliceInWonderland-DE.txt.utf-8 /bobZone/home/di4r-user1#aliceZone
@@ -155,26 +169,39 @@ ils /bobZone/home/di4r-user1#aliceZone -L
 ```
 
 #### Small exercise (10min)
-- Try to use *imv* to move *aliceInWonderland-DE.txt.utf-8* from *aliceZone* to *bobZone*. Can you use *icp*? What could be the reasoning for the different behaviour?
-- Download the German version from *bobZone* to your local linux filesystem (store it under a different file name). Which commands can you use?
 
-The command *imv* edits the corresponding entry in the iCAT metadata catalogue at *aliceZone* and moves the data physically to a new location in the *Vault*.
+- Try to use *imv* to move *aliceInWonderland-DE.txt.utf-8* from *aliceZone* to
+  *bobZone*. Can you use *icp*? What could be the reasoning for the different
+  behaviour?
+- Download the German version from *bobZone* to the 'local' Unix filesystem (on
+  the UI machine). Store it under a different file name. Which commands can you
+  use?
+
+The command *imv* edits the corresponding entry in the iCAT metadata catalogue
+at *aliceZone* and moves the data physically to a new location in the *Vault*.
 
 ```
 ils -L aliceInWonderland-DE.txt.utf-8
 imv aliceInWonderland-DE.txt.utf-8 aliceGerman.txt
 ils -L aliceGerman.txt
 ```
-*imv* would mean that the metadata entry is at *aliceZone*, while the data is physically stored at *bobZone*.
-With *icp* you create a new data object with a metadata entry at its iRODS zone and storage site.
+
+*imv* would mean that the metadata entry is at *aliceZone*, while the data is
+physically stored at *bobZone*. With *icp* you create a new data object with a
+metadata entry at its iRODS zone and storage site.
 
 ### Replicating and synchronising data (15min)
-As with *gridFTP* and *rsync* iRODS offers a command to synchronise data between either your local unix filesystem or between different iRODS zones.
-In contrast to pure iRODS replication with *irepl* this will create new data objects and collections at the remote zone.
 
-In the following we will use the remote iRODS zone as a backup server. The iRODS collection *archive* will serve as source collection for the backup.
+As with *gridFTP* and *rsync* iRODS offers a command to synchronise data
+between either your 'local' Unix filesystem or between different iRODS zones.
+In contrast to pure iRODS replication with *irepl* this will create new data
+objects and collections at the remote zone.
 
-Upload one of the files in *aliceInWonderland* to your home-collection on **aliceZone**. Do not use the *-K* flag.
+In the following we will use the remote iRODS zone as a backup server. The
+iRODS collection *archive* will serve as source collection for the backup.
+
+Upload one of the files in *aliceInWonderland* to your home collection on
+**aliceZone**. Do not use the *-K* flag.
 
 ```
 iput aliceInWonderland/aliceInWonderland-EN.txt.utf-8
@@ -193,22 +220,34 @@ Check
 ils -L /bobZone/home/di4r-user1#aliceZone/aliceInWonderland-DE.txt.utf-8
 ```
 
-You see that at the remote site there is a checksum calculated. *irsync* calculates the checksums and uses them to determine whether the file needs to be transferred. After some delay you will also see with *ils -L* on **aliceZone** that iROD calcuated and stored a checksum for the file.
-File transfers with *irsync* are quicker when first calculating the checksum and then transferring them.
+You see that at the remote site there is a checksum calculated. *irsync*
+calculates the checksums and uses them to determine whether the file needs to
+be transferred. After some delay you will also see with *ils -L* on
+**aliceZone** that iROD calculated and stored a checksum for the file. File
+transfers with *irsync* are faster when first calculating the checksum and
+then transferring them.
 
 #### Small Exercise
-Which commands can you use to download the data from the remote iRODS zone to your local unix file system?
+
+Which commands can you use to download the data from the remote iRODS zone to
+your 'local' Unix filesystem?
 
 ### Exercise (15min)
+
 Verify that *irsync* really just updates data when necessary.
 
 1. Create a collection on *aliceZone*, e.g. *archive*
-2. Add some files to this collection, e.g. the German version of Alice in Wonderland (use *icp* or *imv*).
-3. Check what needs to be synchronised with *irsync -l* flag. What does this flag do?
-4. Synchronise the whole collection with *bobZone* (not only the file). Which flag do you have to use?
+2. Add some files to this collection, e.g. the German version of Alice in
+   Wonderland (use *icp* or *imv*).
+3. Check what needs to be synchronised with *irsync -l* flag. What does this
+   flag do?
+4. Synchronise the whole collection with *bobZone* (not only the file). Which
+   flag do you have to use?
 5. Check again if there is something to be synchronised.
-6. Add another file to *archive* on *aliceZone*, e.g. the Italian version of Alice in Wonderland.
-7. Check the synchronisation status. (It can take some time until the iRODS system marks the new files as 'synchronised')
+6. Add another file to *archive* on *aliceZone*, e.g. the Italian version of
+   Alice in Wonderland.
+7. Check the synchronisation status. (It can take some time until the iRODS
+   system marks the new files as 'synchronised')
 
 #### Solution
 
@@ -238,13 +277,17 @@ Verify that *irsync* really just updates data when necessary.
  irsync -r -l i:archive i:/bobZone/home/di4r-user1#aliceZone/archive
  ```
 
- If you did not calculate the checksums for the source files, the sync-status needs some time to be updated.
+If you did not calculate the checksums for the source files, the sync-status
+needs some time to be updated.
 
 ### Metadata for remote data (5min)
-We created another copy of the *archive* collection at *bobZone* but we lost the link to the data at *aliceZone*.
-We will now have a loko at how we can use the iCAT metadata catalogues at *bobZone* and at *aliceZone* to link the data.
 
-Recall, we can create metadata for iRODS data objects and collections on our home iRODS zone like this:
+We created another copy of the *archive* collection at *bobZone* but we lost
+the link to the data at *aliceZone*.  We will now have a look at how we can use
+the iCAT metadata catalogues at *bobZone* and at *aliceZone* to link the data.
+
+Recall, we can create metadata for iRODS data objects and collections on our
+home iRODS zone like this:
 
 ```
 imeta add -C archive "Original" "/aliceZone/home/di4r-user1/archive"
@@ -273,11 +316,12 @@ imeta add -C /bobZone/home/di4r-user1#aliceZone/archive \
 
 #### Small exercise (5min)
 
-1. Label the files in */bobZone/home/di4r-user1#aliceZone/archive* with information on its original source.
-2. Introduce another metadata field in the original data to link to the replicas. Use the key "Replica".
+1. Label the files in */bobZone/home/di4r-user1#aliceZone/archive* with
+   information on its original source.
+2. Introduce another metadata field in the original data to link to the
+   replicas. Use the key "Replica".
 
 ### Retrieving data by metadata (10min)
-It is worth mentioning that you are not able to query the iCAT catalogue of a remote zone.
 
 We can retrieve our freshly labeled data at *aliceZone*
 
@@ -287,26 +331,40 @@ COLL_NAME = /aliceZone/home/di4r-user1/archive
 DATA_NAME = aliceInWonderland-EN.txt.utf-8
 ```
 
-But the metadata created for the *archive* collection at *bobZone* lies in the other iCAT database and we have no access to it.
+To query the metadata in the iCAT catalogue for *bobZone* we need to specify
+this using the *-z* flag of *iquest*.
 
 ```
 iquest "select COLL_NAME, DATA_NAME where \
 META_DATA_ATTR_NAME like 'Origin' and META_DATA_ATTR_VALUE like '%bobZone%'"
 
 CAT_NO_ROWS_FOUND: Nothing was found matching your query
+
+
+iquest -z bobZone "select COLL_NAME, DATA_NAME where \
+META_DATA_ATTR_NAME like 'Origin' and META_DATA_ATTR_VALUE like '%bobZone%'"
+Zone is bobZone
+COLL_NAME = /bobZone/home/di4r-user1#aliceZone/archive
+DATA_NAME = aliceInWonderland-EN.txt.utf-8
 ```
 
-**-->** Federated data and resource access but **no federated iCAT search**, also not for resources, so you have no means to find out about iRODS storage resources at the remote Zone.
+There is no standard way to query multiple iCAT catalogues with a single
+*iquest* command.
 
 #### Small exercise (10 min)
-Assume your "Original" *archive* collection on aliceZone is corrupted. How would you find out where you can get a copy of that data and how would you restore the data?
+
+Assume your "Original" *archive* collection on aliceZone is corrupted. How
+would you find out where you can get a copy of that data and how would you
+restore the data?
 
 #### Solution
+
 ```
 iquest "select META_COLL_ATTR_VALUE where META_COLL_ATTR_NAME like 'Replica' and COLL_NAME like '%archive%'"
 irsync -r -l i:\<answer from iquest\> i:/aliceZone/home/di4r-user1/archive
 irsync -r i:\<answer from iquest\> i:/aliceZone/home/di4r-user1/archive
 ```
+
 
 ## iRODS rules (30min)
 In the previous parts we did a lot of work manually:

@@ -365,7 +365,6 @@ irsync -r -l i:\<answer from iquest\> i:/aliceZone/home/di4r-user1/archive
 irsync -r i:\<answer from iquest\> i:/aliceZone/home/di4r-user1/archive
 ```
 
-
 ## iRODS rules (30min)
 In the previous parts we did a lot of work manually:
 
@@ -390,6 +389,14 @@ and execute the rule with
 ```sh
 irule -F exampleRules/helloworld.r
 ```
+### iRODS microservices
+**TODO**
+
+### iRODS core.re
+**TODO**
+
+### Policiy enforcememt points and actions
+**TODO**
 
 ### Passing arguments, variables and output
 The rule has an input variable which we did not set in the previous call. The default value for the variable is "YourName".
@@ -443,13 +450,35 @@ irule -F exampleRules/variables.r "*var1='Hello'" "*var2=Hello"
 
 ### Global/System variables
 
-iRODS knows predefined global variables that are set by the system and can come in handy. Those variables are addressed by "$" just like in shell scripting.
+iRODS knows predefined global variables that are set by the system and can come in handy. Those variables are addressed by "$" just like in shell scripting. We list here some of them:
 
 ```sh
-$userNameClient
-$rodsZoneClient
-$objPath
+#User
+userNameClient
+userClient
+rodsZoneClient
 
+#Data objects
+objPath
+dataType
+dataSize
+chksum
+filePath
+replNum
+dataOwner
+dataOwnerZone
+dataAccess
+
+#Collections
+collName
+collParentName
+collOwnername
+collAccess
+collInheritance
+
+#Resources
+destRescName
+rescName
 ```
 
 With them you can e.g. create the home collection of the active user:
@@ -458,25 +487,9 @@ With them you can e.g. create the home collection of the active user:
 *home="/$rodsZoneClient/home/$userNameClient"
 ```
 
-### For-loops
+### Looping over data
 
-General for-loops as in any other programming language.
-
-```c
-forloopRule{
-    for(*A = *B; *A < 1020; *A = *A+2){
-        writeLine("stdout", *A)
-    }
-}
-
-input *B=500*2+1
-output ruleExecOut, *A, *B
-```
-```sh
-irule -F exampleRules/forloop.r
-```
-
-However, iRODS is a data management software. In most cases we would like to loop over data objects and collections.
+iRODS is a data management software. In most cases we would like to loop over data objects and collections.
 This is a rule that lists all data objects in a user's 'home' collection.
 
 ```c
@@ -597,6 +610,9 @@ The rules work like a filter. Rules can have the same name and different bodies.
 
 On-statements enable us to define different policies and update them without breaking other policies. Explore that in the exercise below.
 
+### Return values of rules
+**TODO**
+
 ### Exercise (15min)
 
 - Write a rule with different cases (decision between data policies), set the variable "iresource" accordingly:
@@ -621,7 +637,7 @@ policydecision{
 	writeLine("stdout", "*resourceName")
 }
 
-	#example on
+#example on
 storagepolicy(*size, *privacy, *availability){
 	on(*availability=="high"){"replResc"}
 }
@@ -659,12 +675,17 @@ OUTPUT ruleExecOut
 ```
 
 ### Implement your own data archiving policy (30min)
-- Automatically synchronise the *archive* collection to *bobZone*. Watch out! Only replicate your *archive* collection not your neighbours collection.
-- Create metadata to track the data.
+The data archiving rule should consist of two rules (policies).
+1) Automatically synchronise the *archive* collection to *bobZone*. Watch out! Only replicate your *archive* collection not your neighbours collection.
+2) Create metadata to track the data.
 
-#### Template
+We will give examples for replicating collections, corresponding  microservice to replicate files only is *msiDataObjRsync(source, "IRODS_TO_IRODS", dest-resource, destination)*. Note that the order of arguments differ in case of collections.
+
+#### The replication part
+**TODO: test**
+
 ```py
-replication{
+myReplicationPolicy{
     # create base path to your home collection
     *home="/$rodsZoneClient/home/$userNameClient";
     # by default we stay in the same iRODS zone
@@ -672,57 +693,33 @@ replication{
     if(*destination == ""){ *destination = *home++"/test"}
     writeLine("stdout", "Replicate *home/*source");
     writeLine("stdout", "Destination *destination/*source");
+    replicate(*home, *destination, *syncStat)
+    writeLine("stdout", "Irsync finished with: *syncStat");
+}
 
+replicate(*source, *dest, *status){
     # check whether it is a collection (-c) or a data object (-d)
     # *source_type catches return value of the function
     msiGetObjType(*home++"/"++*source,*source_type);
     writeLine("stdout", "*source is of type *source_type");
-
-    # choose the right replication microservice
-
-    # iRODS microservice for irsync for collections
-    # 3rd parameter is the target resource which we leave empty.
-    # *rsyncStatus is a variable returned by the function
     msiCollRsync(*home++"/"++*source, *destination++"/"++*source,
     	"null","IRODS_TO_IRODS",*rsyncStatus);
-    # iRODS microservice for irsync for data objects
-    #msiDataObjRsync(*home++"/"++*source,"IRODS_TO_IRODS","null",
-    #	*destination++"/aliceText.txt",*rsyncStatus);
     writeLine("stdout", "Irsync status: *rsyncStatus");
+    *rsyncStatus
+}
 
-    # create some metadata and link it to the source and
-    # example for the collection "archive"
-    # Verify with icommands imeta ls -C archive
-    # How do you create an AVU for your remote collection?
+INPUT *source="archive", *destination=""
+OUTPUT ruleExecOut
+```
 
+#### The metadata part
+```py
+myMetadataPolicy{
     *MDKey   = "TYPE";
+    msiGetObjType(*home++"/"++*source,*source_type);
     *MDValue = *source_type;
     *Path = *home++"/"++*source;
     createAVU(*MDKey, *MDValue, *Path);
-
-    writeLine("stdout", "");
-
-    # Loop over all data objects in your archive collection in aliceZone
-    # Set the field REPLICA for all data objects in archive
-    # Set the field ORIGINAL for all replicated data objects
-
-    #foreach(*row in SELECT COLL_NAME, DATA_NAME where COLL_NAME like <FILL_IN>){
-        #*coll = *row.COLL_NAME;
-        #*data = *row.DATA_NAME; # this is your local file on alice
-        #*repl = <FILL IN the string that determines the remote file>;
-        #*path = <FILL IN your local path on aliceZone>;
-        #writeLine("stdout", *path);
-        #writeLine("stdout", "Metadata for *path:");
-
-        #createAVU("TYPE", <FILL IN>, <FILL IN>);
-        #createAVU("REPLICA", <FILL IN>, <FILL IN>);
-        #writeLine("stdout", "");
-
-        #writeLine("stdout", "Metadata for *repl:");
-        #createAVU("TYPE", <FILL IN>, <FILL IN>);
-        #createAVU("ORIGINAL", <FILL IN>, <FILL IN>);
-        #writeLine("stdout", "");
-    #}
 }
 
 createAVU(*key, *value, *path){
@@ -737,9 +734,83 @@ INPUT *source="archive", *destination=""
 OUTPUT ruleExecOut
 ```
 
+#### Combine them all
+**TODO: test**
 
+```py
+myReplicationPolicy{
+    # create base path to your home collection
+    *home="/$rodsZoneClient/home/$userNameClient";
+    # by default we stay in the same iRODS zone
+    # --> How do you have to alter *destination to replicate to bobZone?
+    if(*destination == ""){ *destination = *home++"/test"}
+    writeLine("stdout", "Replicate *home/*source");
+    writeLine("stdout", "Destination *destination/*source");
+    replicate(*home, *destination, *syncStat)
+    writeLine("stdout", "Irsync finished with: *syncStat");
+    
+    # continue with metadata only if replication succeeded:
+    if(<FILL_IN>){
+        #Label the collection
+        *MDKey   = "TYPE";
+    	*MDValue = *source_type;
+    	*Path = *home++"/"++*source;
+    	createAVU(*MDKey, *MDValue, *Path);
+	
+    	# Loop over all data objects in your archive collection in aliceZone
+    	# Set the field REPLICA for all data objects in archive
+    	# Set the field ORIGINAL for all replicated data objects
+    	#foreach(*row in SELECT COLL_NAME, DATA_NAME where COLL_NAME like <FILL_IN>){
+            #*coll = *row.COLL_NAME;
+            #*data = *row.DATA_NAME; # this is your local file on alice
+            #*repl = <FILL IN the string that determines the remote file>;
+            #*path = <FILL IN your local path on aliceZone>;
+            #writeLine("stdout", *path);
+            #writeLine("stdout", "Metadata for *path:");
+
+            #createAVU("TYPE", <FILL IN>, <FILL IN>);
+            #createAVU("REPLICA", <FILL IN>, <FILL IN>);
+            #writeLine("stdout", "");
+
+            #writeLine("stdout", "Metadata for *repl:");
+            #createAVU("TYPE", <FILL IN>, <FILL IN>);
+            #createAVU("ORIGINAL", <FILL IN>, <FILL IN>);
+            #writeLine("stdout", "");
+        #}
+    }
+}
+
+replicate(*source, *dest, *status){
+    # check whether it is a collection (-c) or a data object (-d)
+    # *source_type catches return value of the function
+    msiGetObjType(*home++"/"++*source,*source_type);
+    writeLine("stdout", "*source is of type *source_type");
+    if(*source_type == <FILL_IN>){
+    	msiCollRsync(*home++"/"++*source, *destination++"/"++*source,
+    	"null","IRODS_TO_IRODS",*rsyncStatus);
+    	writeLine("stdout", "Irsync status: *rsyncStatus");
+     else{
+     	*rsyncStatus = <FILL_IN> #catch some error
+     }
+    *replStatus = *rsyncStatus
+    }
+}
+
+createAVU(*key, *value, *path){
+    #Creates a key-value pair and connects it to a data object or collection
+    msiAddKeyVal(*Keyval,*key, *value);
+    writeKeyValPairs("stdout", *Keyval, " is : ");
+    msiGetObjType(*path,*objType);
+    msiSetKeyValuePairsToObj(*Keyval, *path, *objType);
+}
+
+INPUT *source="archive", *destination=""
+OUTPUT ruleExecOut
+```
 
 #### Solution
+**TODO**
+
 ```
 replication{
     # create base path to your home collection
@@ -807,4 +878,11 @@ createAVU(*key, *value, *path){
 INPUT *source="archive", *destination="/bobZone/home/di4r-user1#aliceZone"
 OUTPUT ruleExecOut
 ```
+
+## Last Challenge
+**TODO: code**
+Write a policy, that removes all data from your iRODS home collection and from your remote home collection, apart from the *archive* collection.
+
+
+
 

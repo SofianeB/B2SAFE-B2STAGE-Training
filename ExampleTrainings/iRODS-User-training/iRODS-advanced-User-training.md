@@ -217,7 +217,7 @@ i:/bobZone/home/di4r-user1#aliceZone/aliceInWonderland-EN.txt.utf-8
 Check
 
 ```
-ils -L /bobZone/home/di4r-user1#aliceZone/aliceInWonderland-DE.txt.utf-8
+ils -L /bobZone/home/di4r-user1#aliceZone/aliceInWonderland-EN.txt.utf-8
 ```
 
 You see that at the remote site there is a checksum calculated. *irsync*
@@ -291,8 +291,8 @@ home iRODS zone like this:
 
 ```
 imeta add -C archive "Original" "/aliceZone/home/di4r-user1/archive"
-imeta add -d archive/aliceInWonderland-EN.txt.utf-8 \
-"Original" "/aliceZone/home/di4r-user1/archive/aliceInWonderland-EN.txt.utf-8"
+imeta add -d archive/aliceInWonderland-DE.txt.utf-8 \
+"Original" "/aliceZone/home/di4r-user1/archive/aliceInWonderland-DE.txt.utf-8"
 ```
 
 With
@@ -336,13 +336,13 @@ this using the *-z* flag of *iquest*.
 
 ```
 iquest "select COLL_NAME, DATA_NAME where \
-META_DATA_ATTR_NAME like 'Origin' and META_DATA_ATTR_VALUE like '%bobZone%'"
+META_DATA_ATTR_NAME like 'Original' and COLL_NAME like '%bobZone%'"
 
 CAT_NO_ROWS_FOUND: Nothing was found matching your query
 
 
 iquest -z bobZone "select COLL_NAME, DATA_NAME where \
-META_DATA_ATTR_NAME like 'Origin' and META_DATA_ATTR_VALUE like '%bobZone%'"
+META_DATA_ATTR_NAME like 'Original' and COLL_NAME like '%bobZone%'"
 Zone is bobZone
 COLL_NAME = /bobZone/home/di4r-user1#aliceZone/archive
 DATA_NAME = aliceInWonderland-EN.txt.utf-8

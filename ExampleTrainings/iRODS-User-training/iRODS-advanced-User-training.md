@@ -718,33 +718,32 @@ The data archiving rule should consist of two rules (policies).
 We will give examples for replicating collections, corresponding  microservice to replicate files only is *msiDataObjRsync(source, "IRODS_TO_IRODS", dest-resource, destination)*. Note that the order of arguments differ in case of collections.
 
 #### The replication part
-**TODO: test**
+*exampleRules/replicationPart.r*
 
 ```py
 myReplicationPolicy{
     # create base path to your home collection
-    *home="/$rodsZoneClient/home/$userNameClient";
+    *source="/$rodsZoneClient/home/$userNameClient/*coll";
     # by default we stay in the same iRODS zone
     # --> How do you have to alter *destination to replicate to bobZone?
-    if(*destination == ""){ *destination = *home++"/test"}
-    writeLine("stdout", "Replicate *home/*source");
-    writeLine("stdout", "Destination *destination/*source");
-    replicate(*home, *destination, *syncStat)
+    if(*destination == ""){ *destination = "/$rodsZoneClient/home/$userNameClient/test"}
+    writeLine("stdout", "Replicate *source");
+    writeLine("stdout", "Destination *destination");
+    replicate("*source", *destination, *syncStat)
     writeLine("stdout", "Irsync finished with: *syncStat");
 }
 
 replicate(*source, *dest, *status){
     # check whether it is a collection (-c) or a data object (-d)
     # *source_type catches return value of the function
-    msiGetObjType(*home++"/"++*source,*source_type);
+    msiGetObjType(*source,*source_type);
     writeLine("stdout", "*source is of type *source_type");
-    msiCollRsync(*home++"/"++*source, *destination++"/"++*source,
-    	"null","IRODS_TO_IRODS",*rsyncStatus);
-    writeLine("stdout", "Irsync status: *rsyncStatus");
-    *rsyncStatus
+    msiCollRsync(*source, *destination,
+        "null","IRODS_TO_IRODS",*status);
+    writeLine("stdout", "Irsync status: *status");
 }
 
-INPUT *source="archive", *destination=""
+INPUT *coll="archive", *destination=""
 OUTPUT ruleExecOut
 ```
 

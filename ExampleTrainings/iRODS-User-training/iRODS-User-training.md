@@ -414,12 +414,22 @@ The most important ones are listed on your cheat-sheet.
 You might see that you get as a result several files. These are the files of your fellow course members. You can see and query the metadata pf these files and collections because you do have the correct ACLs.
 
 ### Small exercise
-Command 	| Meaning
+Command  | Meaning
 ---------|--------
 iquest		| Find data by query on metadata
 iquest attrs	| List of attributes to query 
-			| USER\_ID, USER\_NAME, RESC\_ID, RESC\_NAME, RESC\_TYPE\_NAME, RESC\_CHILDREN, RESC\_PARENT, DATA\_NAME, DATA\_REPL\_NUM, DATA\_SIZE, DATA\_RESC\_NAME, DATA\_PATH, DATA\_OWNER\_NAME, DATA\_CHECKSUM, COLL\_ID, COLL\_NAME, COLL\_PARENT\_NAME, COLL\_OWNER\_NAME, META\_DATA\_ATTR\_NAME, META\_DATA\_ATTR\_VALUE, META\_DATA\_ATTR\_UNITS, META\_DATA\_ATTR\_ID, META\_COLL\_ATTR\_NAME, META\_COLL\_ATTR\_VALUE, META\_COLL\_ATTR\_UNITS, META\_COLL\_ATTR\_ID, META\_COLL\_CREATE\_TIME, META\_COLL\_MODIFY\_TIME, META\_NAMESPACE\_COLL, META\_RESC\_ATTR\_NAME, META\_RESC\_ATTR\_VALUE, META\_RESC\_ATTR\_UNITS
 
+```
+USER_ID, USE_NAME, RESC_ID, RESC_NAME, RESC_TYPE_NAME, 
+RESC_CHILDREN, RESC_PARENT, DATA_NAME, DATA\_REPL_NUM, 
+DATA_SIZE, DATA_RESC_NAME, DATA_PATH, DATA_OWNER_NAME, 
+DATA_CHECKSUM, COLL_ID, COLL_NAME, COLL_PARENT_NAME, 
+COLL_OWNER_NAME, META_DATA_ATTR_NAME, META_DATA_ATTR_VALUE, 
+META_DATA_ATTR_UNITS, META_DATA_ATTR_ID, META_COLL_ATTR_NAME, 
+META_COLL_ATTR_VALUE, META_COLL_ATTR_UNITS, META_COLL_ATTR_ID, 
+META_COLL_CREATE_TIME, META_COLL_MODIFY_TIME, META_NAMESPACE_COLL, 
+META_RESC_ATTR_NAME, META_RESC_ATTR_VALUE, META_RESC_ATTR_UNITS
+```
 
 - Pair up with another team.
 - Create some data and annotate the data, with own attributes and values.

@@ -618,9 +618,6 @@ The rules work like a filter. Rules can have the same name and different bodies.
 
 On-statements enable us to define different policies and update them without breaking other policies. Explore that in the exercise below.
 
-### Return values of rules
-**TODO**
-
 ### Exercise (15min)
 
 - Write a rule with different cases (decision between data policies), set the variable "iresource" accordingly:
@@ -681,6 +678,37 @@ storagepolicy(*size, *privacy, *availability){
 INPUT *size="large", *privacy="low", *availability="high"
 OUTPUT ruleExecOut
 ```
+
+### Return values of rules
+We saw in the previous exercise that functions automatically return the last value that is set (not assigned to another variable!). But how can you pass on variables or several variables? An alternative to the solution above is he following:
+
+```
+policydecision{
+        storagepolicy(*size, *privacy, *availability, *resourceName);
+        writeLine("stdout", "*resourceName");
+}
+
+storagepolicy(*size, *privacy, *availability, *resource){
+        on(*privacy=="high"){ *resource = "storage3"; }
+}
+
+storagepolicy(*size, *privacy, *availability, *resource){
+        on(*availability=="high"){ *resource = "replResc"; }
+}
+
+storagepolicy(*size, *privacy, *availability, *resource){
+        on(*size=="large"){ *resource = "archive"; }
+}
+
+storagepolicy(*size, *privacy, *availability, *resource){
+        *resource = "demoResc";
+}
+
+INPUT *size="large", *privacy="low", *availability="high"
+OUTPUT ruleExecOut
+```
+
+Here we create a dummy variable *resourceName* that is empty when the *storagepolicy* is called and which is assigned with *resource* after the subpolicies are executed.
 
 ### Implement your own data archiving policy (30min)
 The data archiving rule should consist of two rules (policies).

@@ -321,6 +321,14 @@ imeta add -C /bobZone/home/di4r-user1#aliceZone/archive \
 2. Introduce another metadata field in the original data to link to the
    replicas. Use the key "Replica".
 
+#### Solution
+
+```py
+imeta add -C archive "Replica" "/bobZone/home/di4r-user1#aliceZone/archive"
+imeta add -d archive/aliceInWonderland-DE.txt.utf-8 "Replica" "/bobZone/home/di4r-user1#aliceZone/archive/aliceInWonderland-DE.txt.utf-8"
+```
+
+
 ### Retrieving data by metadata (10min)
 
 We can retrieve our freshly labeled data at *aliceZone*

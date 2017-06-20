@@ -951,149 +951,183 @@ No mdval given.
 **Watch out:** Do not use special characters in metadata entries. I.e. no signs that have a special meaning in iRODS: '-', '$', '#', ...
 
 
-#### Combine them all
-**TODO: test**
+#### Putting it all together
+Now that we have the single parts, write a rule, that replicates a collection to *bobZone* and labels the collection and all its contents:
+- The original data on *aliceZone* with the links to the replicated data on *bobZone*
+ 
+ ```
+attribute: REPLICA
+value: /bobZone/home/di4r-user1#aliceZone/archive
+ ```
+- The replicated data on *bobZone* with the link to the original data on *aliceZone*
 
-```py
-myReplicationPolicy{
+ ```
+ attribute: ORIGINAL
+ value: /aliceZone/home/di4r-user1/archive
+ ```
+ 
+ **Start fresh**: Make sure you have some data and some subcollection in an iRODS collection called *archive*
+ 
+ ```
+ ils archive
+ 
+/aliceZone/home/di4r-user1/archive:
+  aliceInWonderland-DE.txt.utf-8
+  C- /aliceZone/home/di4r-user1/archive/aliceInWonderland
+  
+imeta ls -C archive
+
+AVUs defined for collection archive:
+None
+ ```
+ 
+
+#### Solution
+```c
+replication{
     # create base path to your home collection
-    *home="/$rodsZoneClient/home/$userNameClient";
+    *source="/$rodsZoneClient/home/$userNameClient/*collection";
     # by default we stay in the same iRODS zone
-    # --> How do you have to alter *destination to replicate to bobZone?
-    if(*destination == ""){ *destination = *home++"/test"}
-    writeLine("stdout", "Replicate *home/*source");
-    writeLine("stdout", "Destination *destination/*source");
-    replicate(*home, *destination, *syncStat)
+    if(*destination == ""){ *destination = "/$rodsZoneClient/home/$userNameClient/test"}
+
+    writeLine("stdout", "Replicate *source");
+    writeLine("stdout", "Destination *destination");
+
+    replicate("*source", *destination, *syncStat)
     writeLine("stdout", "Irsync finished with: *syncStat");
-    
-    # continue with metadata only if replication succeeded:
-    if(<FILL_IN>){
-        #Label the collection
-        *MDKey   = "TYPE";
-    	*MDValue = *source_type;
-    	*Path = *home++"/"++*source;
-    	createAVU(*MDKey, *MDValue, *Path);
-	
-    	# Loop over all data objects in your archive collection in aliceZone
-    	# Set the field REPLICA for all data objects in archive
-    	# Set the field ORIGINAL for all replicated data objects
-    	#foreach(*row in SELECT COLL_NAME, DATA_NAME where COLL_NAME like <FILL_IN>){
-            #*coll = *row.COLL_NAME;
-            #*data = *row.DATA_NAME; # this is your local file on alice
-            #*repl = <FILL IN the string that determines the remote file>;
-            #*path = <FILL IN your local path on aliceZone>;
-            #writeLine("stdout", *path);
-            #writeLine("stdout", "Metadata for *path:");
+    writeLine("stdout", "")
 
-            #createAVU("TYPE", <FILL IN>, <FILL IN>);
-            #createAVU("REPLICA", <FILL IN>, <FILL IN>);
-            #writeLine("stdout", "");
+    # Create metadata for *collection
+    writeLine("stdout", "Create metadata for input collection *source.")
+    addMD("TYPE", "", *source);
+    addMD("REPLICA", *destination, *source);
+    # Create metadata for *destination
+    writeLine("stdout", "Create metadata for replica collection *destination.")
+    addMD("TYPE", "", *destination);
+    addMD("ORIGINAL", *source, *destination);
+    writeLine("stdout", "")
 
-            #writeLine("stdout", "Metadata for *repl:");
-            #createAVU("TYPE", <FILL IN>, <FILL IN>);
-            #createAVU("ORIGINAL", <FILL IN>, <FILL IN>);
-            #writeLine("stdout", "");
-        #}
+    # Loop over all data objects in your archive collection in aliceZone
+    # Set the field REPLICA for the data objects in archive
+    # Set the field ORIGINAL for the data objects in the replicas
+    writeLine("stdout", "Create metadata for all data objects in *source.")
+    foreach(*row in SELECT COLL_NAME, DATA_NAME where COLL_NAME like "*source"){
+        *coll = *row.COLL_NAME;
+        *data = *row.DATA_NAME;
+        *repl = *destination++"/"++*data;
+        *path = *coll++"/"++*data;
+
+        linkOrigRepl(*path, *repl)
     }
+
+    # Do the same for the sub collections
+    writeLine("stdout", "Create metadata for all subcollections in *source.")
+    foreach(*row in SELECT COLL_NAME where COLL_NAME like "%archive/%"){
+        *coll = *row.COLL_NAME;
+        msiSplitPath(*coll, *parent, *child)
+        *repl = *destination++"/"++*child;
+
+        linkOrigRepl(*coll, *repl)
+    }
+}
+
+linkOrigRepl(*orig, *repl){
+    writeLine("stdout", "Metadata for *orig:");
+    addMD("REPLICA", *repl, *orig);
+    addMD("TYPE", "", *orig)
+    writeLine("stdout", "");
+
+    writeLine("stdout", "Metadata for *repl:");
+    addMD("ORIGINAL", *orig, *repl);
+    addMD("TYPE", "", *repl)
+    writeLine("stdout", "");
+}
+
+addMD(*key, *value, *path){
+    on(*key=="TYPE"){
+        msiGetObjType(*path,*source_type);
+        if(*source_type=="-d"){
+            *MDValue="data object";
+        }
+        else{
+            *MDValue="collection"
+        }
+        createAVU(*key, *MDValue, *path);
+    }
+}
+
+addMD(*key, *value, *path){
+    # Do not add metadata with empty value!
+    if(*value==""){
+        writeLine("stdout", "No mdval given.");
+    }
+    else{
+        createAVU(*key, *value, *path);
+    }
+}
+
+createAVU(*key, *value, *path){
+    msiAddKeyVal(*Keyval,*key, *value);
+    writeKeyValPairs("stdout", *Keyval, " is : ");
+    msiGetObjType(*path,*objType);
+    msiSetKeyValuePairsToObj(*Keyval, *path, *objType);
 }
 
 replicate(*source, *dest, *status){
     # check whether it is a collection (-c) or a data object (-d)
     # *source_type catches return value of the function
-    msiGetObjType(*home++"/"++*source,*source_type);
+    msiGetObjType(*source,*source_type);
     writeLine("stdout", "*source is of type *source_type");
-    if(*source_type == <FILL_IN>){
-    	msiCollRsync(*home++"/"++*source, *destination++"/"++*source,
-    	"null","IRODS_TO_IRODS",*rsyncStatus);
-    	writeLine("stdout", "Irsync status: *rsyncStatus");
-     else{
-     	*rsyncStatus = <FILL_IN> #catch some error
-     }
-    *replStatus = *rsyncStatus
+
+    # Only proceed when source_type matches "collection"
+    if(*source_type == "-c"){
+        msiCollRsync(*source, *destination,
+            "null","IRODS_TO_IRODS",*status);
+    }
+    else{
+       writeLine("stdout", "Expected Collection, got data object.");
+       *status = "FAIL - No data collection."
     }
 }
 
-createAVU(*key, *value, *path){
-    #Creates a key-value pair and connects it to a data object or collection
-    msiAddKeyVal(*Keyval,*key, *value);
-    writeKeyValPairs("stdout", *Keyval, " is : ");
-    msiGetObjType(*path,*objType);
-    msiSetKeyValuePairsToObj(*Keyval, *path, *objType);
-}
-
-INPUT *source="archive", *destination=""
+INPUT *collection="archive", *destination="/bobZone/home/di4r-user1#aliceZone/BACKUP"
 OUTPUT ruleExecOut
+
 ```
 
-#### Solution
-**TODO**
+Example output:
 
 ```
-replication{
-    # create base path to your home collection
-    *home="/$rodsZoneClient/home/$userNameClient";
-    # by default we stay in the same iRODS zone
-    # --> How do you have to alter *destination to replicate to bobZone?
-    if(*destination == ""){ *destination = *home++"/test"}
-    writeLine("stdout", "Replicate *home/*source");
-    writeLine("stdout", "Destination *destination/*source");
+di4r-user1@ui:~$ irule -F exampleRules/replication.r
+Replicate /aliceZone/home/di4r-user1/archive
+Destination /bobZone/home/di4r-user1#aliceZone/BACKUP
+/aliceZone/home/di4r-user1/archive is of type -c
+Irsync finished with: 0
 
-    # check whether it is a collection (-c) or a data object (-d)
-    # *source_type catches return value of the function
-    msiGetObjType(*home++"/"++*source,*source_type);
-    writeLine("stdout", "*source is of type *source_type");
+Create metadata for input collection /aliceZone/home/di4r-user1/archive.
+TYPE is : collection
+REPLICA is : /bobZone/home/di4r-user1#aliceZone/BACKUP
+Create metadata for replica collection /bobZone/home/di4r-user1#aliceZone/BACKUP.
+TYPE is : collection
+ORIGINAL is : /aliceZone/home/di4r-user1/archive
 
-    # choose the right replication microservice
+Create metadata for all data objects in /aliceZone/home/di4r-user1/archive.
+Metadata for /aliceZone/home/di4r-user1/archive/aliceInWonderland-DE.txt.utf-8:
+REPLICA is : /bobZone/home/di4r-user1#aliceZone/BACKUP/aliceInWonderland-DE.txt.utf-8
+TYPE is : data object
 
-    # iRODS microservice for irsync for collections
-    # 3rd parameter is the target resource which we leave empty.
-    # *rsyncStatus is a variable returned by the function
-    msiCollRsync(*home++"/"++*source, *destination++"/"++*source,"null","IRODS_TO_IRODS",*rsyncStatus);
-    # iRODS microservice for irsync for data objects
-    #msiDataObjRsync(*home++"/"++*source,"IRODS_TO_IRODS","null",*destination++"/aliceText.txt",*rsyncStatus);
-    writeLine("stdout", "Irsync status: *rsyncStatus"); # is 0 when there is nothing to sync
+Metadata for /bobZone/home/di4r-user1#aliceZone/BACKUP/aliceInWonderland-DE.txt.utf-8:
+ORIGINAL is : /aliceZone/home/di4r-user1/archive/aliceInWonderland-DE.txt.utf-8
+TYPE is : data object
 
-    # create some metadata and link it to the source and
-    # example for the collection "archive"
-    # Verify with icommands imeta ls -C archive
+Create metadata for all subcollections in /aliceZone/home/di4r-user1/archive.
+Metadata for /aliceZone/home/di4r-user1/archive/aliceInWonderland:
+REPLICA is : /bobZone/home/di4r-user1#aliceZone/BACKUP/aliceInWonderland
+TYPE is : collection
 
-    *MDKey   = "TYPE";
-    *MDValue = *source_type;
-    *Path = *home++"/"++*source;
-    createAVU(*MDKey, *MDValue, *Path);
-
-    writeLine("stdout", "");
-    # Loop over all data objects in your archive collection in aliceZone
-    # Set the field REPLICA for the data objects in archive
-    # Set the field ORIGINAL for the data objects in the replicas
-    foreach(*row in SELECT COLL_NAME, DATA_NAME where COLL_NAME like "*home/*source"){
-        *coll = *row.COLL_NAME;
-        *data = *row.DATA_NAME;
-        *repl = *destination++"/"++*source++"/"++*data;
-        *path = *coll++"/"++*data;
-        writeLine("stdout", *path);
-        writeLine("stdout", "Metadata for *path:");
-        msiGetObjType(*path,*objType);
-        createAVU("TYPE", *objType, *path);
-        createAVU("REPLICA", *repl, *path);
-        writeLine("stdout", "");
-
-        writeLine("stdout", "Metadata for *repl:");
-        createAVU("TYPE", *objType, *repl);
-        createAVU("ORIGINAL", *path, *repl);
-        writeLine("stdout", "");
-    }
-}
-
-createAVU(*key, *value, *path){
-    msiAddKeyVal(*Keyval,*key, *value);
-    writeKeyValPairs("stdout", *Keyval, " is : ");
-    msiGetObjType(*path,*objType);
-    msiSetKeyValuePairsToObj(*Keyval, *path, *objType);
-}
-
-INPUT *source="archive", *destination="/bobZone/home/di4r-user1#aliceZone"
-OUTPUT ruleExecOut
+Metadata for /bobZone/home/di4r-user1#aliceZone/BACKUP/aliceInWonderland:
+ORIGINAL is : /aliceZone/home/di4r-user1/archive/aliceInWonderland
+TYPE is : collection
 ```
 
 ## Last Challenge

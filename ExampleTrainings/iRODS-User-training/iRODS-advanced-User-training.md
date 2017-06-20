@@ -381,7 +381,7 @@ In the previous parts we did a lot of work manually:
 
 iRODS offers the possibility to automate data management processes by creating scripts written in the iRODS rule language. We will first inspect the iRODS rule language and then automatise the steps of the previous section and finally schedule the backup process in regular time intervals.
 
-Save the example rule below in a file called *HelloWorld.r*
+Open *exampleRules/helloworld.r*
 
 ```
 HelloWorld{
@@ -397,14 +397,21 @@ and execute the rule with
 ```sh
 irule -F exampleRules/helloworld.r
 ```
-### iRODS microservices
-**TODO**
 
-### iRODS core.re
-**TODO**
+Rules are structure as follows:
+- Name of the rule, this name does not have to correspond with the filename
+- Curly braces to indicate code blocks
+- User defined rules always need an *INPUT* and *OUTPUT* at the end of the file, each in a separate line
+	- INPUT: Defines some variables from the commandline
+	- OUTPUT: always needs the *ruleExecOut* and can contain variables that will be printed to the prompt
 
-### Policiy enforcememt points and actions
-**TODO**
+### iRODS microservices, rules, policy-enforcement points and the rulebase
+**Slides**
+- Microservices
+- Rule engine
+- The default rulebase *core.re*
+- Order matters
+- Workflow for developing rules
 
 ### Passing arguments, variables and output
 The rule has an input variable which we did not set in the previous call. The default value for the variable is "YourName".

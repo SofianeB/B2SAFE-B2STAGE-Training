@@ -323,7 +323,7 @@ imeta add -C /bobZone/home/di4r-user1#aliceZone/archive \
 
 #### Solution
 
-```py
+```
 imeta add -C archive "Replica" "/bobZone/home/di4r-user1#aliceZone/archive"
 imeta add -d archive/aliceInWonderland-DE.txt.utf-8 \
 "Replica" "/bobZone/home/di4r-user1#aliceZone/archive/aliceInWonderland-DE.txt.utf-8"
@@ -384,7 +384,7 @@ iRODS offers the possibility to automate data management processes by creating s
 
 Open *exampleRules/helloworld.r*
 
-```
+```c
 HelloWorld{
 	writeLine("stdout", "Hello *name!");
 }
@@ -395,7 +395,7 @@ OUTPUT ruleExecOut, *name
 
 and execute the rule with
 
-```sh
+```
 irule -F exampleRules/helloworld.r
 ```
 
@@ -418,7 +418,7 @@ Rules are structured as follows:
 The rule has an input variable which we did not set in the previous call. The default value for the variable is "YourName".
 To customise the function, we could alter the code, or we could pass on the right value for the variable.
 
-```
+```c
 HelloWorld{
 	writeLine("stdout", "Hello *name!");
 }
@@ -429,13 +429,13 @@ OUTPUT ruleExecOut, *name
 
 We can overwrite input parameters by calling the function like this:
 
-```sh
+```
 irule -F exampleRules/helloworld.r "*name='Alice'"
 ```
 
 ### Exercise: Passing variables, data types (10min)
 
-```
+```c
 variables{
 	writeLine("stdout", "var1 is *var1!");
 	writeLine("stdout", "var2 is *var2!");
@@ -448,19 +448,19 @@ OUTPUT ruleExecOut, *name
 - Alter the type of the input variables: numbers and simple calculations, booleans (true, false), strings
 - How do you only change one of the two variables?
 
-```sh
+```
 irule -F exampleRules/variables.r '*var1="Hello"'
 ```
 
-```sh
+```
 irule -F exampleRules/variables.r "*var1='456'" "*var2='true'"
 ```
 
-```sh
+```
 irule -F exampleRules/variables.r '*var1=3+4/7.'
 ```
 
-```sh
+```
 irule -F exampleRules/variables.r "*var1='Hello'" "*var2=Hello"
 ```
 
@@ -468,7 +468,7 @@ irule -F exampleRules/variables.r "*var1='Hello'" "*var2=Hello"
 
 iRODS knows predefined global variables that are set by the system and can come in handy. Those variables are addressed by "$" just like in shell scripting. In this tutorial we will use the following variables:
 
-```sh
+```
 #User
 userNameClient
 userClient
@@ -499,7 +499,7 @@ rescName
 
 With them you can e.g. create the home collection of the active user:
 
-```sh
+```c
 *home="/$rodsZoneClient/home/$userNameClient"
 ```
 
@@ -522,7 +522,7 @@ recursivelist{
 input null
 output ruleExecOut
 ```
-```sh
+```
 irule -F exampleRules/recursivelist.r
 ```
 The '%' works as wild card, variables are denoted by '*'.
@@ -692,7 +692,7 @@ OUTPUT ruleExecOut
 ### Return values of rules
 We saw in the previous exercise that functions automatically return the last value that is set (not assigned to another variable!). But how can you pass on variables or several variables? An alternative to the solution above is he following:
 
-```
+```c
 policydecision{
         storagepolicy(*size, *privacy, *availability, *resourceName);
         writeLine("stdout", "*resourceName");
@@ -806,6 +806,21 @@ replicate(*source, *dest, *status){
 
 INPUT *coll="archive", *destination=""
 OUTPUT ruleExecOut
+```
+
+Example output:
+```
+irule -F exampleRules/replicationPart_solution.r
+Replicate /aliceZone/home/di4r-user1/archive
+Destination /aliceZone/home/di4r-user1/test
+/aliceZone/home/di4r-user1/archive is of type -c
+Irsync status: 0
+Irsync finished with: 0
+
+irule -F exampleRules/replicationPart_solution.r \
+	"*coll='lewiscarroll/book-aliceInWonderland/aliceInWonderland-EN.txt.utf-8'"
+Expected Collection, got data object.
+Irsync finished with: FAIL - No data collection.
 ```
 
 #### The metadata part

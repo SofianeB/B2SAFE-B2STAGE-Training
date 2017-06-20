@@ -325,7 +325,8 @@ imeta add -C /bobZone/home/di4r-user1#aliceZone/archive \
 
 ```py
 imeta add -C archive "Replica" "/bobZone/home/di4r-user1#aliceZone/archive"
-imeta add -d archive/aliceInWonderland-DE.txt.utf-8 "Replica" "/bobZone/home/di4r-user1#aliceZone/archive/aliceInWonderland-DE.txt.utf-8"
+imeta add -d archive/aliceInWonderland-DE.txt.utf-8 \
+"Replica" "/bobZone/home/di4r-user1#aliceZone/archive/aliceInWonderland-DE.txt.utf-8"
 ```
 
 

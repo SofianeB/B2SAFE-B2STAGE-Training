@@ -362,14 +362,15 @@ There is no standard way to query multiple iCAT catalogues with a single
 
 #### Small exercise (10 min)
 
-Assume your "Original" *archive* collection on aliceZone is corrupted. How
+Assume your "Original" *archive* collection on *aliceZone* is corrupted. How
 would you find out where you can get a copy of that data and how would you
 restore the data?
 
 #### Solution
 
 ```
-iquest "select META_COLL_ATTR_VALUE where META_COLL_ATTR_NAME like 'Replica' and COLL_NAME like '%archive%'"
+iquest \
+"select META_COLL_ATTR_VALUE where META_COLL_ATTR_NAME like 'Replica' and COLL_NAME like '%archive%'"
 irsync -r -l i:\<answer from iquest\> i:/aliceZone/home/di4r-user1/archive
 irsync -r i:\<answer from iquest\> i:/aliceZone/home/di4r-user1/archive
 ```
@@ -400,6 +401,7 @@ irule -F exampleRules/helloworld.r
 ```
 
 Rules are structured as follows:
+
 - Name of the rule, this name does not have to correspond with the filename
 - Curly braces to indicate code blocks
 - User defined rules always need an *INPUT* and *OUTPUT* at the end of the file, each in a separate line
@@ -466,37 +468,7 @@ irule -F exampleRules/variables.r "*var1='Hello'" "*var2=Hello"
 
 ### Global/System variables
 
-iRODS knows predefined global variables that are set by the system and can come in handy. Those variables are addressed by "$" just like in shell scripting. In this tutorial we will use the following variables:
-
-```
-#User
-userNameClient
-userClient
-rodsZoneClient
-
-#Data objects
-objPath
-dataType
-dataSize
-chksum
-filePath
-replNum
-dataOwner
-dataOwnerZone
-dataAccess
-
-#Collections
-collName
-collParentName
-collOwnername
-collAccess
-collInheritance
-
-#Resources
-destRescName
-rescName
-```
-
+iRODS knows predefined global variables that are set by the system and can come in handy. Those variables are addressed by "$" just like in shell scripting. 
 With them you can e.g. create the home collection of the active user:
 
 ```c
@@ -558,12 +530,14 @@ output ruleExecOut
 
 ```c
 queryall{
-        foreach(*row in SELECT COLL_NAME, META_COLL_ATTR_VALUE where META_COLL_ATTR_NAME like '*var'){
+        foreach(*row in SELECT COLL_NAME, META_COLL_ATTR_VALUE where 
+        	META_COLL_ATTR_NAME like '*var'){
         *coll = *row.COLL_NAME;
         *value = *row.META_COLL_ATTR_VALUE;
         writeLine("stdout", "*coll *value");
         }
-        foreach(*row in SELECT COLL_NAME, DATA_NAME, META_DATA_ATTR_VALUE where META_DATA_ATTR_NAME like '*var'){
+        foreach(*row in SELECT COLL_NAME, DATA_NAME, META_DATA_ATTR_VALUE where 
+        	META_DATA_ATTR_NAME like '*var'){
         *coll = *row.COLL_NAME;
         *data = *row.DATA_NAME;
         *value = *row.META_DATA_ATTR_VALUE;
@@ -723,14 +697,16 @@ Here we create a dummy variable *resourceName* that is empty when the *storagepo
 **Show both solutions next to each other.**
 
 ### Implement your own data archiving policy (60min)
-The data archiving rule should consist of two rules (policies).
-1) Automatically synchronise the *archive* collection to *bobZone*. Watch out! Only replicate your *archive* collection not your neighbours collection.
-2) Create metadata to track the data.
 
-We will give examples for replicating collections, corresponding  microservice to replicate files only is *msiDataObjRsync(source, "IRODS_TO_IRODS", dest-resource, destination)*. Note that the order of arguments differ in case of collections.
+The data archiving rule should consist of two rules (policies).
+
+1. Automatically synchronise the *archive* collection to *bobZone*. Watch out! Only replicate your *archive* collection not your neighbours collection.
+2. Create metadata to track the data.
+
+We will give examples for replicating collections.
 
 #### Exercise: The replication part
-Write a rule that will repliocate iRODS collections (template in 
+Write a rule that will replicate iRODS collections (template in 
 *exampleRules/replicationPart.r*).
 
 ```c
@@ -953,6 +929,7 @@ No mdval given.
 
 #### Exercise: Putting it all together
 Now that we have the single parts, write a rule, that replicates a collection to *bobZone* and labels the collection and all its contents:
+
 - The original data on *aliceZone* with the links to the replicated data on *bobZone*
  
  ```
@@ -966,22 +943,22 @@ value: /bobZone/home/di4r-user1#aliceZone/archive
  value: /aliceZone/home/di4r-user1/archive
  ```
  
- **Start fresh**: Make sure you have some data and some subcollection in an iRODS collection called *archive*
+- **Start fresh**: Make sure you have some data and some subcollection in an iRODS collection called *archive*
  
  ```
  ils archive
- 
-/aliceZone/home/di4r-user1/archive:
-  aliceInWonderland-DE.txt.utf-8
-  C- /aliceZone/home/di4r-user1/archive/aliceInWonderland
-  
-imeta ls -C archive
 
-AVUs defined for collection archive:
-None
+ /aliceZone/home/di4r-user1/archive:
+ aliceInWonderland-DE.txt.utf-8
+ C- /aliceZone/home/di4r-user1/archive/aliceInWonderland
+  
+ imeta ls -C archive
+
+ AVUs defined for collection archive:
+ None
  ```
  
- ```c
+```c
  replication{
     # create base path to your home collection
     *source=<FILL_IN>;
@@ -1020,7 +997,8 @@ None
     writeLine("stdout", "Create metadata for all subcollections in *source.")
     foreach(*row in SELECT COLL_NAME where COLL_NAME like "%archive/%"){
         *coll = *row.COLL_NAME;
-        msiSplitPath(*coll, *parent, *child) #might be handy, have a look at the produced variables *parent and *child
+        #might be handy, have a look at the produced variables *parent and *child
+        msiSplitPath(*coll, *parent, *child) 
         *repl = <FILL_IN>;
 
         linkOrigRepl(*coll, *repl);
@@ -1245,6 +1223,7 @@ TYPE is : collection
 **The big cleanup:** Write a policy, that removes all data from your iRODS home collection and from your remote home collection.
 
 Hints:
+
 - Loop over all data objects AND colections in aliceZone
 - Loop over all data objects AND colections in bobZone
 - Microservices to delete data objects and collections:
@@ -1274,13 +1253,13 @@ cleanup{
     }
 
     writeLine("stdout", "Cleanup *home")
-    foreach(*row in SELECT COLL_NAME, DATA_NAME where COLL_NAME like "*home%"){
+    foreach(*row in SELECT COLL_NAME, DATA_NAME where COLL_NAME like "*remote%"){
         *path = *row.COLL_NAME++'/'++*row.DATA_NAME;
         writeLine("stdout", "Remove *path");
         msiGetObjType(*path,*objType);
         remove(*objType, *path);
     }
-    foreach(*row in SELECT COLL_NAME where COLL_NAME like "*home/%"){
+    foreach(*row in SELECT COLL_NAME where COLL_NAME like "*remote/%"){
         *path = *row.COLL_NAME;
         writeLine("stdout", "Remove *path");
         msiGetObjType(*path,*objType);

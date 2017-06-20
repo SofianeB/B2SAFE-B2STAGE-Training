@@ -399,7 +399,7 @@ and execute the rule with
 irule -F exampleRules/helloworld.r
 ```
 
-Rules are structure as follows:
+Rules are structured as follows:
 - Name of the rule, this name does not have to correspond with the filename
 - Curly braces to indicate code blocks
 - User defined rules always need an *INPUT* and *OUTPUT* at the end of the file, each in a separate line
@@ -466,7 +466,7 @@ irule -F exampleRules/variables.r "*var1='Hello'" "*var2=Hello"
 
 ### Global/System variables
 
-iRODS knows predefined global variables that are set by the system and can come in handy. Those variables are addressed by "$" just like in shell scripting. We list here some of them:
+iRODS knows predefined global variables that are set by the system and can come in handy. Those variables are addressed by "$" just like in shell scripting. In this tutorial we will use the following variables:
 
 ```sh
 #User
@@ -577,6 +577,7 @@ output ruleExecOut
 ```
 
 ### If-statements and on-statements
+Open *exampleRules/conditionalhello.r*.
 
 ```c
 conditionalhello{
@@ -593,7 +594,7 @@ irule -F exampleRules/conditionalhello.r "*name='You'"
 ```
 
 iRODS knows another conditional structure, the on-statement. It can be seen as a *switch statement* in other programming languages.
-The same rue above looks like this with on-statements:
+The same rue above looks like this with on-statements (*exampleRules/conditionalhelloon.r*):
 
 ```c
 hellorule{
@@ -627,6 +628,7 @@ The rules work like a filter. Rules can have the same name and different bodies.
 On-statements enable us to define different policies and update them without breaking other policies. Explore that in the exercise below.
 
 ### Exercise (15min)
+- Switch the two *hello* rules in the rule above. What happens and why?
 
 - Write a rule with different cases (decision between data policies), set the variable "iresource" accordingly:
 	- If the data size is large, "iresource" should be "archive"
@@ -717,6 +719,8 @@ OUTPUT ruleExecOut
 ```
 
 Here we create a dummy variable *resourceName* that is empty when the *storagepolicy* is called and which is assigned with *resource* after the subpolicies are executed.
+
+**Show both solutions next to each other.**
 
 ### Implement your own data archiving policy (30min)
 The data archiving rule should consist of two rules (policies).

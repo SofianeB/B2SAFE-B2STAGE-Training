@@ -824,7 +824,7 @@ Expected Collection, got data object.
 Irsync finished with: FAIL - No data collection.
 ```
 
-#### The metadata part
+#### Exercise: The metadata part
 Write a rule that attaches metadata to collections and data objects (template in *exampleRules/metadataPart.r*).
 The metadata should contain a key-value pair determining whether the data is a collection or a data object (extract that information automatically from iRODS), another metadata entry should be determined by a key value pair given as input of the rule.
 
@@ -951,7 +951,7 @@ No mdval given.
 **Watch out:** Do not use special characters in metadata entries. I.e. no signs that have a special meaning in iRODS: '-', '$', '#', ...
 
 
-#### Putting it all together
+#### Exercise: Putting it all together
 Now that we have the single parts, write a rule, that replicates a collection to *bobZone* and labels the collection and all its contents:
 - The original data on *aliceZone* with the links to the replicated data on *bobZone*
  

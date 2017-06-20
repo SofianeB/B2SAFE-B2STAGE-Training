@@ -568,7 +568,7 @@ irule -F exampleRules/conditionalhello.r "*name='You'"
 ```
 
 iRODS knows another conditional structure, the on-statement. It can be seen as a *switch statement* in other programming languages.
-The same rue above looks like this with on-statements (*exampleRules/conditionalhelloon.r*):
+The same rule above looks like this with on-statements (*exampleRules/conditionalhelloon.r*):
 
 ```c
 hellorule{

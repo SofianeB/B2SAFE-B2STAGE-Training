@@ -732,15 +732,16 @@ We will give examples for replicating collections, corresponding  microservice t
 #### The replication part
 *exampleRules/replicationPart.r*
 
-```py
+```c
 myReplicationPolicy{
-    # create base path to your home collection
-    *source="/$rodsZoneClient/home/$userNameClient/*coll";
-    # by default we stay in the same iRODS zone
-    # --> How do you have to alter *destination to replicate to bobZone?
+    # create base path to your home collection and extend with what you want to replicate
+    *source="/$rodsZoneClient/home/$userNameClient/<FILL_IN>";
+    # by default we stay in the same iRODS zone and use a new collection called 'test'
     if(*destination == ""){ *destination = "/$rodsZoneClient/home/$userNameClient/test"}
+    # some sanity checking
     writeLine("stdout", "Replicate *source");
     writeLine("stdout", "Destination *destination");
+
     replicate("*source", *destination, *syncStat)
     writeLine("stdout", "Irsync finished with: *syncStat");
 }
@@ -750,9 +751,57 @@ replicate(*source, *dest, *status){
     # *source_type catches return value of the function
     msiGetObjType(*source,*source_type);
     writeLine("stdout", "*source is of type *source_type");
-    msiCollRsync(*source, *destination,
-        "null","IRODS_TO_IRODS",*status);
-    writeLine("stdout", "Irsync status: *status");
+
+    # Only proceed when source_type matches "collection"
+    if(<FILL_IN>){
+        msiCollRsync(*source, *destination,
+            "null","IRODS_TO_IRODS",*status);
+        writeLine("stdout", "Irsync status: *status");
+    }
+    else{
+        # Create some useful message on the prompt
+        writeLine("stdout", "<FILL_IN>");
+        # Propagate the status variable so that it can be taken up by myReplicationPolicy
+        *status = <FILL_IN>
+    }
+}
+
+INPUT *coll="archive", *destination=""
+OUTPUT ruleExecOut
+```
+
+#### Solution - replication part
+
+```c
+myReplicationPolicy{
+    # create base path to your home collection
+    *source="/$rodsZoneClient/home/$userNameClient/*coll";
+    # by default we stay in the same iRODS zone
+    if(*destination == ""){ *destination = "/$rodsZoneClient/home/$userNameClient/test"}
+
+    writeLine("stdout", "Replicate *source");
+    writeLine("stdout", "Destination *destination");
+
+    replicate("*source", *destination, *syncStat)
+    writeLine("stdout", "Irsync finished with: *syncStat");
+}
+
+replicate(*source, *dest, *status){
+    # check whether it is a collection (-c) or a data object (-d)
+    # *source_type catches return value of the function
+    msiGetObjType(*source,*source_type);
+    writeLine("stdout", "*source is of type *source_type");
+
+    # Only proceed when source_type matches "collection"
+    if(*source_type == "-c"){
+        msiCollRsync(*source, *destination,
+            "null","IRODS_TO_IRODS",*status);
+        writeLine("stdout", "Irsync status: *status");
+    }
+    else{
+       writeLine("stdout", "Expected Collection, got data object.");
+       *status = "FAIL - No data collection."
+    }
 }
 
 INPUT *coll="archive", *destination=""

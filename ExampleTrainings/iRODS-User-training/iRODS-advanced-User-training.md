@@ -981,6 +981,117 @@ AVUs defined for collection archive:
 None
  ```
  
+ ```c
+ replication{
+    # create base path to your home collection
+    *source=<FILL_IN>;
+    # by default we stay in the same iRODS zone
+    if(*destination == ""){ *destination = "/$rodsZoneClient/home/$userNameClient/test"}
+
+    writeLine("stdout", "Replicate *source");
+    writeLine("stdout", "Destination *destination");
+
+    replicate("*source", *destination, *syncStat);
+    writeLine("stdout", "Irsync finished with: *syncStat");
+    writeLine("stdout", "");
+
+    # Use addMD to link the original collection and the replicated collection
+    # Create metadata for *collection
+    writeLine("stdout", "Create metadata for input collection *source.")
+    <FILL_IN>
+
+    # Create metadata for *destination
+    writeLine("stdout", "Create metadata for replica collection *destination.")
+    <FILL_IN>
+    writeLine("stdout", "");
+
+    # Loop over all data objects in your archive collection in aliceZone
+    writeLine("stdout", "Create metadata for all data objects in *source.")
+    foreach(*row in SELECT COLL_NAME, DATA_NAME where COLL_NAME like "*source"){
+        *coll = *row.COLL_NAME;
+        *data = *row.DATA_NAME;
+        *repl = <FILL_IN>; # build the paths to the original data file and the replica
+        *orig = <FILL_IN>;
+
+        linkOrigRepl(*path, *orig);
+    }
+
+    # Do the same for the sub collections
+    writeLine("stdout", "Create metadata for all subcollections in *source.")
+    foreach(*row in SELECT COLL_NAME where COLL_NAME like "%archive/%"){
+        *coll = *row.COLL_NAME;
+        msiSplitPath(*coll, *parent, *child) #might be handy, have a look at the produced variables *parent and *child
+        *repl = <FILL_IN>;
+
+        linkOrigRepl(*coll, *repl);
+    }
+}
+ 
+ # Given the original path and the replication path introduce the linking.
+linkOrigRepl(*orig, *repl){
+    # label orig with "REPLICA" *repl
+    writeLine("stdout", "Metadata for *orig:");
+    addMD("REPLICA", *repl, *orig);
+    addMD("TYPE", "", *orig)
+    writeLine("stdout", "");
+
+    # label repl with "ORIGINAL" *orig
+    writeLine("stdout", "Metadata for *repl:");
+    addMD("ORIGINAL", *orig, *repl);
+    addMD("TYPE", "", *repl)
+    writeLine("stdout", "");
+}
+
+addMD(*key, *value, *path){
+    on(*key=="TYPE"){
+        msiGetObjType(*path,*source_type);
+        if(*source_type=="-d"){
+            *MDValue="data object";
+        }
+        else{
+            *MDValue="collection"
+        }
+        createAVU(*key, *MDValue, *path);
+    }
+}
+
+addMD(*key, *value, *path){
+    # Do not add metadata with empty value!
+    if(*value==""){
+        writeLine("stdout", "No mdval given.");
+    }
+    else{
+        createAVU(*key, *value, *path);
+    }
+}
+
+createAVU(*key, *value, *path){
+    msiAddKeyVal(*Keyval,*key, *value);
+    writeKeyValPairs("stdout", *Keyval, " is : ");
+    msiGetObjType(*path,*objType);
+    msiSetKeyValuePairsToObj(*Keyval, *path, *objType);
+}
+
+replicate(*source, *dest, *status){
+    # check whether it is a collection (-c) or a data object (-d)
+    # *source_type catches return value of the function
+    msiGetObjType(*source,*source_type);
+    writeLine("stdout", "*source is of type *source_type");
+
+    # Only proceed when source_type matches "collection"
+    if(*source_type == "-c"){
+        msiCollRsync(*source, *destination,
+            "null","IRODS_TO_IRODS",*status);
+    }
+    else{
+       writeLine("stdout", "Expected Collection, got data object.");
+       *status = "FAIL - No data collection."
+    }
+}
+
+INPUT *collection="archive", *destination="/bobZone/home/di4r-user1#aliceZone/BACKUP"
+OUTPUT ruleExecOut
+ ```
 
 #### Solution
 ```c
@@ -1131,9 +1242,73 @@ TYPE is : collection
 ```
 
 ## Last Challenge
-**TODO: code**
-Write a policy, that removes all data from your iRODS home collection and from your remote home collection, apart from the *archive* collection.
+**The big cleanup:** Write a policy, that removes all data from your iRODS home collection and from your remote home collection.
 
+Hints:
+- Loop over all data objects AND colections in aliceZone
+- Loop over all data objects AND colections in bobZone
+- Microservices to delete data objects and collections:
+	- `msiDataObjUnlink(*data,*status)`
+	- `msiRmColl(*collection, "", *status)`
 
+### Solution
+```c
+cleanup{
+    *home="/$rodsZoneClient/home/$userNameClient";
+    *remote="/bobZone/home/$userNameClient#aliceZone";
+    writeLine("stdout", *home);
+    writeLine("stdout", $userNameClient);
+    #data
+    writeLine("stdout", "Cleanup *remote")
+    foreach(*row in SELECT COLL_NAME, DATA_NAME where COLL_NAME like "*home%"){
+        *path = *row.COLL_NAME++'/'++*row.DATA_NAME;
+        writeLine("stdout", "Remove *path");
+        msiGetObjType(*path,*objType);
+        remove(*objType, *path);
+    }
+    foreach(*row in SELECT COLL_NAME where COLL_NAME like "*home/%"){
+        *path = *row.COLL_NAME;
+        writeLine("stdout", "Remove *path");
+        msiGetObjType(*path,*objType);
+        remove(*objType, *path);
+    }
 
+    writeLine("stdout", "Cleanup *home")
+    foreach(*row in SELECT COLL_NAME, DATA_NAME where COLL_NAME like "*home%"){
+        *path = *row.COLL_NAME++'/'++*row.DATA_NAME;
+        writeLine("stdout", "Remove *path");
+        msiGetObjType(*path,*objType);
+        remove(*objType, *path);
+    }
+    foreach(*row in SELECT COLL_NAME where COLL_NAME like "*home/%"){
+        *path = *row.COLL_NAME;
+        writeLine("stdout", "Remove *path");
+        msiGetObjType(*path,*objType);
+        remove(*objType, *path);
+    }
+}
+
+remove(*objType, *data){
+    on($userNameClient == "rods") { writeLine("stdout", "You are admin. I refuse to delete your data."); }
+}
+
+remove(*objType, *data){
+    on($userNameClient == "alice") { writeLine("stdout", "You are admin. I refuse to delete your data."); }
+}
+
+remove(*objType, *data){
+    on($userNameClient == "bob") { writeLine("stdout", "You are admin. I refuse to delete your data."); }
+}
+
+remove(*objType, *data){
+    on(*objType == '-d') {msiDataObjUnlink("*data",*status); writeLine("stdout", "Done.");}
+}
+
+remove(*objType, *data){
+    on(*objType == '-c') {msiRmColl(*data, "", *status); }
+}
+INPUT null
+OUTPUT ruleExecOut
+
+```
 

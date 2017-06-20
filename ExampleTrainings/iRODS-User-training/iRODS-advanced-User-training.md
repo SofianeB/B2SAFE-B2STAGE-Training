@@ -722,7 +722,7 @@ Here we create a dummy variable *resourceName* that is empty when the *storagepo
 
 **Show both solutions next to each other.**
 
-### Implement your own data archiving policy (30min)
+### Implement your own data archiving policy (60min)
 The data archiving rule should consist of two rules (policies).
 1) Automatically synchronise the *archive* collection to *bobZone*. Watch out! Only replicate your *archive* collection not your neighbours collection.
 2) Create metadata to track the data.

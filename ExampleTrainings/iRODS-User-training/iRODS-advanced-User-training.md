@@ -826,6 +826,7 @@ Irsync finished with: FAIL - No data collection.
 
 #### The metadata part
 Write a rule that attaches metadata to collections and data objects (template in *exampleRules/metadataPart.r*).
+The metadata should contain a key-value pair determining whether the data is a collection or a data object (extract that information automatically from iRODS), another metadata entry should be determined by a key value pair given as input of the rule.
 
 
 #### Solution - metadata part

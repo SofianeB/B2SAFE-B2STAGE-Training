@@ -1224,8 +1224,8 @@ TYPE is : collection
 
 Hints:
 
-- Loop over all data objects AND colections in aliceZone
-- Loop over all data objects AND colections in bobZone
+- Loop over all data objects AND collections in aliceZone
+- Loop over all data objects AND collections in bobZone
 - Microservices to delete data objects and collections:
 	- `msiDataObjUnlink(*data,*status)`
 	- `msiRmColl(*collection, "", *status)`

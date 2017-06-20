@@ -828,8 +828,127 @@ Irsync finished with: FAIL - No data collection.
 Write a rule that attaches metadata to collections and data objects (template in *exampleRules/metadataPart.r*).
 The metadata should contain a key-value pair determining whether the data is a collection or a data object (extract that information automatically from iRODS), another metadata entry should be determined by a key value pair given as input of the rule.
 
+```c
+myMetadataPolicy{
+
+    # Build absolute path for obaject or collection to label with metadata
+    *path=<FILL_IN>
+    writeLine("stdout", "Labeling *path");
+
+    # Add metadata on TYPE, defined by system
+    addMD("TYPE", "", *path)
+    # Add user metadata
+    writeLine("stdout", "*mdkey *mdval");
+    addMD(*mdkey, *mdval, *path)
+}
+
+# Function to attach metadata to any data collection or data object
+# Case 1: Metadata to extract from system --> TYPE
+addMD(*key, *value, *path){
+    on(<FILL_IN>){
+        msiGetObjType(*path,*source_type);
+        if(*source_type=="-d"){
+            *MDValue="data object";
+        }
+        else{
+            *MDValue="collection"
+        }
+        createAVU(*key, *MDValue, *path);
+    }
+}
+
+# Case 2: User defined metadata
+addMD(*key, *value, *path){
+    # Do not add metadata with empty value!
+    # Test whether value is empty --> ""
+    # Create AVU when value is given.
+    <FILL_IN>
+}
+
+# Low-level helper function
+createAVU(*key, *value, *path){
+    #Creates a key-value pair and connects it to a data object or collection
+    msiAddKeyVal(*Keyval,*key, *value);
+    writeKeyValPairs("stdout", *Keyval, " is : ");
+    msiGetObjType(*path,*objType);
+    msiSetKeyValuePairsToObj(*Keyval, *path, *objType);
+}
+
+INPUT *item="archive", *mdkey="ORIGINAL", *mdval="/aliceZone/home/di4r-user1/archive"
+OUTPUT ruleExecOut
+```
 
 #### Solution - metadata part
+```c
+myMetadataPolicy{
+
+    # Build absolute path for obaject or collection to label with metadata
+    *path="/$rodsZoneClient/home/$userNameClient/*item"
+    writeLine("stdout", "Labeling *path");
+
+    # Add metadata on TYPE, defined by system
+    addMD("TYPE", "", *path)
+    # Add user metadata
+    writeLine("stdout", "*mdkey *mdval");
+    addMD(*mdkey, *mdval, *path)
+}
+
+# Function to attach metadata to any data collection or data object
+addMD(*key, *value, *path){
+    on(*key=="TYPE"){
+        msiGetObjType(*path,*source_type);
+        if(*source_type=="-d"){
+            *MDValue="data object";
+        }
+        else{
+            *MDValue="collection"
+        }
+        createAVU(*key, *MDValue, *path);
+    }
+}
+
+addMD(*key, *value, *path){
+    # Do not add metadata with empty value!
+    if(*value==""){
+        writeLine("stdout", "No mdval given.");
+    }
+    else{
+        createAVU(*key, *value, *path);
+    }
+}
+
+# Low-level helper function
+createAVU(*key, *value, *path){
+    #Creates a key-value pair and connects it to a data object or collection
+    msiAddKeyVal(*Keyval,*key, *value);
+    writeKeyValPairs("stdout", *Keyval, " is : ");
+    msiGetObjType(*path,*objType);
+    msiSetKeyValuePairsToObj(*Keyval, *path, *objType);
+}
+
+INPUT *item="archive", *mdkey="ORIGINAL", *mdval="/aliceZone/home/di4r-user1/archive"
+OUTPUT ruleExecOut
+```
+Example output:
+
+```
+irule -F exampleRules/metadataPart_solution.r
+Labeling /aliceZone/home/di4r-user1/archive
+TYPE is : collection
+ORIGINAL is : /aliceZone/home/di4r-user1/archive
+
+irule -F exampleRules/metadataPart_solution.r "*item='archive/aliceInWonderland-DE.txt.utf-8'"
+Labeling /aliceZone/home/di4r-user1/archive/aliceInWonderland-DE.txt.utf-8
+TYPE is : data object
+ORIGINAL is : /aliceZone/home/di4r-user1/archive
+
+irule -F exampleRules/metadataPart_solution.r "*item='archive/aliceInWonderland-DE.txt.utf-8'" "*mdval=''"
+Labeling /aliceZone/home/di4r-user1/archive/aliceInWonderland-DE.txt.utf-8
+TYPE is : data object
+ORIGINAL
+No mdval given.
+```
+**Watch out:** Do not use special characters in metadata entries. I.e. no signs that have a special meaning in iRODS: '-', '$', '#', ...
 
 
 #### Combine them all

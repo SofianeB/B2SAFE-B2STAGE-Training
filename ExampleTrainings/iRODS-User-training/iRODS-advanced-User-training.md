@@ -729,8 +729,9 @@ The data archiving rule should consist of two rules (policies).
 
 We will give examples for replicating collections, corresponding  microservice to replicate files only is *msiDataObjRsync(source, "IRODS_TO_IRODS", dest-resource, destination)*. Note that the order of arguments differ in case of collections.
 
-#### The replication part
-*exampleRules/replicationPart.r*
+#### Exercise: The replication part
+Write a rule that will repliocate iRODS collections (template in 
+*exampleRules/replicationPart.r*).
 
 ```c
 myReplicationPolicy{
@@ -824,26 +825,11 @@ Irsync finished with: FAIL - No data collection.
 ```
 
 #### The metadata part
-```py
-myMetadataPolicy{
-    *MDKey   = "TYPE";
-    msiGetObjType(*home++"/"++*source,*source_type);
-    *MDValue = *source_type;
-    *Path = *home++"/"++*source;
-    createAVU(*MDKey, *MDValue, *Path);
-}
+Write a rule that attaches metadata to collections and data objects (template in *exampleRules/metadataPart.r*).
 
-createAVU(*key, *value, *path){
-	#Creates a key-value pair and connects it to a data object or collection
-    msiAddKeyVal(*Keyval,*key, *value);
-    writeKeyValPairs("stdout", *Keyval, " is : ");
-    msiGetObjType(*path,*objType);
-    msiSetKeyValuePairsToObj(*Keyval, *path, *objType);
-}
 
-INPUT *source="archive", *destination=""
-OUTPUT ruleExecOut
-```
+#### Solution - metadata part
+
 
 #### Combine them all
 **TODO: test**

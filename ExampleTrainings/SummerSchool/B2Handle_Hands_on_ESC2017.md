@@ -137,7 +137,7 @@ Have a look at your credentials
 cred.get_all_args()
 ```
 
-```json
+```
 {'HTTPS_verify': 'False',
  'certificate_only': '308_21.T12995_TRAINING_certificate_only.pem',
  'credentials_filename': 'cred_21.T12995.json',
@@ -178,7 +178,7 @@ client.modify_handle_value(handle, TYPE='file')
 print(client.retrieve_handle_record(handle))
 ```
 
-```python
+```
 {'URL': 'https://ndownloader.figshare.com/files/2292172', 'TYPE': 'file', 'HS_ADMIN': "{'index': 200, 'handle': '0
 .NA/21.T12995', 'permissions': '011111110011'}", 'CREATION_DATE': '04-07-2017'}
 

@@ -131,7 +131,7 @@ Try to download this file.
 
 Lessons to learn:
 
-- If the link provided in the URL field is compliant with HTTP the Handle system cannot resolve. Here the PID is not resolvable since the file is not publicly accessible.
+- If the link provided in the URL field is not compliant with HTTP the Handle system cannot resolve. Here the PID is not resolvable since the file is not publicly accessible.
 - You can reference private data and include them in a data registry. Registering data with Handles does not mean to open the data for the public.
 - If the URL field does not resolve, you should not hand these PIDs out to normal users. But you can employ them in user portals or for applications that know how to access the data behind the PIDs, an example is the usage of PIDs in B2SAFE and B2STAGE.
 

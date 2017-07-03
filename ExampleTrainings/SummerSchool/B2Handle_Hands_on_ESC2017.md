@@ -132,7 +132,8 @@ print(pidname)
 - **Register the Handle**
 
 ```python
-handle = prefix + '/' + pidname
+prefix = '21.T12995'
+handle = prefix + '/' + str(pidname)
 client.register_handle(handle, location)
 ```
 
@@ -209,7 +210,7 @@ HandleAlreadyExistsException: Handle 21.T12995/1418280e-e551-44ec-8c51-7ee360247
 If we are really sure we would like to overwrite it, we can specify this:
 
 ```python
-client.register_handle(newhandle, location, overwrite=True)
+client.register_handle(handle, location, overwrite=True)
 ```
 
 To avoid running into this problem and having to decide whether to overwrite or not, it is always preferable to use UUIDs as handle suffixes. Using "speaking names", i.e. suffixes with semantics, is strongly discouraged.

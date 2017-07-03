@@ -9,7 +9,6 @@ Sofiane Bendoukha (DKRZ), Christine Staiger (SURFsara)
 **B2Handle lead developer:**
 Merret Buurman (DKRZ)
 
-
 ## Plan
 
 We will cover:
@@ -122,26 +121,24 @@ location = 'https://ndownloader.figshare.com/files/2292172'
 The library provides an easy way to generate such a handle name. In this case, don't forget to store the handle name in a variable for further use.
 
 ```python
-pidname = client.generate_PID_name(prefix)
+pidname = client.generate_PID_name()
 print(pidname)
 ```
 
 ```commandline
-21.T12995/33c686e5-4a7e-44c6-a8fe-81cd91ca32d6
+33c686e5-4a7e-44c6-a8fe-81cd91ca32d6
 ```
-
 
 - **Register the Handle**
 
 ```python
-prefix = '21.T12995'
 handle = prefix + '/' + pidname
 client.register_handle(handle, location)
 ```
 
 Attention - this command will throw an error, this is expected!
 
-
+	
 ## 3.2 Write access to the Handle server
 
 For modifying, creating and deleting Handle records, we first need to authenticate. In this tutorial, we will use
@@ -221,19 +218,17 @@ And it's even easier to generate the name and register the handle at the same ti
 name.
 
 ```python
-Handle = client.generate_and_register_handle(prefix, location)
-print(Handle)
+client.generate_and_register_handle(prefix, location)
 ```
 
 ```python
 21.T12995/33c686e5-4a7e-44c6-a8fe-81cd91ca32d6
-
 ```
 
 We can check the contents of this newly created handle record:
 
 ```python
-record = client.retrieve_handle_record(Handle)
+record = client.retrieve_handle_record(...)
 print(record)
 ```
 
@@ -253,7 +248,6 @@ Let's try it - let's add the creation date and file type to the Handle record.
 
 With the same method, we can add new values to the Handle record.
 
-<br></br>
 ```python
 client.modify_handle_value(Handle, TYPE='file')
 print(client.retrieve_handle_record(handle))

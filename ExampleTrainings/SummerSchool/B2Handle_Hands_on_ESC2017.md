@@ -98,18 +98,11 @@ If you pass it to the reading methods, these do not access the Handle Server any
 print(client.get_value_from_handle(handle, 'CREATION_DATE', handlerecord_json))
 ```
 
-03-07-2017
-
-
-
 ## 3. Creating Handle records
 
 In their simple form, PIDs or Handles are simple redirection to URL. In this case all they have is an entry that stores
 the URL.
 You can simply create such a handle using the method _register_handle()_.
-
-
-
 
 ### 3.1 Create Handle for the public file
 
@@ -122,8 +115,6 @@ First we define the location or the URL of the file.
 ```python
 location = 'https://ndownloader.figshare.com/files/2292172'
 ```
-<br></br>
-<br></br>
 
 - **PID name**
 
@@ -192,8 +183,6 @@ cred.get_all_args()
  'reverselookup_username': '21.T12995'}
 
 ```
-
-<br></br>
 
 Let's try again now!
 
@@ -298,8 +287,6 @@ print('deleted wrong value')
 print(client.get_value_from_handle(handle, 'RCEATION_DATE'))
 ```
 
-None
-
 - ***modify existing values***
 
 Now we can try to modify again:
@@ -313,8 +300,6 @@ Let's check again if it worked!
 print(client.get_value_from_handle(handle, 'CREATION_DATE'))
 ```
 
-04-07-2017
-
 - ***Download file by PID***
 
 In ipython normal shell commands can  be executed with !in front of the command
@@ -326,10 +311,6 @@ pidname
 !cat <pidname>
 
 ```
-<br></br>
-<br></br>
-<br></br>
-<br></br>
 ## 5. Create a PID for the local file
 
 We will create now a PID for the locally downloaded file

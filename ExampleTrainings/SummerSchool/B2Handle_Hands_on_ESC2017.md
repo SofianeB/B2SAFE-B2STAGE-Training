@@ -27,7 +27,7 @@ The library currently supports Python 2.6, 2.7 and 3.5, and requires at least a 
 ## Setup
 
 ```commandline
-ssh di4r-user*@145.s100.59.156
+ssh di4r-user*@145.100.59.156
 
 ipython
 
